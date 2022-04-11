@@ -6,13 +6,28 @@ from aux_classes import *
 from aux_exceptions import *
 
 grammar = """
-start        : corpo
-corpo        : (operacao | operacao_end)*
-operacao     : (cond | ciclo_while | ciclo_for)
-operacao_end : (decl | decl_atrib | atrib | ciclo_do_while) ";"
+start        : funcao*
 
-decl          : TYPE VAR
-decl_atrib    : TYPE VAR "=" expr
+type        : ATOMIC_TYPE
+ATOMIC_TYPE : "void" | "int" | "float" | "bool"
+
+val         : NUM | BOOL | VAR | funcao_call
+NUM         : /\d+(\.\d+)?/
+BOOL        : "True" | "False"
+VAR         : /[a-zA-Z_]\w*/
+FUNC_NAME   : /[a-zA-Z_]\w*/
+
+funcao           : type FUNC_NAME "(" funcao_args? ")" "{" corpo "}"
+funcao_args      : type VAR ("," type VAR)*
+funcao_call      : FUNC_NAME "(" funcao_call_args? ")"
+funcao_call_args : expr ("," expr)*
+
+corpo          : (operacao | operacao_end)*
+operacao       : (cond | ciclo_while | ciclo_for)
+operacao_end   : (decl | decl_atrib | atrib | funcao_call | ciclo_do_while) ";"
+
+decl          : type VAR
+decl_atrib    : type VAR "=" expr
 atrib         : atrib_simples | atrib_bin | atrib_un
 atrib_simples : VAR "=" expr
 atrib_bin     : VAR OP_BIN_ATRIB "=" expr
@@ -49,10 +64,10 @@ expr_mul     : (expr_mul OP_EXPR_MUL expr_mul)
              | expr_un
 expr_un      : expr_op_un expr_un
              | expr_symb
-expr_symb    : (NUM | BOOL | VAR | "(" expr ")")
+expr_symb    : val | "(" expr ")"
 
 expr_op_un   : (OP_EXPR_UN | op_expr_cast)
-op_expr_cast : "(" TYPE ")"
+op_expr_cast : "(" type ")"
 
 OP_EXPR_OR   : "||"
 OP_EXPR_AND  : "&&"
@@ -62,20 +77,17 @@ OP_EXPR_ADD  : "+" | "-"
 OP_EXPR_MUL  : "*" | "/" | "%"
 OP_EXPR_UN   : "+" | "-" | "!"
 
-TYPE : "int" | "float" | "bool"
-VAR  : /[a-zA-Z_]\w*/
-NUM  : /\d+(\.\d+)?/
-BOOL : "True" | "False"
-
 %import common.WS
 %ignore WS
 """
 
 class MyInterpreter(Interpreter):
 
-    #region Variaveis
+    #region Variaveis do Interpreter
 
     scopes = []
+
+    funcoes = {}
 
     palavrasReservadas = {"True", "False"}
 
@@ -84,8 +96,14 @@ class MyInterpreter(Interpreter):
     #region Metodos Auxiliares
 
     def definirVariavel(self, var):
+        # Verificar se o nome da variavel e valido
         if var.nome in self.palavrasReservadas:
-            raise NomeVariavelProibidoException(var.nome)
+            raise NomeProibidoException(var.nome)
+        # Verificar se a variavel existe
+        old_var = self.getVariavel(var.nome)
+        if old_var is not None:
+            raise VariavelRedefinidaException(var.nome)
+        # Definir a variavel
         scope = len(self.scopes) - 1
         self.scopes[scope][var.nome] = var
 
@@ -101,48 +119,125 @@ class MyInterpreter(Interpreter):
                 scope[nome].inicializada = True
                 return
 
-    def atribuicaoValida(self, tipoVar, tipoVal):
+    def definirFuncao(self, func):
+        # Verificar se o nome da funcao e valido
+        if func.nome in self.palavrasReservadas:
+            raise NomeProibidoException(func.nome)
+        # Verificar se a funcao existe
+        self.funcoes.setdefault(func.nome, [])
+        for other_func in self.funcoes[func.nome]:
+            if func.args_tipo == other_func.args_tipo:
+                raise FuncaoRedefinidaException(func.nome, func.args_tipo)
+        # Definir a funcao
+        self.funcoes[func.nome].append(func)
+
+    def validarFuncaoCall(self, nome, args_tipo):
+        # Verificar se existe alguma funcao com o mesmo nome
+        if nome not in self.funcoes:
+            raise FuncaoNaoDefinidaException(nome, args_tipo)
+        # Verificar se existe alguma funcao com o mesmo nome e argumentos
+        tipo_ret = None
+        for func in self.funcoes[nome]:
+            if func.args_tipo == args_tipo:
+                tipo_ret = func.tipo_ret
+                break
+        if tipo_ret is None:
+            raise FuncaoNaoDefinidaException(nome, args_tipo)
+        return tipo_ret
+    
+    def validarAtribuicao(self, nomeVar, tipoVar, tipoVal):
         conversoesValidas = {
+            "void"  : {},
             "int"   : {},
             "float" : {"int"},
             "bool"  : {}
         }
-        return tipoVar == tipoVal or tipoVal in conversoesValidas[tipoVar]
+        if tipoVar != tipoVal and tipoVal not in conversoesValidas[tipoVar]:
+            TipoVariavelException(nomeVar, tipoVar, tipoVal)
 
-    def castValido(self, tipoCast, tipoExp):
+    def validarCast(self, tipoCast, tipoExp):
         conversoesValidas = {
+            "void"  : {},
             "int"   : {"float", "bool"},
             "float" : {"int", "bool"},
             "bool"  : {}
         }
-        return tipoCast == tipoExp or tipoExp in conversoesValidas[tipoCast]
+        if tipoCast != tipoExp and tipoExp not in conversoesValidas[tipoCast]:
+            raise TipoCastException(tipoCast, tipoExp)
 
     #endregion
 
-    #region Corpo
+    #region Start
 
     def start(self, tree):
         try:
-            self.visit(tree.children[0])
+            for elem in tree.children:
+                self.visit(elem)
             print("O código é válido")
         except LanguageException as e:
             print(f"Erro: {e}")
 
+    #endregion
+
+    #region Funcoes
+
+    def funcao(self, tree):
+        nome = tree.children[1].value
+        tipo_return = self.visit(tree.children[0])
+        if len(tree.children) == 3:
+            args_tipo = []
+            args_nome = []
+        else:
+            args_tipo, args_nome = self.visit(tree.children[2])
+        # Definir a funcao
+        self.definirFuncao(Funcao(nome, args_tipo, args_nome, tipo_return))
+        # Criar um scope para os args e adiciona-los
+        self.scopes.append(dict())
+        for tipo, nome in zip(args_tipo, args_nome):
+            self.definirVariavel(Variavel(nome, tipo, True))
+        # Validar o corpo
+        idx = len(tree.children) - 1
+        self.visit(tree.children[idx])
+        # Apagar o scope
+        self.scopes.pop(len(self.scopes) - 1)
+
+    def funcao_args(self, tree):
+        args_tipo = []
+        args_nome = []
+        for idx in range(0, len(tree.children), 2):
+            args_tipo.append(self.visit(tree.children[idx]))
+            args_nome.append(tree.children[idx + 1].value)
+        return args_tipo, args_nome
+   
+    def funcao_call(self, tree):
+        nome = tree.children[0].value
+        if len(tree.children) == 2:
+            args_tipo = self.visit(tree.children[1])
+        else:
+            args_tipo = []
+        # Validar a funcao
+        tipo_ret = self.validarFuncaoCall(nome, args_tipo)
+        return tipo_ret
+
+    def funcao_call_args(self, tree):
+        tipos = []
+        for element in tree.children:
+            tipo = self.visit(element)
+            tipos.append(tipo)
+        return tipos
+
+    #endregion
+
+    #region Corpo
 
     def corpo(self, tree):
         # Criar novo scope
         self.scopes.append(dict())
         # Validar operacoes
         for elemento in tree.children:
-            self.visit(elemento)
+            self.visit(elemento.children[0])
         # Apagar o scope
         self.scopes.pop(len(self.scopes) - 1)
-
-    def operacao(self, tree):
-        self.visit(tree.children[0])
-    
-    def operacao_end(self, tree):
-        self.visit(tree.children[0])
 
     #endregion
 
@@ -151,28 +246,17 @@ class MyInterpreter(Interpreter):
     def decl(self, tree):
         # Validar variavel
         nome = tree.children[1].value
-        var = self.getVariavel(nome)
-        if var is not None:
-            raise VariavelRedefinidaException(nome)
-        # Declarar a variavel
-        tipo = tree.children[0].value
+        tipo = self.visit(tree.children[0])
         self.definirVariavel(Variavel(nome, tipo, False))
     
     def decl_atrib(self, tree):
+        # Definir a variavel
+        nome = tree.children[1].value
+        tipo = self.visit(tree.children[0])
+        self.definirVariavel(Variavel(nome, tipo, True))
         # Validar expressao
         tipoExpr = self.visit(tree.children[2])
-        # Validar variavel
-        nome = tree.children[1].value
-        tipo = tree.children[0].value
-        var = self.getVariavel(nome)
-        # Verificar se a variavel existe
-        if var is not None:
-            raise VariavelRedefinidaException(nome)
-        # Verificar se o tipo da expressao é valido
-        if not self.atribuicaoValida(tipo, tipoExpr):
-            raise TipoVariavelException(nome, tipo, tipoExpr)
-        # Declarar a variavel
-        self.definirVariavel(Variavel(nome, tipo, True))
+        self.validarAtribuicao(nome, tipo, tipoExpr)
 
     def atrib(self, tree):
         self.visit(tree.children[0])
@@ -187,8 +271,7 @@ class MyInterpreter(Interpreter):
         if var is None:
             raise VariavelNaoDefinidaException(nome)
         # Verificar se o tipo da expressao é valido
-        if not self.atribuicaoValida(var.tipo, tipoExpr):
-            raise TipoVariavelException(nome, var.tipo, tipoExpr)
+        self.validarAtribuicao(nome, var.tipo, tipoExpr)
         # Inicializar a variavel
         self.inicializarVariavel(nome)
     
@@ -208,8 +291,7 @@ class MyInterpreter(Interpreter):
         if var.tipo not in {"int", "float"}:
             raise TipoAtribuicaoComplexaException(nome, True)
         # Verificar se o tipo da expressao é valido
-        if not self.atribuicaoValida(var.tipo, tipoExpr):
-            raise TipoVariavelException(nome, var.tipo, tipoExpr)
+        self.validarAtribuicao(nome, var.tipo, tipoExpr)
 
     def atrib_un(self, tree):
         # Validar variavel
@@ -299,6 +381,7 @@ class MyInterpreter(Interpreter):
 
     #region Expressoes
 
+    # Todas as funcoes de visita de expressoes retornam o tipo final da expressao
     def expr(self, tree):
         return self.visit(tree.children[0])
     
@@ -384,10 +467,9 @@ class MyInterpreter(Interpreter):
             operador = tree.children[0].children[0]
             # Se for cast
             if isinstance(operador, Tree):
-                tipoCast = operador.children[0].value
+                tipoCast = self.visit(operador.children[0])
                 # Verificar se o cast e valido
-                if not self.castValido(tipoCast, tipoExp):
-                    raise TipoCastException(tipoCast, tipoExp)
+                self.validarCast(tipoCast, tipoExp)
                 return tipoCast
             # Se for "+" ou "-"
             elif operador.value == "+" or operador.value == "-":
@@ -403,22 +485,35 @@ class MyInterpreter(Interpreter):
                 return tipoExp
 
     def expr_symb(self, tree):
+        return self.visit(tree.children[0])
+
+    #endregion
+
+    #region Outros
+
+    # Retorna o tipo em formato string
+    def type(self, tree):
+        return tree.children[0].value
+
+    # Retorna o tipo do valor
+    def val(self, tree):
         element = tree.children[0]
 
-        # Se o filho for uma expr
+        # Se for uma function call
         if isinstance(element, Tree):
-            return self.visit(element)
+            tipo = self.visit(element)
+            return tipo
 
-        # Se o filho for um numero
+        # Se for um numero
         elif element.type == "NUM":
             val = element.value
             return "float" if "." in val else "int"
 
-        # Se o filho for um bool
+        # Se for um bool
         elif element.type == "BOOL":
             return "bool" 
 
-        # Se o filho for uma variavel
+        # Se for uma variavel
         elif element.type == "VAR":
             # Validar variavel
             nome = element.value
@@ -430,5 +525,6 @@ class MyInterpreter(Interpreter):
             if not var.inicializada:
                 raise VariavelNaoInicializadaException(nome)
             return var.tipo
+
 
     #endregion

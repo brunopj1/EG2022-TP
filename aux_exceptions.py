@@ -3,10 +3,6 @@ class LanguageException(Exception):
 
 #region Variaveis
 
-class NomeVariavelProibidoException(LanguageException):
-    def __init__(self, nomeVar):
-        super().__init__(f"A palavra '{nomeVar}' nao pode ser utilizada como nome de variavel")
-
 class VariavelNaoDefinidaException(LanguageException):
     def __init__(self, nomeVar):
         super().__init__(f"Variavel '{nomeVar}' nao definida")
@@ -18,6 +14,18 @@ class VariavelRedefinidaException(LanguageException):
 class VariavelNaoInicializadaException(LanguageException):
     def __init__(self, nomeVar):
         super().__init__(f"Variavel '{nomeVar}' nao inicializada")
+
+#endregion
+
+#region Funcoes
+
+class FuncaoNaoDefinidaException(LanguageException):
+    def __init__(self, nomeFunc, argsFunc):
+        super().__init__(f"Funcao '{nomeFunc}' com os argumentos {argsFunc} nao definida")
+
+class FuncaoRedefinidaException(LanguageException):
+    def __init__(self, nomeFunc, argsFunc):
+        super().__init__(f"Funcao '{nomeFunc}' com os argumentos {argsFunc} redefinida")
 
 #endregion
 
@@ -40,7 +48,6 @@ class TipoOperadorUnException(LanguageException):
     def __init__(self, operador, tipo):
         super().__init__(f"Tipo de dados '{tipo}' invalido no operador unario '{operador}'")
 
-
 class CondicaoIfException(LanguageException):
     def __init__(self):
         super().__init__(f"A condicao da operação If não corresponde a um valor do tipo bool")
@@ -60,5 +67,13 @@ class CondicaoForException(LanguageException):
 class TipoCastException(LanguageException):
     def __init__(self, tipoCast, tipoExp):
         super().__init__(f"Cast inválido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}")
+
+#endregion
+
+#region Outras
+
+class NomeProibidoException(LanguageException):
+    def __init__(self, nome):
+        super().__init__(f"A palavra '{nome}' nao pode ser utilizada como nome de variavel / funcao")
 
 #endregion

@@ -7,10 +7,14 @@ Validação de variaveis:
 - Variaveis deixam de estar definidas quando se sai do scope onde foram criadas
 - Variaveis so podem receber valores do tipo certo (exceto quando existe conversao possivel)
 
+Funcoes:
+- É possivel criar funcoes e fazer chamadas às mesmas
+- É possivel definir varias funções com o mesmo nome desde que tenham argumentos diferentes
+- Não é possivel utilizar funcoes nao definidas
+
 Operacoes:
 - As condicoes dos If, While e For tem de ser do tipo bool
 - Atribuicoes binarias e unarias so funcionam para variaveis numericas
 
 # Falta implementar:
-- Adicionar funcoes
 - Adicionar estruturas
