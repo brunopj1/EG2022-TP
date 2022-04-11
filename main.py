@@ -1,4 +1,5 @@
-from linguagem import *
+from gramatica import grammar
+from interpreter import Lark, MyInterpreter
 
 frase = """
 
@@ -9,7 +10,7 @@ int foo(int a) {
 void foo() {
     int a = (int) (1.0 + 2 * 1.5);
     bool b = False;
-    foo((float) 3 + a);
+    foo(3 + a);
     while (b) {
     }
     bool c = False;
