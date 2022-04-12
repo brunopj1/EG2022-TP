@@ -1,18 +1,10 @@
 grammar = """
-start        : funcao*
+start  : codigo
+codigo : (funcao | (decl_atrib ";"))*
 
-type        : ATOMIC_TYPE
-ATOMIC_TYPE : "void" | "int" | "float" | "bool"
-
-val         : NUM | BOOL | VAR | funcao_call
-NUM         : /\d+(\.\d+)?/
-BOOL        : "True" | "False"
-VAR         : /[a-zA-Z_]\w*/
-FUNC_NAME   : /[a-zA-Z_]\w*/
-
-funcao           : type FUNC_NAME "(" funcao_args? ")" "{" corpo "}"
+funcao           : type FUNC_NOME "(" funcao_args? ")" "{" corpo "}"
 funcao_args      : type VAR ("," type VAR)*
-funcao_call      : FUNC_NAME "(" funcao_call_args? ")"
+funcao_call      : FUNC_NOME "(" funcao_call_args? ")"
 funcao_call_args : expr ("," expr)*
 
 corpo          : (operacao | operacao_end)*
@@ -21,10 +13,11 @@ operacao_end   : (decl | decl_atrib | atrib | funcao_call | ciclo_do_while) ";"
 
 decl          : type VAR
 decl_atrib    : type VAR "=" expr
-atrib         : atrib_simples | atrib_bin | atrib_un
-atrib_simples : VAR "=" expr
-atrib_bin     : VAR OP_BIN_ATRIB "=" expr
-atrib_un      : VAR OP_UN_ATRIB
+atrib         : VAR atrib_aux
+atrib_aux     : atrib_simples | atrib_bin | atrib_un
+atrib_simples : "=" expr
+atrib_bin     : OP_BIN_ATRIB "=" expr
+atrib_un      : OP_UN_ATRIB
 OP_BIN_ATRIB  : "+" | "-" | "*" | "/" | "%"
 OP_UN_ATRIB   : "++" | "--"
 
@@ -69,6 +62,17 @@ OP_EXPR_ORD  : "<" | "<=" | ">" | ">="
 OP_EXPR_ADD  : "+" | "-"
 OP_EXPR_MUL  : "*" | "/" | "%"
 OP_EXPR_UN   : "+" | "-" | "!"
+
+val         : num | BOOL | VAR | funcao_call
+num         : INT | FLOAT
+INT         : /\d+/
+FLOAT       : /\d+\.\d+/
+BOOL        : "True" | "False"
+VAR         : /[a-zA-Z_]\w*/
+FUNC_NOME   : /[a-zA-Z_]\w*/
+
+type         : ATOMIC_TYPE
+ATOMIC_TYPE  : "void" | "int" | "float" | "bool"
 
 %import common.WS
 %ignore WS

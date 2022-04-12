@@ -9,14 +9,18 @@ class MyInterpreter(Interpreter):
     #region Variaveis do Interpreter
 
     scopes = []
-
     funcoes = {}
-
     palavrasReservadas = {"True", "False"}
 
     #endregion
 
     #region Metodos Auxiliares
+
+    def getVariavel(self, nome):
+        for scope in self.scopes:
+            if nome in scope.keys():
+                return scope[nome]
+        return None
 
     def definirVariavel(self, var):
         # Verificar se o nome da variavel e valido
@@ -29,12 +33,6 @@ class MyInterpreter(Interpreter):
         # Definir a variavel
         scope = len(self.scopes) - 1
         self.scopes[scope][var.nome] = var
-
-    def getVariavel(self, nome):
-        for scope in self.scopes:
-            if nome in scope.keys():
-                return scope[nome]
-        return None
 
     def inicializarVariavel(self, nome):
         for scope in self.scopes:
@@ -88,17 +86,31 @@ class MyInterpreter(Interpreter):
         if tipoCast != tipoExp and tipoExp not in conversoesValidas[tipoCast]:
             raise TipoCastException(tipoCast, tipoExp)
 
+    def getMembrosExprBin(self, tree):
+        tipoEsq = self.visit(tree.children[0])
+        tipoDir = self.visit(tree.children[2])
+        operador = tree.children[1].value
+        return tipoEsq, tipoDir, operador
+
     #endregion
 
     #region Start
 
     def start(self, tree):
         try:
-            for elem in tree.children:
-                self.visit(elem)
+            self.visit(tree.children[0])
             print("O código é válido")
         except LanguageException as e:
             print(f"Erro: {e}")
+
+    def codigo(self, tree):
+        # Criar um scope para as variaveis globais
+        self.scopes.append(dict())
+        # Processar as operacoes
+        for elem in tree.children:
+            self.visit(elem)
+        # Apagar o scope
+        self.scopes.pop(len(self.scopes) - 1)
 
     #endregion
 
@@ -149,10 +161,6 @@ class MyInterpreter(Interpreter):
             tipos.append(tipo)
         return tipos
 
-    #endregion
-
-    #region Corpo
-
     def corpo(self, tree):
         # Criar novo scope
         self.scopes.append(dict())
@@ -182,53 +190,45 @@ class MyInterpreter(Interpreter):
         self.validarAtribuicao(nome, tipo, tipoExpr)
 
     def atrib(self, tree):
-        self.visit(tree.children[0])
-    
-    def atrib_simples(self, tree):
-        # Validar expressao
-        tipoExpr = self.visit(tree.children[1])
-        # Validar variavel
+        # Validar a variavel
         nome = tree.children[0].value
         var = self.getVariavel(nome)
+
         # Verificar se a variavel existe
         if var is None:
             raise VariavelNaoDefinidaException(nome)
+
         # Verificar se o tipo da expressao é valido
+        tipoExpr = self.visit(tree.children[1])
         self.validarAtribuicao(nome, var.tipo, tipoExpr)
+        
+        # Se a atribuicao for binaria ou unaria
+        if tree.children[1].children[0].data != "atrib_simples":
+            # Verificar se a variavel foi inicializada
+            if not var.inicializada:
+                raise VariavelNaoInicializadaException(nome)
+            # Verificar se a variavel pode ser utilizada numa atribuicao complexa
+            if var.tipo not in {"int", "float"}:
+                atribuicaoBin = tree.children[1].children[0].data == "atrib_bin"
+                raise TipoAtribuicaoComplexaException(nome, atribuicaoBin)
+
         # Inicializar a variavel
-        self.inicializarVariavel(nome)
+        if not var.inicializada:
+            self.inicializarVariavel(nome)
+    
+    def atrib_aux(self, tree):
+        return self.visit(tree.children[0])
+
+    def atrib_simples(self, tree):
+        tipoExpr = self.visit(tree.children[0])
+        return tipoExpr
     
     def atrib_bin(self, tree):
-        # Validar expressao
-        tipoExpr = self.visit(tree.children[2])
-        # Validar variavel
-        nome = tree.children[0].value
-        var = self.getVariavel(nome)
-        # Verificar se a variavel existe
-        if var is None:
-            raise VariavelNaoDefinidaException(nome)
-        # Verificar se a variavel foi inicializada
-        if not var.inicializada:
-            raise VariavelNaoInicializadaException(nome)
-        # Verificar se a variavel pode ser utilizada numa atribuicao binaria
-        if var.tipo not in {"int", "float"}:
-            raise TipoAtribuicaoComplexaException(nome, True)
-        # Verificar se o tipo da expressao é valido
-        self.validarAtribuicao(nome, var.tipo, tipoExpr)
+        tipoExpr = self.visit(tree.children[1])
+        return tipoExpr
 
     def atrib_un(self, tree):
-        # Validar variavel
-        nome = tree.children[0].value
-        var = self.getVariavel(nome)
-        # Verificar se a variavel existe
-        if var is None:
-            raise VariavelNaoDefinidaException(nome)
-        # Verificar se a variavel foi inicializada
-        if not var.inicializada:
-            raise VariavelNaoInicializadaException(nome)
-        # Verificar se a variavel pode ser utilizada numa atribuicao unaria
-        if var.tipo not in {"int", "float"}:
-            raise TipoAtribuicaoComplexaException(nome, False)
+        return "int"
 
     #endregion
 
@@ -312,9 +312,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            operador = tree.children[1].value
-            tipoEsq = self.visit(tree.children[0])
-            tipoDir = self.visit(tree.children[2])
+            tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq != "bool" or tipoDir != "bool":
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
@@ -324,9 +322,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            operador = tree.children[1].value
-            tipoEsq = self.visit(tree.children[0])
-            tipoDir = self.visit(tree.children[2])
+            tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq != "bool" or tipoDir != "bool":
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
@@ -336,9 +332,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            operador = tree.children[1].value
-            tipoEsq = self.visit(tree.children[0])
-            tipoDir = self.visit(tree.children[2])
+            tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq == "void" or tipoDir == "void":
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
@@ -348,9 +342,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            operador = tree.children[1].value
-            tipoEsq = self.visit(tree.children[0])
-            tipoDir = self.visit(tree.children[2])
+            tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq != "bool" or tipoDir != "bool":
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
@@ -360,9 +352,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            operador = tree.children[1].value
-            tipoEsq = self.visit(tree.children[0])
-            tipoDir = self.visit(tree.children[2])
+            tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq not in {"int", "float"} or tipoDir not in {"int", "float"}:
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
@@ -372,9 +362,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            operador = tree.children[1].value
-            tipoEsq = self.visit(tree.children[0])
-            tipoDir = self.visit(tree.children[2])
+            tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq not in {"int", "float"} or tipoDir not in {"int", "float"}:
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
@@ -388,14 +376,16 @@ class MyInterpreter(Interpreter):
         else:
             tipoExp = self.visit(tree.children[1])
             operador = tree.children[0].children[0]
+
             # Se for cast
             if isinstance(operador, Tree):
                 tipoCast = self.visit(operador.children[0])
                 # Verificar se o cast e valido
                 self.validarCast(tipoCast, tipoExp)
                 return tipoCast
+
             # Se for "+" ou "-"
-            elif operador.value == "+" or operador.value == "-":
+            elif operador.value in {"+", "-"}:
                 # Verificar se do operador e valido
                 if tipoExp not in {"int", "float"}:
                     raise TipoOperadorUnException(operador.value, tipoExp)
@@ -422,15 +412,15 @@ class MyInterpreter(Interpreter):
     def val(self, tree):
         element = tree.children[0]
 
-        # Se for uma function call
-        if isinstance(element, Tree):
-            tipo = self.visit(element)
+        # Se for um numero
+        if isinstance(element, Tree) and element.data == "num":
+            tipo = element.children[0].type.lower()
             return tipo
 
-        # Se for um numero
-        elif element.type == "NUM":
-            val = element.value
-            return "float" if "." in val else "int"
+        # Se for uma function call
+        elif isinstance(element, Tree) and element.data == "funcao_call":
+            tipo = self.visit(element)
+            return tipo
 
         # Se for um bool
         elif element.type == "BOOL":
@@ -448,6 +438,5 @@ class MyInterpreter(Interpreter):
             if not var.inicializada:
                 raise VariavelNaoInicializadaException(nome)
             return var.tipo
-
 
     #endregion

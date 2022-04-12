@@ -5,10 +5,15 @@ frase = """
 
 int foo(int a) {
     a++;
+    int b = 1;
+    b++;
+    b += 2;
 }
 
+float PI = 3.14;
+
 void foo() {
-    int a = (int) (1.0 + 2 * 1.5);
+    int a = (int) (1.0 + 2 * PI);
     bool b = False;
     foo(3 + a);
     while (b) {
