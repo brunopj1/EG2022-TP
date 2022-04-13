@@ -16,10 +16,11 @@ void foo() {
     int a = (int) (1.0 + 2 * PI);
     bool b = False;
     foo(3 + a);
-    while (b) {
+    for (int z = 1; z < 14.3; z += (int) 2.3) {
     }
     bool c = False;
     c = !c;
+    c += True;
 }
 
 int bar(int a) { }
@@ -30,3 +31,4 @@ i = MyInterpreter()
 
 tree = l.parse(frase)
 i.visit(tree)
+#print(tree.pretty())

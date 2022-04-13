@@ -2,18 +2,18 @@ grammar = """
 start  : codigo
 codigo : (funcao | (decl_atrib ";"))*
 
-funcao           : type FUNC_NOME "(" funcao_args? ")" "{" corpo "}"
-funcao_args      : type VAR ("," type VAR)*
-funcao_call      : FUNC_NOME "(" funcao_call_args? ")"
-funcao_call_args : expr ("," expr)*
+funcao           : type FUNC_NOME "(" funcao_args ")" "{" corpo "}"
+funcao_args      : (type VAR_NOME ("," type VAR_NOME)*)?
+funcao_call      : FUNC_NOME "(" funcao_call_args ")"
+funcao_call_args : (expr ("," expr)*)?
 
 corpo          : (operacao | operacao_end)*
 operacao       : (cond | ciclo_while | ciclo_for)
 operacao_end   : (decl | decl_atrib | atrib | funcao_call | ciclo_do_while) ";"
 
-decl          : type VAR
-decl_atrib    : type VAR "=" expr
-atrib         : VAR atrib_aux
+decl          : type VAR_NOME
+decl_atrib    : type VAR_NOME "=" expr
+atrib         : VAR_NOME atrib_aux
 atrib_aux     : atrib_simples | atrib_bin | atrib_un
 atrib_simples : "=" expr
 atrib_bin     : OP_BIN_ATRIB "=" expr
@@ -63,16 +63,25 @@ OP_EXPR_ADD  : "+" | "-"
 OP_EXPR_MUL  : "*" | "/" | "%"
 OP_EXPR_UN   : "+" | "-" | "!"
 
-val         : num | BOOL | VAR | funcao_call
+type     : TYPE_NOME subtype?
+subtype : "<" type ("," type)* ">"
+
+val         : num | BOOL | VAR_NOME | funcao_call | struct
+struct      : lista | tuplo | set | dicionario | set_dic_vazio
 num         : INT | FLOAT
 INT         : /\d+/
 FLOAT       : /\d+\.\d+/
 BOOL        : "True" | "False"
-VAR         : /[a-zA-Z_]\w*/
-FUNC_NOME   : /[a-zA-Z_]\w*/
 
-type         : ATOMIC_TYPE
-ATOMIC_TYPE  : "void" | "int" | "float" | "bool"
+VAR_NOME  : /[a-zA-Z_]\w*/
+TYPE_NOME : /[a-zA-Z_]\w*/
+FUNC_NOME : /[a-zA-Z_]\w*/
+
+lista         : "[" (val ("," val)*)? "]"
+tuplo         : "(" (val ("," val)*)? ")"
+set           : "{" val ("," val)* "}"
+dicionario    : "{" val ":" val ("," val ":" val)* "}"
+set_dic_vazio : "{" "}"
 
 %import common.WS
 %ignore WS

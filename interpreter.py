@@ -6,11 +6,42 @@ from aux_exceptions import *
 
 class MyInterpreter(Interpreter):
 
-    #region Variaveis do Interpreter
+    #region Init
 
-    scopes = []
-    funcoes = {}
-    palavrasReservadas = {"True", "False"}
+    def __init__(self):
+        super().__init__()
+
+        # Variaveis auxiliares
+        self.palavrasReservadas = set()
+        self.tipos = set()
+        self.funcoes = {}
+        self.scopes = []
+
+        # Definir as palavras reservadas
+        self.palavrasReservadas.add("True")
+        self.palavrasReservadas.add("False")
+
+        # Definir os tipos basicos
+        self.tipos.add(RegistoTipo("void",  0))
+        self.tipos.add(RegistoTipo("int",   0))
+        self.tipos.add(RegistoTipo("float", 0))
+        self.tipos.add(RegistoTipo("bool",  0))
+
+        # Definir as atribuicoes validas
+        self.atribuicoesValidas = { # { tipoVar : tipoVal }
+            RegistoTipo("void",  0) : {},
+            RegistoTipo("int",   0) : {},
+            RegistoTipo("float", 0) : { RegistoTipo("int", 0) },
+            RegistoTipo("bool",  0) : {}
+        }
+
+        # Definir os casts validos
+        self.castsValidos = { # { tipoCast : tipoExp }
+            RegistoTipo("void",  0) : {},
+            RegistoTipo("int",   0) : { RegistoTipo("float", 0), RegistoTipo("bool", 0) },
+            RegistoTipo("float", 0) : { RegistoTipo("int", 0), RegistoTipo("bool", 0) },
+            RegistoTipo("bool",  0) : {}
+        }
 
     #endregion
 
@@ -67,24 +98,29 @@ class MyInterpreter(Interpreter):
         return tipo_ret
     
     def validarAtribuicao(self, nomeVar, tipoVar, tipoVal):
-        conversoesValidas = {
-            "void"  : {},
-            "int"   : {},
-            "float" : {"int"},
-            "bool"  : {}
-        }
-        if tipoVar != tipoVal and tipoVal not in conversoesValidas[tipoVar]:
-            TipoVariavelException(nomeVar, tipoVar, tipoVal)
+        if not self.validarConversaoAux(tipoVal, tipoVar, self.atribuicoesValidas):
+            raise TipoVariavelException(nomeVar, tipoVar, tipoVal)
 
     def validarCast(self, tipoCast, tipoExp):
-        conversoesValidas = {
-            "void"  : {},
-            "int"   : {"float", "bool"},
-            "float" : {"int", "bool"},
-            "bool"  : {}
-        }
-        if tipoCast != tipoExp and tipoExp not in conversoesValidas[tipoCast]:
+        if not self.validarConversaoAux(tipoExp, tipoCast, self.castsValidos):
             raise TipoCastException(tipoCast, tipoExp)
+
+    def validarConversaoAux(self, tipoIn, tipoOut, tabelaConversao):
+        # Converter os tipos
+        _tipoIn = RegistoTipo(tipoIn.nome, len(tipoIn.subtipos))
+        _tipoOut = RegistoTipo(tipoOut.nome, len(tipoOut.subtipos))
+        # Se os tipos principais + numero de subtipos nao forem compativeis
+        if _tipoIn != _tipoOut and _tipoIn not in tabelaConversao[_tipoOut]:
+            return False
+        # Se os subtipos nao forem compativeis
+        for subtipoVar, subtipoVal in zip(tipoIn.subtipos, tipoOut.subtipos):
+            if not self.validarConversaoAux(subtipoVar, subtipoVal):
+                return False
+        # Atribuicao e valida
+        return True
+
+    def isTipoNumero(self, tipo):
+        return tipo in {Tipo("int", []), Tipo("float", [])}
 
     def getMembrosExprBin(self, tree):
         tipoEsq = self.visit(tree.children[0])
@@ -119,37 +155,29 @@ class MyInterpreter(Interpreter):
     def funcao(self, tree):
         nome = tree.children[1].value
         tipo_return = self.visit(tree.children[0])
-        if len(tree.children) == 3:
-            args_tipo = []
-            args_nome = []
-        else:
-            args_tipo, args_nome = self.visit(tree.children[2])
+        args = self.visit(tree.children[2])
         # Definir a funcao
-        self.definirFuncao(Funcao(nome, args_tipo, args_nome, tipo_return))
+        self.definirFuncao(Funcao(nome, tipo_return, args))
         # Criar um scope para os args e adiciona-los
         self.scopes.append(dict())
-        for tipo, nome in zip(args_tipo, args_nome):
+        for tipo, nome in args:
             self.definirVariavel(Variavel(nome, tipo, True))
         # Validar o corpo
-        idx = len(tree.children) - 1
-        self.visit(tree.children[idx])
+        self.visit(tree.children[3])
         # Apagar o scope
         self.scopes.pop(len(self.scopes) - 1)
 
     def funcao_args(self, tree):
-        args_tipo = []
-        args_nome = []
+        args = []
         for idx in range(0, len(tree.children), 2):
-            args_tipo.append(self.visit(tree.children[idx]))
-            args_nome.append(tree.children[idx + 1].value)
-        return args_tipo, args_nome
+            tipo = self.visit(tree.children[idx])
+            nome = tree.children[idx + 1].value
+            args.append((tipo, nome))
+        return args
    
     def funcao_call(self, tree):
         nome = tree.children[0].value
-        if len(tree.children) == 2:
-            args_tipo = self.visit(tree.children[1])
-        else:
-            args_tipo = []
+        args_tipo = self.visit(tree.children[1])
         # Validar a funcao
         tipo_ret = self.validarFuncaoCall(nome, args_tipo)
         return tipo_ret
@@ -208,9 +236,8 @@ class MyInterpreter(Interpreter):
             if not var.inicializada:
                 raise VariavelNaoInicializadaException(nome)
             # Verificar se a variavel pode ser utilizada numa atribuicao complexa
-            if var.tipo not in {"int", "float"}:
-                atribuicaoBin = tree.children[1].children[0].data == "atrib_bin"
-                raise TipoAtribuicaoComplexaException(nome, atribuicaoBin)
+            if not self.isTipoNumero(var.tipo):
+                raise TipoAtribuicaoBinariaException(nome)
 
         # Inicializar a variavel
         if not var.inicializada:
@@ -228,7 +255,7 @@ class MyInterpreter(Interpreter):
         return tipoExpr
 
     def atrib_un(self, tree):
-        return "int"
+        return Tipo("int", [])
 
     #endregion
 
@@ -241,7 +268,7 @@ class MyInterpreter(Interpreter):
     def cond_if(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do If
-        if tipo != "bool":
+        if tipo != Tipo("bool", []):
             raise CondicaoIfException()
         self.visit(tree.children[1])
 
@@ -258,14 +285,14 @@ class MyInterpreter(Interpreter):
     def ciclo_while(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
-        if tipo != "bool":
+        if tipo != Tipo("bool", []):
             raise CondicaoWhileException()
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
-        if tipo != "bool":
+        if tipo != Tipo("bool", []):
             raise CondicaoWhileException()
         self.visit(tree.children[1])
 
@@ -293,7 +320,7 @@ class MyInterpreter(Interpreter):
     def ciclo_for_head_2(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do For
-        if tipo != "bool":
+        if tipo != Tipo("bool", []):
             raise CondicaoForException()
     
     def ciclo_for_head_3(self, tree):
@@ -314,9 +341,9 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if tipoEsq != "bool" or tipoDir != "bool":
+            if tipoEsq != Tipo("bool", []) or tipoDir != Tipo("bool", []):
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
-            return "bool"
+            return Tipo("bool", [])
     
     def expr_and(self, tree):
         if len(tree.children) == 1:
@@ -324,9 +351,9 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if tipoEsq != "bool" or tipoDir != "bool":
+            if tipoEsq != Tipo("bool", []) or tipoDir != Tipo("bool", []):
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
-            return "bool"
+            return Tipo("bool", [])
     
     def expr_eq(self, tree):
         if len(tree.children) == 1:
@@ -334,9 +361,9 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if tipoEsq == "void" or tipoDir == "void":
+            if tipoEsq == Tipo("void", []) or tipoDir[0] == Tipo("void", []):
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
-            return "bool"
+            return Tipo("bool", [])
     
     def expr_ord(self, tree):
         if len(tree.children) == 1:
@@ -344,9 +371,9 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if tipoEsq != "bool" or tipoDir != "bool":
+            if not self.isTipoNumero(tipoEsq) or not self.isTipoNumero(tipoDir):
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
-            return "bool"
+            return Tipo("bool", [])
     
     def expr_add(self, tree):
         if len(tree.children) == 1:
@@ -354,9 +381,10 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if tipoEsq not in {"int", "float"} or tipoDir not in {"int", "float"}:
+            if not self.isTipoNumero(tipoEsq) or not self.isTipoNumero(tipoDir):
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
-            return "float" if "float" in {tipoEsq, tipoDir} else "int"
+            tipo = Tipo("float", []) if Tipo("float", []) in {tipoEsq, tipoDir} else Tipo("int", [])
+            return tipo
     
     def expr_mul(self, tree):
         if len(tree.children) == 1:
@@ -364,9 +392,10 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if tipoEsq not in {"int", "float"} or tipoDir not in {"int", "float"}:
+            if not self.isTipoNumero(tipoEsq) or not self.isTipoNumero(tipoDir):
                 raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
-            return "float" if "float" in {tipoEsq, tipoDir} else "int"
+            tipo = Tipo("float", []) if Tipo("float", []) in {tipoEsq, tipoDir} else Tipo("int", [])
+            return tipo
 
     def expr_un(self, tree):
         # Se nao houverem operadores
@@ -378,7 +407,7 @@ class MyInterpreter(Interpreter):
             operador = tree.children[0].children[0]
 
             # Se for cast
-            if isinstance(operador, Tree):
+            if isinstance(operador, Tree) and operador.data == "op_expr_cast":
                 tipoCast = self.visit(operador.children[0])
                 # Verificar se o cast e valido
                 self.validarCast(tipoCast, tipoExp)
@@ -387,13 +416,13 @@ class MyInterpreter(Interpreter):
             # Se for "+" ou "-"
             elif operador.value in {"+", "-"}:
                 # Verificar se do operador e valido
-                if tipoExp not in {"int", "float"}:
+                if not self.isTipoNumero(tipoExp):
                     raise TipoOperadorUnException(operador.value, tipoExp)
                 return tipoExp
             # Se for "!" converter para int
             elif operador.value == "!":
                 # Verificar se do operador e valido
-                if tipoExp != "bool":
+                if tipoExp != Tipo("bool", []):
                     raise TipoOperadorUnException(operador.value, tipoExp)
                 return tipoExp
 
@@ -404,9 +433,27 @@ class MyInterpreter(Interpreter):
 
     #region Outros
 
-    # Retorna o tipo em formato string
+    # Retorna o tipo
     def type(self, tree):
-        return tree.children[0].value
+        nome = tree.children[0].value
+        # Processar subtipos
+        if len(tree.children) == 2:
+            subtipos = self.visit(tree.children[1])
+            num_subtipos = len(subtipos)
+        else:
+            subtipos = []
+            num_subtipos = 0
+        # Validar o tipo
+        if RegistoTipo(nome, num_subtipos) not in self.tipos:
+            raise TipoInvalidoException(nome, num_subtipos)
+        return Tipo(nome, subtipos)
+
+    # Retorna a lista de subtipos
+    def subtype(self, tree):
+        subtipos = []
+        for elem in tree.children:
+            subtipos.append(self.visit(elem))
+        return subtipos
 
     # Retorna o tipo do valor
     def val(self, tree):
@@ -414,8 +461,7 @@ class MyInterpreter(Interpreter):
 
         # Se for um numero
         if isinstance(element, Tree) and element.data == "num":
-            tipo = element.children[0].type.lower()
-            return tipo
+            return Tipo(element.children[0].type.lower(), [])
 
         # Se for uma function call
         elif isinstance(element, Tree) and element.data == "funcao_call":
@@ -424,10 +470,10 @@ class MyInterpreter(Interpreter):
 
         # Se for um bool
         elif element.type == "BOOL":
-            return "bool" 
+            return Tipo("bool", [])
 
         # Se for uma variavel
-        elif element.type == "VAR":
+        elif element.type == "VAR_NOME":
             # Validar variavel
             nome = element.value
             var = self.getVariavel(nome)

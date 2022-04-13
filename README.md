@@ -18,5 +18,5 @@ Operacoes:
 - Atribuicoes binarias e unarias so funcionam para variaveis numericas
 
 # Falta implementar:
-- Adicionar arrays
+- Adicionar os tipos complexos
 - Adicionar estruturas

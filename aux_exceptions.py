@@ -31,14 +31,22 @@ class FuncaoRedefinidaException(LanguageException):
 
 #region Tipos
 
+class TipoInvalidoException(LanguageException):
+    def __init__(self, nome, num_subtipos):
+        subtipos = "" if num_subtipos == 0 else f"<{num_subtipos}>"
+        super().__init__(f"Utilização de um tipo inválido '{nome}{subtipos}'")
+
 class TipoVariavelException(LanguageException):
     def __init__(self, nomeVar, tipoVar, tipoVal):
         super().__init__(f"Variavel '{nomeVar}' do tipo {tipoVar} a receber um valor do tipo {tipoVal}")
 
-class TipoAtribuicaoComplexaException(LanguageException):
+class TipoCastException(LanguageException):
+    def __init__(self, tipoCast, tipoExp):
+        super().__init__(f"Cast inválido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}")
+
+class TipoAtribuicaoBinariaException(LanguageException):
     def __init__(self, nomeVar, atribBinaria):
-        tipoAtrib = "binaria" if atribBinaria else "unaria"
-        super().__init__(f"Variavel '{nomeVar}' de tipo nao numerico utilizada numa atribuicao {tipoAtrib}")
+        super().__init__(f"Variavel '{nomeVar}' de tipo nao numerico utilizada numa atribuicao binaria")
 
 class TipoOperadorBinException(LanguageException):
     def __init__(self, operador, tipoEsq, tipoDir):
@@ -59,14 +67,6 @@ class CondicaoWhileException(LanguageException):
 class CondicaoForException(LanguageException):
     def __init__(self):
         super().__init__(f"A condicao do ciclo For não corresponde a um valor do tipo bool")
-
-#endregion
-
-#region Operacoes
-
-class TipoCastException(LanguageException):
-    def __init__(self, tipoCast, tipoExp):
-        super().__init__(f"Cast inválido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}")
 
 #endregion
 
