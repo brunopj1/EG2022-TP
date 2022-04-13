@@ -20,7 +20,23 @@ void foo() {
     }
     bool c = False;
     c = !c;
-    c += True;
+
+    int z;
+    z = 1;
+    z++;
+
+    List<List<List<int>>> l = [
+        [[1,2], [2,3]],
+        [[3,-4]],
+        []
+    ];
+    Map<int, List<int>> m = {
+        1: [],
+        2: [],
+        3: []
+    };
+
+    Set<bool> s = « True, False, False »;
 }
 
 int bar(int a) { }

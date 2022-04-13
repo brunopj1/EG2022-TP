@@ -44,8 +44,13 @@ class TipoCastException(LanguageException):
     def __init__(self, tipoCast, tipoExp):
         super().__init__(f"Cast inválido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}")
 
+# TODO adicionar mais informacao ao erro
+class TipoEstruturaException(LanguageException):
+    def __init__(self):
+        super().__init__(f"Estrutura com elementos de tipos incompativeis")
+
 class TipoAtribuicaoBinariaException(LanguageException):
-    def __init__(self, nomeVar, atribBinaria):
+    def __init__(self, nomeVar):
         super().__init__(f"Variavel '{nomeVar}' de tipo nao numerico utilizada numa atribuicao binaria")
 
 class TipoOperadorBinException(LanguageException):

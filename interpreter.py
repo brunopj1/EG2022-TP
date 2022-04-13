@@ -21,27 +21,55 @@ class MyInterpreter(Interpreter):
         self.palavrasReservadas.add("True")
         self.palavrasReservadas.add("False")
 
-        # Definir os tipos basicos
-        self.tipos.add(RegistoTipo("void",  0))
+        # Definir os tipos atomicos
+        self.tipos.add(RegistoTipo("void",  0)) # Utilizado para funcoes que nao tem return
+        self.tipos.add(RegistoTipo("empty", 0)) # Utilizado para estruturas vazias
         self.tipos.add(RegistoTipo("int",   0))
         self.tipos.add(RegistoTipo("float", 0))
         self.tipos.add(RegistoTipo("bool",  0))
 
+        # Definir os tipos complexos
+        self.tipos.add(RegistoTipo("List",  1))
+        self.tipos.add(RegistoTipo("Set",  1))
+        self.tipos.add(RegistoTipo("Map",  2))
+
         # Definir as atribuicoes validas
         self.atribuicoesValidas = { # { tipoVar : tipoVal }
-            RegistoTipo("void",  0) : {},
-            RegistoTipo("int",   0) : {},
+            # Tipos atomicos
+            RegistoTipo("void",  0) : set(),
+            RegistoTipo("empty", 0) : set(),
+            RegistoTipo("int",   0) : set(),
             RegistoTipo("float", 0) : { RegistoTipo("int", 0) },
-            RegistoTipo("bool",  0) : {}
+            RegistoTipo("bool",  0) : set(),
+            # Tipos complexos
+            RegistoTipo("List", 1) : set(),
+            RegistoTipo("Set",  1) : set(),
+            RegistoTipo("Map",  2) : set()
         }
 
         # Definir os casts validos
         self.castsValidos = { # { tipoCast : tipoExp }
-            RegistoTipo("void",  0) : {},
+            # Tipos atomicos
+            RegistoTipo("void",  0) : set(),
+            RegistoTipo("empty", 0) : set(),
             RegistoTipo("int",   0) : { RegistoTipo("float", 0), RegistoTipo("bool", 0) },
             RegistoTipo("float", 0) : { RegistoTipo("int", 0), RegistoTipo("bool", 0) },
-            RegistoTipo("bool",  0) : {}
+            RegistoTipo("bool",  0) : set(),
+            # Tipos complexos
+            RegistoTipo("List", 1) : { RegistoTipo("Set",  1) },
+            RegistoTipo("Set",  1) : set(),
+            RegistoTipo("Map",  2) : set()
         }
+
+        # Permitir a atribuicao de tipos para "empty"
+        for tipoOut, tiposIn in self.atribuicoesValidas.items():
+            if tipoOut.nome != "empty":
+                tiposIn.add(RegistoTipo("empty", 0))
+
+        # Permitir o cast de tipos para "empty"
+        for tipoOut, tiposIn in self.castsValidos.items():
+            if tipoOut.nome != "empty":
+                tiposIn.add(RegistoTipo("empty", 0))
 
     #endregion
 
@@ -64,12 +92,6 @@ class MyInterpreter(Interpreter):
         # Definir a variavel
         scope = len(self.scopes) - 1
         self.scopes[scope][var.nome] = var
-
-    def inicializarVariavel(self, nome):
-        for scope in self.scopes:
-            if nome in scope.keys():
-                scope[nome].inicializada = True
-                return
 
     def definirFuncao(self, func):
         # Verificar se o nome da funcao e valido
@@ -114,7 +136,7 @@ class MyInterpreter(Interpreter):
             return False
         # Se os subtipos nao forem compativeis
         for subtipoVar, subtipoVal in zip(tipoIn.subtipos, tipoOut.subtipos):
-            if not self.validarConversaoAux(subtipoVar, subtipoVal):
+            if not self.validarConversaoAux(subtipoVar, subtipoVal, tabelaConversao):
                 return False
         # Atribuicao e valida
         return True
@@ -127,6 +149,32 @@ class MyInterpreter(Interpreter):
         tipoDir = self.visit(tree.children[2])
         operador = tree.children[1].value
         return tipoEsq, tipoDir, operador
+
+    def determinarSubtipoVal(self, elementos):
+        subtipos = set()
+        # Determinar todos os tipos
+        for elem in elementos:
+            subtipos.add(self.visit(elem))
+        # Determinar o tipo comum
+        if len(subtipos) > 1:
+            self.determinarSubtipoComum(subtipos)
+        # Retornar o tipo
+        return subtipos.pop()
+
+    def determinarSubtipoComum(self, tipos):
+        while len(tipos) > 1:
+            it = iter(tipos)
+            tipo1 = next(it)
+            tipo2 = next(it)
+            # Se o tipo1 poder ser convertido no tipo2
+            if self.validarConversaoAux(tipo1, tipo2, self.atribuicoesValidas):
+                tipos.remove(tipo1)
+            # Se o tipo2 poder ser convertido no tipo1
+            elif self.validarConversaoAux(tipo2, tipo1, self.atribuicoesValidas):
+                tipos.remove(tipo2)
+            # Se nao houver conversao
+            else:
+                raise TipoEstruturaException()
 
     #endregion
 
@@ -241,7 +289,7 @@ class MyInterpreter(Interpreter):
 
         # Inicializar a variavel
         if not var.inicializada:
-            self.inicializarVariavel(nome)
+            var.inicializada = True
     
     def atrib_aux(self, tree):
         return self.visit(tree.children[0])
@@ -431,7 +479,7 @@ class MyInterpreter(Interpreter):
 
     #endregion
 
-    #region Outros
+    #region Tipos
 
     # Retorna o tipo
     def type(self, tree):
@@ -455,6 +503,10 @@ class MyInterpreter(Interpreter):
             subtipos.append(self.visit(elem))
         return subtipos
 
+    #endregion
+
+    #region Valores
+
     # Retorna o tipo do valor
     def val(self, tree):
         element = tree.children[0]
@@ -463,17 +515,12 @@ class MyInterpreter(Interpreter):
         if isinstance(element, Tree) and element.data == "num":
             return Tipo(element.children[0].type.lower(), [])
 
-        # Se for uma function call
-        elif isinstance(element, Tree) and element.data == "funcao_call":
-            tipo = self.visit(element)
-            return tipo
-
         # Se for um bool
-        elif element.type == "BOOL":
+        elif isinstance(element, Token) and element.type == "BOOL":
             return Tipo("bool", [])
 
         # Se for uma variavel
-        elif element.type == "VAR_NOME":
+        elif isinstance(element, Token) and element.type == "VAR_NOME":
             # Validar variavel
             nome = element.value
             var = self.getVariavel(nome)
@@ -484,5 +531,32 @@ class MyInterpreter(Interpreter):
             if not var.inicializada:
                 raise VariavelNaoInicializadaException(nome)
             return var.tipo
+
+        # Se for uma function call
+        elif isinstance(element, Tree) and element.data == "funcao_call":
+            tipo = self.visit(element)
+            return tipo
+
+        # Se for um tipo complexo
+        else:
+            element = element.children[0]
+
+            # Se estiver vazio
+            if len(element.children) == 0:
+                if element.data == "map":
+                    subtipos = [ Tipo("empty", []), Tipo("empty", []) ]
+                else:
+                    subtipos = [ Tipo("empty", []) ]
+            # Se nao estiver vazio
+            else:
+                if element.data == "map":
+                    subtipo1 = self.determinarSubtipoVal(element.children[0::2])
+                    subtipo2 = self.determinarSubtipoVal(element.children[1::2])
+                    subtipos = [ subtipo1, subtipo2 ]
+                else:
+                    subtipos = [ self.determinarSubtipoVal(element.children) ]
+            # Retornar
+            nome_tipo = element.data.capitalize()
+            return Tipo(nome_tipo, subtipos)
 
     #endregion

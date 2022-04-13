@@ -36,7 +36,8 @@ class Tipo:
         if len(self.subtipos) == 0:
             return self.nome
         else: 
-            subtipos = ", ".join(self.subtipos)
+            subtipos = [s.__repr__() for s in self.subtipos]
+            subtipos = ", ".join(subtipos)
             return f"{self.nome}<{subtipos}>"
 
     def __eq__(self, other):

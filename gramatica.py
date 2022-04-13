@@ -67,7 +67,7 @@ type     : TYPE_NOME subtype?
 subtype : "<" type ("," type)* ">"
 
 val         : num | BOOL | VAR_NOME | funcao_call | struct
-struct      : lista | tuplo | set | dicionario | set_dic_vazio
+struct      : list | set | map
 num         : INT | FLOAT
 INT         : /\d+/
 FLOAT       : /\d+\.\d+/
@@ -77,11 +77,9 @@ VAR_NOME  : /[a-zA-Z_]\w*/
 TYPE_NOME : /[a-zA-Z_]\w*/
 FUNC_NOME : /[a-zA-Z_]\w*/
 
-lista         : "[" (val ("," val)*)? "]"
-tuplo         : "(" (val ("," val)*)? ")"
-set           : "{" val ("," val)* "}"
-dicionario    : "{" val ":" val ("," val ":" val)* "}"
-set_dic_vazio : "{" "}"
+list : "[" (expr ("," expr)*)? "]"
+set  : "«" (expr ("," expr)*)? "»"
+map  : "{" (expr ":" expr ("," expr ":" expr)*)? "}"
 
 %import common.WS
 %ignore WS
