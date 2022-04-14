@@ -17,7 +17,7 @@ Funcoes:
 - É possivel definir varias funções com o mesmo nome desde que tenham argumentos diferentes
 - Não é possivel utilizar funcoes nao definidas
 
-Operacoes: 
+Operacoes:
 - As condicoes dos If, While e For tem de ser do tipo bool
 - Atribuicoes binarias e unarias so funcionam para variaveis numericas
 

@@ -37,6 +37,7 @@ void foo() {
     };
 
     Set<bool> s = « True, False, False »;
+    List<bool> zzz = (List<bool>) s;
 }
 
 int bar(int a) { }
