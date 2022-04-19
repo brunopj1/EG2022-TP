@@ -88,7 +88,7 @@ class MyInterpreter(Interpreter):
         operador = tree.children[1].value
         return tipoEsq, tipoDir, operador
 
-    def determinarSubtipoVal(self, elementos):
+    def determinarSubtipoComum(self, elementos):
         subtipos = set()
         # Determinar todos os tipos
         for elem in elementos:
@@ -482,11 +482,13 @@ class MyInterpreter(Interpreter):
             # Se nao estiver vazio
             else:
                 if element.data == "map":
-                    subtipo1 = self.determinarSubtipoVal(element.children[0::2])
-                    subtipo2 = self.determinarSubtipoVal(element.children[1::2])
+                    subtipo1 = self.determinarSubtipoComum(element.children[0::2])
+                    subtipo2 = self.determinarSubtipoComum(element.children[1::2])
                     subtipos = [subtipo1, subtipo2]
+                elif element.data == "tuple":
+                    subtipos = list(map(lambda elem : self.visit(elem), element.children))
                 else:
-                    subtipos = [self.determinarSubtipoVal(element.children)]
+                    subtipos = [self.determinarSubtipoComum(element.children)]
             # Retornar
             nome_tipo = element.data.capitalize()
             tipo = Tipo.fromNome(nome_tipo, subtipos)

@@ -67,15 +67,16 @@ type    : TYPE_NOME subtype?
 subtype : "<" type ("," type)* ">"
 
 val         : num | BOOL | VAR_NOME | funcao_call | struct
-struct      : list | set | map
+struct      : list | set | map | tuple
 num         : INT | FLOAT
 INT         : /\d+/
 FLOAT       : /\d+\.\d+/
 BOOL        : "True" | "False"
 
-list : "[" (expr ("," expr)*)? "]"
-set  : "«" (expr ("," expr)*)? "»"
-map  : "{" (expr ":" expr ("," expr ":" expr)*)? "}"
+list  : "[" (expr ("," expr)*)? "]"
+set   : "«" (expr ("," expr)*)? "»"
+map   : "{" (expr ":" expr ("," expr ":" expr)*)? "}"
+tuple : "(" expr ("," expr)* ")"
 
 VAR_NOME  : /[a-zA-Z_]\w*/
 TYPE_NOME : /[a-zA-Z_]\w*/

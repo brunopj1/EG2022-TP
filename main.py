@@ -39,6 +39,7 @@ void foo() {
 
     Set<bool> s = « True, False, False »;
     List<bool> zzz = (List<bool>) s;
+    Tuple<bool, bool, int> ajwdwja = ( True, False, (int) 12.0 * 1.5 );
 }
 
 int bar(int a) { }

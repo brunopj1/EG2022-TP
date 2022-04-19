@@ -9,7 +9,7 @@ Validação de variaveis:
 - É possivel criar variaveis globais desde que sejam inicializadas na sua criação
 
 Tipos:
-- É possivel declarar tipos complexos como listas, sets, e maps
+- É possivel declarar tipos complexos como listas, sets, maps e tuplos
 - É possivel declarar tipos complexos dentro de outros tipos complexos (ex: lista de sets de bools)
 
 Funcoes:
@@ -22,10 +22,8 @@ Operacoes:
 - Atribuicoes binarias e unarias so funcionam para variaveis numericas
 
 # Falta implementar:
-- Adicionar tuplo : "(" (val ("," val)*)? ")"
+- Acessos a tipos complexos
 
 # Duvidas:
 - Podemos utilizar simbolos diferentes dos de python? (ex: « » para os sets)
-- A implementação dos tuplos é obrigatoria? (causam problemas com o nosso metodo de registar tipos)
 - A maneira como representamos os tipos é valida para este trabalho?
-- É necessario que a linguagem permita acessos às estruturas ou a declaracao chega?
