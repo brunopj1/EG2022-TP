@@ -44,6 +44,14 @@ class TipoCastException(LanguageException):
     def __init__(self, tipoCast, tipoExp):
         super().__init__(f"Cast inválido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}")
 
+class AcessoTipoException(LanguageException):
+    def __init__(self, tipo):
+        super().__init__(f"Acesso inválido a um valor do tipo '{tipo}'")
+
+class AcessoTipoKeyException(LanguageException):
+    def __init__(self, tipoEstrutura, tipoKey, tipoKeyEsperada):
+        super().__init__(f"Acesso inválido a uma estrutura do tipo '{tipoEstrutura}' com uma chave do tipo '{tipoKey}' (esperada uma chave do tipo '{tipoKeyEsperada}'")
+
 # TODO adicionar mais informacao ao erro
 class TipoEstruturaException(LanguageException):
     def __init__(self):

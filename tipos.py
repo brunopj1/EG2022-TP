@@ -1,3 +1,5 @@
+from aux_exceptions import *
+
 class Tipo:
     def __init__(self, nome, num_subtipos_variavel, num_subtipos, subtipos):
         # Inicializar
@@ -90,22 +92,28 @@ class Tipo_Void(Tipo):
     def __init__(self):
         super().__init__("void", False, 0, [])
     
-    def atribuicaoValida(tipoFinal):
+    def atribuicaoValida(self, tipoFinal):
         return False
     
-    def castValido(tipoFinal):
+    def castValido(self, tipoFinal):
         return False
 
+    def validarAcesso(self, tipoExpr):
+        raise AcessoTipoException(self)
+
 # Utilizado para listas vazias
-class Tipo_Empty(Tipo):
+class Tipo_Anything(Tipo):
     def __init__(self):
-        super().__init__("empty", False, 0, [])
+        super().__init__("anything", False, 0, [])
             
     def atribuicaoValida(self, tipoFinal):
         return True
     
     def castValido(self, tipoFinal):
         return True
+        
+    def validarAcesso(self, tipoExpr):
+        raise AcessoTipoException(self)
 
 class Tipo_Int(Tipo):
     def __init__(self):
@@ -114,8 +122,11 @@ class Tipo_Int(Tipo):
     def atribuicaoValida(self, tipoFinal):
         return tipoFinal.isAnyOf({ Tipo_Int, Tipo_Float })
     
-    def castValido(self,tipoFinal):
+    def castValido(self, tipoFinal):
         return tipoFinal.isAnyOf({ Tipo_Int, Tipo_Float })
+        
+    def validarAcesso(self, tipoExpr):
+        raise AcessoTipoException(self)
 
 class Tipo_Float(Tipo):
     def __init__(self):
@@ -126,6 +137,9 @@ class Tipo_Float(Tipo):
     
     def castValido(self,tipoFinal):
         return tipoFinal.isAnyOf({ Tipo_Int, Tipo_Float })
+        
+    def validarAcesso(self, tipoExpr):
+        raise AcessoTipoException(self)
 
 class Tipo_Bool(Tipo):
     def __init__(self):
@@ -136,6 +150,9 @@ class Tipo_Bool(Tipo):
     
     def castValido(self,tipoFinal):
         return tipoFinal.isAnyOf({ Tipo_Bool })
+        
+    def validarAcesso(self, tipoExpr):
+        raise AcessoTipoException(self)
 
 class Tipo_List(Tipo):
     def __init__(self, subtipos = None):
@@ -152,6 +169,12 @@ class Tipo_List(Tipo):
             return self._validarSubtipos(tipoFinal, False)
         else:
             return False
+            
+    def validarAcesso(self, tipoExpr):
+        # Validar o tipo da expressao
+        if not isinstance(tipoExpr, Tipo_Int):
+            raise AcessoTipoKeyException(self, tipoExpr, Tipo_Int())
+        return Tipo.fromNome(self._subtipos[0]._nome, self._subtipos[0]._subtipos)
 
 class Tipo_Set(Tipo):
     def __init__(self, subtipos = None):
@@ -168,6 +191,9 @@ class Tipo_Set(Tipo):
             return self._validarSubtipos(tipoFinal, False)
         else:
             return False
+            
+    def validarAcesso(self, tipoExpr):
+        raise AcessoTipoException(self)
 
 class Tipo_Map(Tipo):
     def __init__(self, subtipos = None):
@@ -179,11 +205,17 @@ class Tipo_Map(Tipo):
         else:
             return False
     
-    def castValido(self,tipoFinal):
+    def castValido(self, tipoFinal):
         if tipoFinal.isAnyOf({ Tipo_Map }):
             return self._validarSubtipos(tipoFinal, False)
         else:
             return False
+            
+    def validarAcesso(self, tipoExpr):
+        # Validar o tipo da expressao
+        if type(tipoExpr) is not type(self._subtipos[0]):
+            raise AcessoTipoKeyException(self, tipoExpr, self._subtipos[0])
+        return Tipo.fromNome(self._subtipos[1]._nome, self._subtipos[1]._subtipos)
 
 class Tipo_Tuple(Tipo):
     def __init__(self, subtipos = None):
@@ -195,8 +227,15 @@ class Tipo_Tuple(Tipo):
         else:
             return False
     
-    def castValido(self,tipoFinal):
+    def castValido(self, tipoFinal):
         if tipoFinal.isAnyOf({ Tipo_Tuple }):
             return self._validarSubtipos(tipoFinal, False)
         else:
             return False
+            
+    def validarAcesso(self, tipoExpr):
+        # Validar o tipo da expressao
+        if not isinstance(tipoExpr, Tipo_Int):
+            raise AcessoTipoKeyException(self, tipoExpr, Tipo_Int())
+        # Retornar um Tipo_Anything
+        return Tipo_Anything()

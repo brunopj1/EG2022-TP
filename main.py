@@ -37,9 +37,16 @@ void foo() {
         3: []
     };
 
+    List<float> lm = m[0];
+
     Set<bool> s = « True, False, False »;
     List<bool> zzz = (List<bool>) s;
-    Tuple<bool, bool, int> ajwdwja = ( True, False, (int) 12.0 * 1.5 );
+    int iii = 4;
+    bool bbb = zzz[iii];
+
+    Tuple<bool, bool, int> tuple = ( True, False, (int) 12.0 );
+    int b1 = tuple[0];
+    int b2 = tuple[0] * 2;
 }
 
 int bar(int a) { }

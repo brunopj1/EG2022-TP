@@ -321,6 +321,7 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
+            # TODO trocar isto para utilizar a funcao de atribuicao valida
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if not isinstance(tipoEsq, Tipo_Bool) or not isinstance(tipoDir, Tipo_Bool):
@@ -464,21 +465,17 @@ class MyInterpreter(Interpreter):
                 raise VariavelNaoInicializadaException(nome)
             return var.tipo
 
-        # Se for uma function call
-        elif isinstance(element, Tree) and element.data == "funcao_call":
-            tipo = self.visit(element)
-            return tipo
-
         # Se for um tipo complexo
-        else:
+        elif isinstance(element, Tree) and element.data == "struct":
+            
             element = element.children[0]
 
             # Se estiver vazio
             if len(element.children) == 0:
                 if element.data == "map":
-                    subtipos = [Tipo_Empty(), Tipo_Empty()]
+                    subtipos = [Tipo_Anything(), Tipo_Anything()]
                 else:
-                    subtipos = [Tipo_Empty()]
+                    subtipos = [Tipo_Anything()]
             # Se nao estiver vazio
             else:
                 if element.data == "map":
@@ -492,6 +489,32 @@ class MyInterpreter(Interpreter):
             # Retornar
             nome_tipo = element.data.capitalize()
             tipo = Tipo.fromNome(nome_tipo, subtipos)
+            return tipo
+
+        # Se for um acesso a um tipo complexo
+        elif isinstance(element, Tree) and element.data == "struct_acesso":
+
+            # Obter o tipo do valor
+            if isinstance(element.children[0], Token) and element.children[0].type == "VAR_NOME":
+                nome = element.children[0].value
+                var = self.getVariavel(nome)
+                # Verificar se a variavel existe
+                if var is None:
+                    raise VariavelNaoDefinidaException(nome)
+                tipoVal = var.tipo
+            else: # isinstance(element.children[0], Tree) and element.children[0].data == "struct"
+                tipoVal = self.visit(element.children[0])
+            
+            # Obter o tipo da expr
+            tipoExpr = self.visit(element.children[1])
+
+            # Validar o tipo final do acesso
+            tipoFinal = tipoVal.validarAcesso(tipoExpr)
+            return tipoFinal
+
+        # Se for uma function call
+        else:
+            tipo = self.visit(element)
             return tipo
 
     #endregion

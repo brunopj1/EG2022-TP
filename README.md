@@ -11,6 +11,8 @@ Validação de variaveis:
 Tipos:
 - É possivel declarar tipos complexos como listas, sets, maps e tuplos
 - É possivel declarar tipos complexos dentro de outros tipos complexos (ex: lista de sets de bools)
+- É possivel aceder a elementos internos de tipos complexos (ex: acessos a listas ou maps)
+- É possivel aceder a tuplos, mas o tipo de retorno nao é validado devido a algumas limitações
 
 Funcoes:
 - É possivel criar funcoes e fazer chamadas às mesmas
@@ -20,9 +22,6 @@ Funcoes:
 Operacoes:
 - As condicoes dos If, While e For tem de ser do tipo bool
 - Atribuicoes binarias e unarias so funcionam para variaveis numericas
-
-# Falta implementar:
-- Acessos a tipos complexos
 
 # Duvidas:
 - Podemos utilizar simbolos diferentes dos de python? (ex: « » para os sets)

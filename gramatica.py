@@ -66,12 +66,13 @@ OP_EXPR_UN   : "+" | "-" | "!"
 type    : TYPE_NOME subtype?
 subtype : "<" type ("," type)* ">"
 
-val         : num | BOOL | VAR_NOME | funcao_call | struct
-struct      : list | set | map | tuple
-num         : INT | FLOAT
-INT         : /\d+/
-FLOAT       : /\d+\.\d+/
-BOOL        : "True" | "False"
+val           : num | BOOL | VAR_NOME | struct | struct_acesso | funcao_call 
+struct        : list | set | map | tuple
+struct_acesso : (struct | VAR_NOME) "[" expr "]"
+num           : INT | FLOAT
+INT           : /\d+/
+FLOAT         : /\d+\.\d+/
+BOOL          : "True" | "False"
 
 list  : "[" (expr ("," expr)*)? "]"
 set   : "«" (expr ("," expr)*)? "»"
