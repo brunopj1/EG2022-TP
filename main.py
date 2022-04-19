@@ -25,11 +25,12 @@ void foo() {
     z = 1;
     z++;
 
-    List<List<List<int>>> l = [
+    List<List<List<int>>> l = (List<List<List<int>>>) «
         [[1,2], [2,3]],
         [[3,-4]],
         []
-    ];
+    »;
+
     Map<int, List<int>> m = {
         1: [],
         2: [],
@@ -48,4 +49,3 @@ i = MyInterpreter()
 
 tree = l.parse(frase)
 i.visit(tree)
-#print(tree.pretty())

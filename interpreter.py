@@ -13,6 +13,10 @@ class MyInterpreter(Interpreter):
     funcoes = {}
     scopes = []
 
+    erros = []
+    warnings = []
+    infos = []
+
     #endregion
 
     #region Metodos Auxiliares

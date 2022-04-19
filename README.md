@@ -23,7 +23,6 @@ Operacoes:
 
 # Falta implementar:
 - Adicionar tuplo : "(" (val ("," val)*)? ")"
-- (Talvez) permitir a conversao de tipos com numero de subtipos diferentes
 
 # Duvidas:
 - Podemos utilizar simbolos diferentes dos de python? (ex: « » para os sets)

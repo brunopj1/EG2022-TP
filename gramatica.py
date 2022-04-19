@@ -63,7 +63,7 @@ OP_EXPR_ADD  : "+" | "-"
 OP_EXPR_MUL  : "*" | "/" | "%"
 OP_EXPR_UN   : "+" | "-" | "!"
 
-type     : TYPE_NOME subtype?
+type    : TYPE_NOME subtype?
 subtype : "<" type ("," type)* ">"
 
 val         : num | BOOL | VAR_NOME | funcao_call | struct
@@ -73,13 +73,13 @@ INT         : /\d+/
 FLOAT       : /\d+\.\d+/
 BOOL        : "True" | "False"
 
-VAR_NOME  : /[a-zA-Z_]\w*/
-TYPE_NOME : /[a-zA-Z_]\w*/
-FUNC_NOME : /[a-zA-Z_]\w*/
-
 list : "[" (expr ("," expr)*)? "]"
 set  : "«" (expr ("," expr)*)? "»"
 map  : "{" (expr ":" expr ("," expr ":" expr)*)? "}"
+
+VAR_NOME  : /[a-zA-Z_]\w*/
+TYPE_NOME : /[a-zA-Z_]\w*/
+FUNC_NOME : /[a-zA-Z_]\w*/
 
 %import common.WS
 %ignore WS
