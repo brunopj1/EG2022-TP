@@ -22,7 +22,3 @@ Funcoes:
 Operacoes:
 - As condicoes dos If, While e For tem de ser do tipo bool
 - Atribuicoes binarias e unarias so funcionam para variaveis numericas
-
-# Duvidas:
-- Podemos utilizar simbolos diferentes dos de python? (ex: « » para os sets)
-- A maneira como representamos os tipos é valida para este trabalho?

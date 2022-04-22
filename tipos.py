@@ -1,4 +1,4 @@
-from aux_exceptions import *
+from language_notes import *
 
 class Tipo:
     def __init__(self, nome, num_subtipos_variavel, num_subtipos, subtipos):
@@ -17,18 +17,18 @@ class Tipo:
         # Verificar que os subtipos ainda nao foram atribuidos
         if self._subtipos != None:
             raise Exception()
+        # Atualizar os subtipos
+        self._subtipos = subtipos
         # Se o tipo tiver um numero de subtipos fixo
-        elif not self._num_subtipos_variavel and len(subtipos) != self._num_subtipos:
-            erro = NumeroTiposEstrutura(self._nome, len(subtipos), self._num_subtipos, False)
-            subtipos = [Tipo_Anything()] * self._num_subtipos
+        if not self._num_subtipos_variavel and len(subtipos) != self._num_subtipos:
+            erro = TipoInvalido(self)
+            self._subtipos = [Tipo_Anything()] * self._num_subtipos
         # Se o tipo tiver um numero de subtipos variavel
         elif self._num_subtipos_variavel:
             if len(subtipos) < self._num_subtipos:
-                erro = NumeroTiposEstrutura(self._nome, len(subtipos), self._num_subtipos, True)
-                subtipos = [Tipo_Anything()] * self._num_subtipos
+                erro = TipoInvalido(self)
+                self._subtipos = [Tipo_Anything()] * self._num_subtipos
             self._num_subtipos = len(subtipos)
-        # Guardar subtipos
-        self._subtipos = subtipos
         return erro
 
     def isAnyOf(self, tipos):
@@ -43,11 +43,12 @@ class Tipo:
         for subclass in Tipo.__subclasses__():
             tipo = subclass()
             if tipo._nome == nome:
-                if subtipos != []:
+                if tipo._subtipos is None:
                     erro = tipo._setSubtipos(subtipos)
                 return tipo, erro
         # Se nao encontrou
-        erro = TipoInvalido(nome, len(subtipos))
+        tipo_invalido = Tipo(nome, False, len(subtipos), subtipos)
+        erro = TipoInvalido(tipo_invalido)
         tipo = Tipo_Anything()
         return tipo, erro
 
@@ -73,9 +74,9 @@ class Tipo:
         elif self._subtipos != None:
             subtipos = [s.__repr__() for s in self._subtipos]
             subtipos = ", ".join(subtipos)
-            return f"{self._nome}<{subtipos}>"
+            return f"{self._nome}&lt;{subtipos}&gt;"
         else:
-            return f"{self._nome}<{self._num_subtipos}>"
+            return f"{self._nome}&lt;{self._num_subtipos}&gt;"
 
     def __eq__(self, other):
         if isinstance(other, Tipo):

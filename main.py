@@ -1,6 +1,7 @@
 from gramatica import grammar
 from interpreter import MyInterpreter
 from lark import Lark
+from report_generator import generateReport
 
 _frase = """
 
@@ -52,7 +53,7 @@ void foo() {
 int bar(int a) { }
 """
 
-frase = """
+_frase = """
 void main(bool b) {
     int a;
     int a;
@@ -71,6 +72,30 @@ int foo() {
     l1 = [2.1, 3];
     Tuple<int> t = (1);
     Ola<int> ola = 1;
+    List l = [1, 2];
+    if (1) { }
+}
+"""
+
+frase = """
+void main() {
+}
+
+void foo() {
+    int i = 1;
+    i = 2;
+    i += 1;
+    i++;
+
+    if (True) {
+
+    } else if (False) {
+
+    } else if (False && True) {
+
+    } else {
+        
+    }
 }
 """
 
@@ -80,6 +105,9 @@ i = MyInterpreter()
 tree = l.parse(frase)
 i.visit(tree)
 
-print("Erros:")
-for erro in i.erros:
-    print(erro.message)
+i.gerarNotesInfo()
+generateReport(i.notas)
+
+#print("Notas:")
+#for erro in i.notas:
+#    print(erro.message)

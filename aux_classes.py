@@ -3,6 +3,8 @@ class Variavel:
         self.nome = nome
         self.tipo = tipo
         self.inicializada = inicializada
+        self.num_reads = 0
+        self.num_writes = 0
 
 class Funcao:
     def __init__(self, nome, tipo_ret, args):
