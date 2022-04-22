@@ -10,9 +10,7 @@ from tipos import *
 # TODO se tiver tempo fazer returns
 # TODO se tiver tempo fazer foreach
 # TODO se tiver tempo fazer warnings para variaveis nao usadas
-
-# TODO tentar perceber o topico 2
-# TODO contar estruturas aninhadas
+# TODO nao declarar a variavel quando o tipo é invalido
 
 class MyInterpreter(Interpreter):
 
@@ -26,12 +24,12 @@ class MyInterpreter(Interpreter):
     # Variaveis de relatorio
     registoVariaveis = []
 
-    registoTipos = { }
+    registoTipos = {}
 
     registoOperacoes = {}
     numeroOperacoes = 0
 
-    registoDepths = { 0: 0 }
+    registoDepths = {}
     depth = 0
 
     notas = []
@@ -45,6 +43,7 @@ class MyInterpreter(Interpreter):
 
     def gerarNotesInfo(self):
         self.saveNote(NumeroAcessosVariaveis(self.registoVariaveis))
+        self.saveNote(NumeroTipos(self.registoTipos))
         self.saveNote(NumeroOperacoes(self.numeroOperacoes, self.registoOperacoes))
         self.saveNote(NumeroOperacoesDepth(self.registoDepths))
     
@@ -71,7 +70,11 @@ class MyInterpreter(Interpreter):
         # Definir a variavel
         scope = len(self.scopes) - 1
         self.scopes[scope][var.nome] = var
+        # Guardar o registo da variavel
         self.registoVariaveis.append(var)
+        # Guardar o registo do tipo
+        self.registoTipos.setdefault(var.tipo, 0)
+        self.registoTipos[var.tipo] += 1
 
     def definirFuncao(self, func):
         # Verificar se o nome da funcao e valido
@@ -132,6 +135,8 @@ class MyInterpreter(Interpreter):
     def codigo(self, tree):
         # Criar um scope para as variaveis globais
         self.scopes.append(dict())
+        # Inicializar a depth 0
+        self.registoDepths[0] = 0
         # Processar as operacoes
         for elem in tree.children:
             # Registar a operacao
@@ -188,9 +193,6 @@ class MyInterpreter(Interpreter):
         self.definirFuncao(Funcao(nome, tipo_return, args))
         # Criar um scope para os args e adiciona-los
         self.scopes.append(dict())
-        # Definir as variaveis
-        for tipo, nome in args:
-            self.definirVariavel(Variavel(nome, tipo, True))
         # Validar o corpo
         self.visit(tree.children[3])
         # Apagar o scope
@@ -199,8 +201,12 @@ class MyInterpreter(Interpreter):
     def funcao_args(self, tree):
         args = []
         for idx in range(0, len(tree.children), 2):
+            # Definir a variavel
             tipo = self.visit(tree.children[idx])
             nome = tree.children[idx + 1].value
+            self.definirVariavel(Variavel(nome, tipo, True))
+
+            # Guardar a variavel
             args.append((tipo, nome))
         return args
    

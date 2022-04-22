@@ -179,6 +179,18 @@ class NumeroAcessosVariaveis(LanguageNote):
 			LanguageNoteType.INFO
 		)
 
+class NumeroTipos(LanguageNote):
+	def __init__(self, tipos):
+		numTipos = len(tipos.keys())
+		message = f"O codigo contem <b>{numTipos} tipos</b> diferentes.<br><br>"
+		for tipo, num in tipos.items():
+			message += f"Ocorreram {num} ocorrencias do tipo <b>{tipo}</b>.<br>"
+		super().__init__(
+			message,
+			LanguageNoteType.INFO
+		)
+
+
 class NumeroOperacoes(LanguageNote):
 	def __init__(self, numOperacoes, operacoes):
 		message = f"O codigo contem <b>{numOperacoes} operacoes</b>.<br><br>"

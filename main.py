@@ -78,10 +78,11 @@ int foo() {
 """
 
 frase = """
-void main() {
+void main(int a) {
+    a = 0;
 }
 
-void foo() {
+void foo(List<List<float>> list) {
     int i = 1;
     i = 2;
     i += 1;
@@ -101,13 +102,15 @@ void foo() {
     else if (False && True) {
         if (True) {
             if(True) {
-                
+
             }
         }
     }
     else {
 
     }
+
+    Map<int, List<int>> map;
 }
 """
 
