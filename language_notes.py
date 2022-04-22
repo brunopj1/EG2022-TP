@@ -121,6 +121,11 @@ class TipoOperadorUn(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
+#endregion
+
+#region Operacoes
+
+
 class CondicaoIf(LanguageNote):
     def __init__(self):
         super().__init__(
@@ -139,6 +144,13 @@ class CondicaoFor(LanguageNote):
     def __init__(self):
         super().__init__(
 			f"A condicao do ciclo For nao corresponde a um valor do tipo bool",
+			LanguageNoteType.WARNING
+		)
+
+class IfsAninhados(LanguageNote):
+    def __init__(self):
+        super().__init__(
+			f"Os If's aninhados podem ser agrupados num so If",
 			LanguageNoteType.WARNING
 		)
 
@@ -168,10 +180,20 @@ class NumeroAcessosVariaveis(LanguageNote):
 		)
 
 class NumeroOperacoes(LanguageNote):
-	def __init__(self, operacoes):
-		message = ""
+	def __init__(self, numOperacoes, operacoes):
+		message = f"O codigo contem <b>{numOperacoes} operacoes</b>.<br><br>"
 		for nome, num in operacoes.items():
 			message += f"Ocorreram {num} operacoes do tipo <b>{nome}</b>.<br>"
+		super().__init__(
+			message,
+			LanguageNoteType.INFO
+		)
+
+class NumeroOperacoesDepth(LanguageNote):
+	def __init__(self, depths):
+		message = ""
+		for depth, num in depths.items():
+			message += f"Ocorreram <b>{num}</b> operacoes com <b>profundeza {depth}</b>.<br>"
 		super().__init__(
 			message,
 			LanguageNoteType.INFO

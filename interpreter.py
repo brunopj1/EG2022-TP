@@ -9,10 +9,10 @@ from tipos import *
 # TODO variaveis nao inicializadas esta mal feito (scopes)
 # TODO se tiver tempo fazer returns
 # TODO se tiver tempo fazer foreach
+# TODO se tiver tempo fazer warnings para variaveis nao usadas
 
 # TODO tentar perceber o topico 2
 # TODO contar estruturas aninhadas
-# TODO contar ifs aninhados que possam ser agrupados
 
 class MyInterpreter(Interpreter):
 
@@ -25,7 +25,15 @@ class MyInterpreter(Interpreter):
 
     # Variaveis de relatorio
     registoVariaveis = []
+
+    registoTipos = { }
+
     registoOperacoes = {}
+    numeroOperacoes = 0
+
+    registoDepths = { 0: 0 }
+    depth = 0
+
     notas = []
 
     #endregion
@@ -37,7 +45,8 @@ class MyInterpreter(Interpreter):
 
     def gerarNotesInfo(self):
         self.saveNote(NumeroAcessosVariaveis(self.registoVariaveis))
-        self.saveNote(NumeroOperacoes(self.registoOperacoes))
+        self.saveNote(NumeroOperacoes(self.numeroOperacoes, self.registoOperacoes))
+        self.saveNote(NumeroOperacoesDepth(self.registoDepths))
     
     #endregion
 
@@ -128,6 +137,12 @@ class MyInterpreter(Interpreter):
             # Registar a operacao
             self.registoOperacoes.setdefault(elem.data, 0)
             self.registoOperacoes[elem.data] += 1
+            # Contar o numero de operacoes
+            if elem.data != "cond":
+                self.numeroOperacoes += 1
+            # Registar a operacao na depth atual
+            if elem.data != "cond":
+                self.registoDepths[self.depth] += 1
             # Visitar a operacao
             self.visit(elem)
         # Apagar o scope
@@ -136,6 +151,9 @@ class MyInterpreter(Interpreter):
     def corpo(self, tree):
         # Criar novo scope
         self.scopes.append(dict())
+        # Incrementar a depth
+        self.depth += 1
+        self.registoDepths.setdefault(self.depth, 0)
         # Validar operacoes
         for elem in tree.children:
             elem = elem.children[0]
@@ -145,10 +163,18 @@ class MyInterpreter(Interpreter):
                 _elem = _elem.children[1].children[0]
             self.registoOperacoes.setdefault(_elem.data, 0)
             self.registoOperacoes[_elem.data] += 1
+            # Contar o numero de operacoes
+            if elem.data != "cond":
+                self.numeroOperacoes += 1
+            # Registar a operacao na depth atual
+            if _elem.data != "cond":
+                self.registoDepths[self.depth] += 1
             # Visitar a operacao
             self.visit(elem)
         # Apagar o scope
         self.scopes.pop(len(self.scopes) - 1)
+        # Decrementar a depth
+        self.depth -= 1
 
     #endregion
 
@@ -279,6 +305,10 @@ class MyInterpreter(Interpreter):
             # Registar a operacao
             self.registoOperacoes.setdefault(elem.data, 0)
             self.registoOperacoes[elem.data] += 1
+            # Contar o numero de operacoes
+            self.numeroOperacoes += 1
+            # Registar a operacao na depth atual
+            self.registoDepths[self.depth] += 1
             # Visitar
             self.visit(elem)
 
@@ -287,6 +317,13 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         if not isinstance(tipo, Tipo_Bool):
             self.saveNote(CondicaoIf())
+        # Verificar se os If's se podem juntar
+        operacoesCorpo = tree.children[1].children
+        if len(operacoesCorpo) == 1:
+            operacao = operacoesCorpo[0].children[0]
+            if operacao.data == "cond" and len(operacao.children) == 1:
+                self.saveNote(IfsAninhados())
+        # Visitar o corpo
         self.visit(tree.children[1])
 
     def cond_else_if(self, tree):

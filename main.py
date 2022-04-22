@@ -88,13 +88,25 @@ void foo() {
     i++;
 
     if (True) {
+        i++;
+    }
+    else if (False) {
+        if (False) {
 
-    } else if (False) {
+        }
+        else {
 
-    } else if (False && True) {
+        }
+    }
+    else if (False && True) {
+        if (True) {
+            if(True) {
+                
+            }
+        }
+    }
+    else {
 
-    } else {
-        
     }
 }
 """
