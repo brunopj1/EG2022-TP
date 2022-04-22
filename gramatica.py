@@ -13,7 +13,7 @@ operacao_end : (decl | decl_atrib | atrib | funcao_call | ciclo_do_while) ";"
 
 decl          : type VAR_NOME
 decl_atrib    : type VAR_NOME "=" expr
-atrib         : VAR_NOME atrib_aux
+atrib         : (VAR_NOME | expr) atrib_aux
 atrib_aux     : atrib_simples | atrib_bin | atrib_un
 atrib_simples : "=" expr
 atrib_bin     : OP_BIN_ATRIB "=" expr
@@ -53,7 +53,9 @@ expr_mul  : (expr_mul OP_EXPR_MUL expr_mul)
           | expr_un
 expr_un   : expr_op_un expr_un
           | expr_symb
-expr_symb : val | "(" expr ")"
+expr_symb : val
+          | expr "[" expr "]"
+          | "(" expr ")"
 
 expr_op_un   : (OP_EXPR_UN | op_expr_cast)
 op_expr_cast : "(" type ")"
@@ -69,9 +71,8 @@ OP_EXPR_UN  : "+" | "-" | "!"
 type    : TYPE_NOME subtype?
 subtype : "<" type ("," type)* ">"
 
-val           : num | BOOL | VAR_NOME | struct | struct_acesso | funcao_call 
+val           : num | BOOL | VAR_NOME | struct | funcao_call
 struct        : list | set | map | tuple
-struct_acesso : (struct | VAR_NOME) "[" expr "]"
 num           : INT | FLOAT
 INT           : /\d+/
 FLOAT         : /\d+\.\d+/

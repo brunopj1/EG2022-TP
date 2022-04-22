@@ -8,7 +8,6 @@ from tipos import *
 # TODO adicionar a linha e coluna do erro
 # TODO variaveis nao inicializadas esta mal feito (scopes)
 # TODO se tiver tempo fazer returns
-# TODO se tiver tempo fazer foreach
 # TODO se tiver tempo fazer warnings para variaveis nao usadas
 
 class MyInterpreter(Interpreter):
@@ -259,40 +258,41 @@ class MyInterpreter(Interpreter):
         # Validar expressao
         tipoExpr = self.visit(tree.children[2])
         if not tipoExpr.atribuicaoValida(tipoVar):
-            self.saveNote(TipoVariavel(nomeVar, tipoVar, tipoExpr))
+            self.saveNote(TipoAtribuicao(tipoExpr, tipoVar))
 
     def atrib(self, tree):
-
-        nome = tree.children[0].value
-        var = self.getVariavel(nome)
-        tipoExpr = self.visit(tree.children[1].children[0])
-
-        # Verificar se a variavel existe
-        if var is None:
-            self.saveNote(VariavelNaoDefinida(nome))
-            return
-
-        # Registar uma operacao de write
-        var.num_writes += 1
-
-        # Registar uma operacao de read
-        if tree.children[1].children[0].data != "atrib_simples":
-            var.num_reads += 1
-
-        # Verificar se o tipo da expressao é valido
-        if not tipoExpr.atribuicaoValida(var.tipo):
-            self.saveNote(TipoVariavel(nome, var.tipo, tipoExpr))
-        
-        # Se a atribuicao for binaria ou unaria
-        if tree.children[1].children[0].data != "atrib_simples":
-            # Verificar se a variavel foi inicializada
+        # Se for uma variavel
+        if isinstance(tree.children[0], Token):
+            nome = tree.children[0].value
+            var = self.getVariavel(nome)
+            tipoVar = var.tipo
+            tipoVal = self.visit(tree.children[1].children[0])
+            # Verificar se a variavel existe
+            if var is None:
+                self.saveNote(VariavelNaoDefinida(nome))
+                return
+            # Registar uma operacao de write
+            var.num_writes += 1
+            # Registar uma operacao de read
+            if tree.children[1].children[0].data != "atrib_simples":
+                var.num_reads += 1
+            # Se a atribuicao for binaria ou unaria
+            if tree.children[1].children[0].data != "atrib_simples":
+                # Verificar se a variavel foi inicializada
+                if not var.inicializada:
+                    self.saveNote(VariavelNaoInicializada(nome))
+            # Inicializar a variavel
             if not var.inicializada:
-                self.saveNote(VariavelNaoInicializada(nome))
+                var.inicializada = True
+        # Se for uma expressao
+        else: # isinstance(tree.children[0], Tree):
+            tipoVar = self.visit(tree.children[0])
+            tipoVal = self.visit(tree.children[1].children[0])
+        
+        # Verificar se o tipo da expressao é valido
+        if not tipoVal.atribuicaoValida(tipoVar):
+            self.saveNote(TipoAtribuicao(tipoVal, tipoVar))
 
-        # Inicializar a variavel
-        if not var.inicializada:
-            var.inicializada = True
-    
     def atrib_simples(self, tree):
         tipoExpr = self.visit(tree.children[0])
         return tipoExpr
@@ -410,7 +410,7 @@ class MyInterpreter(Interpreter):
         if erro is not None:
             self.saveNote(erro)
         if not tipoIter.atribuicaoValida(tipoVar):
-            self.saveNote(TipoVariavel(nomeVar, tipoVar, tipoIter))
+            self.saveNote(TipoAtribuicao(tipoIter, tipoVar))
 
     #endregion
 
@@ -511,7 +511,19 @@ class MyInterpreter(Interpreter):
                 return tipoExp
 
     def expr_symb(self, tree):
-        return self.visit(tree.children[0])
+        # Se for um valor ou uma expressao entre parenteses
+        if len(tree.children) == 1:
+            return self.visit(tree.children[0])
+        # Se for um acesso a um tipo complexo
+        else:
+            # Obter o tipo de ambas as expressoes
+            tipoVal = self.visit(tree.children[0])
+            tipoKey = self.visit(tree.children[1])    
+            # Validar o tipo final do acesso
+            tipoFinal, erro = tipoVal.validarAcesso(tipoKey)
+            if erro is not None:
+                self.saveNote(erro)
+            return tipoFinal
 
     #endregion
 
@@ -600,32 +612,6 @@ class MyInterpreter(Interpreter):
             if erro is not None:
                 self.saveNote(erro)
             return tipo
-
-        # Se for um acesso a um tipo complexo
-        elif isinstance(element, Tree) and element.data == "struct_acesso":
-
-            # Obter o tipo do valor
-            if isinstance(element.children[0], Token) and element.children[0].type == "VAR_NOME":
-                nome = element.children[0].value
-                var = self.getVariavel(nome)
-                # Verificar se a variavel existe
-                if var is None:
-                    self.saveNote(VariavelNaoDefinida(nome))
-                    tipoVal = Tipo_Unknown()
-                else:
-                    tipoVal = var.tipo
-            else: # isinstance(element.children[0], Tree) and element.children[0].data == "struct"
-                tipoVal = self.visit(element.children[0])
-            
-            # Obter o tipo da expr
-            tipoExpr = self.visit(element.children[1])
-
-            # Validar o tipo final do acesso
-            tipoFinal, erro = tipoVal.validarAcesso(tipoExpr)
-            if erro is not None:
-                self.saveNote(erro)
-
-            return tipoFinal
 
         # Se for uma function call
         else:

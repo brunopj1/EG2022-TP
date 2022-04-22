@@ -119,12 +119,24 @@ void foo(List<List<float>> list) {
 frase = """
 void main() {
     foreach (List<int> i in [[1, 2], [3, 4], [5, 6]]) {
-        i++;
+        i[0]++;
     }
 
     foreach(Tuple<int, List<int>> entry in { 1: [1, 2], 2: [3, 4], 3: [4, 5] }) {
     }
+
+    List<List<List<int>>> l = [];
+    int i = l[0][0][0];
 }
+
+List<int> foo() {
+}
+
+void bar() {
+    List<int> list;
+    list[0] += True;
+}
+
 """
 
 l = Lark(grammar)

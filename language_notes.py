@@ -64,10 +64,10 @@ class TipoInvalido(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
-class TipoVariavel(LanguageNote):
-    def __init__(self, nomeVar, tipoVar, tipoVal):
+class TipoAtribuicao(LanguageNote):
+    def __init__(self, tipoIn, tipoOut):
         super().__init__(
-			f"Variavel '{nomeVar}' do tipo {tipoVar} a receber um valor do tipo {tipoVal}",
+			f"Atribuicao invalida de uma expressao do tipo {tipoIn} para o tipo {tipoOut}",
 			LanguageNoteType.ERROR
 		)
 
@@ -99,7 +99,6 @@ class IteracaoTipo(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
-# TODO melhorar esta classe
 class TipoEstrutura(LanguageNote):
     def __init__(self, tipo1, tipo2):
         super().__init__(
