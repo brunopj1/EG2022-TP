@@ -12,6 +12,8 @@ class Tipo:
         if subtipos != None:
             self._setSubtipos(subtipos)
 
+    #region Metodos Auxiliares
+
     def _setSubtipos(self, subtipos):
         erro = None
         # Verificar que os subtipos ainda nao foram atribuidos
@@ -22,14 +24,28 @@ class Tipo:
         # Se o tipo tiver um numero de subtipos fixo
         if not self._num_subtipos_variavel and len(subtipos) != self._num_subtipos:
             erro = TipoInvalido(self)
-            self._subtipos = [Tipo_Anything()] * self._num_subtipos
+            self._subtipos = [Tipo_Unknown()] * self._num_subtipos
         # Se o tipo tiver um numero de subtipos variavel
         elif self._num_subtipos_variavel:
             if len(subtipos) < self._num_subtipos:
                 erro = TipoInvalido(self)
-                self._subtipos = [Tipo_Anything()] * self._num_subtipos
+                self._subtipos = [Tipo_Unknown()] * self._num_subtipos
             self._num_subtipos = len(subtipos)
         return erro
+
+    def _validarSubtipos(self, tipoFinal, atribuicao : bool):
+        # Validar o numero de subtipos
+        if self._num_subtipos != tipoFinal._num_subtipos:
+            return False
+        # Validar os subtipos
+        for subtipo, subtipoFinal in zip(self._subtipos, tipoFinal._subtipos):
+            if atribuicao:
+                if not subtipo.atribuicaoValida(subtipoFinal):
+                    return False
+            else:
+                if not subtipo.castValido(subtipoFinal):
+                    return False
+        return True
 
     def isAnyOf(self, tipos):
         for tipo in tipos:
@@ -49,22 +65,18 @@ class Tipo:
         # Se nao encontrou
         tipo_invalido = Tipo(nome, False, len(subtipos), subtipos)
         erro = TipoInvalido(tipo_invalido)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
         return tipo, erro
 
-    def _validarSubtipos(self, tipoFinal, atribuicao : bool):
-        # Validar o numero de subtipos
-        if self._num_subtipos != tipoFinal._num_subtipos:
-            return False
-        # Validar os subtipos
-        for subtipo, subtipoFinal in zip(self._subtipos, tipoFinal._subtipos):
-            if atribuicao:
-                if not subtipo.atribuicaoValida(subtipoFinal):
-                    return False
-            else:
-                if not subtipo.castValido(subtipoFinal):
-                    return False
-        return True
+    @staticmethod
+    def getNomeTipos():
+        nomes = set()
+        for subclass in Tipo.__subclasses__():
+            tipo = subclass()
+            nomes.add(tipo._nome)
+        return nomes
+
+    #endregion
 
     #region Metodos internos
 
@@ -105,13 +117,18 @@ class Tipo_Void(Tipo):
 
     def validarAcesso(self, tipoExpr):
         erro = AcessoTipo(self)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo = Tipo_Unknown()
+        erro = IteracaoTipo(self)
         return tipo, erro
 
 # Utilizado para listas vazias e erros
-class Tipo_Anything(Tipo):
+class Tipo_Unknown(Tipo):
     def __init__(self):
-        super().__init__("anything", False, 0, [])
+        super().__init__("unknown", False, 0, [])
             
     def atribuicaoValida(self, tipoFinal):
         return True
@@ -121,7 +138,12 @@ class Tipo_Anything(Tipo):
         
     def validarAcesso(self, tipoExpr):
         erro = AcessoTipo(self)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo = Tipo_Unknown()
+        erro = IteracaoTipo(self)
         return tipo, erro
 
 class Tipo_Int(Tipo):
@@ -136,7 +158,12 @@ class Tipo_Int(Tipo):
         
     def validarAcesso(self, tipoExpr):
         erro = AcessoTipo(self)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo = Tipo_Unknown()
+        erro = IteracaoTipo(self)
         return tipo, erro
 
 class Tipo_Float(Tipo):
@@ -151,7 +178,12 @@ class Tipo_Float(Tipo):
         
     def validarAcesso(self, tipoExpr):
         erro = AcessoTipo(self)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo = Tipo_Unknown()
+        erro = IteracaoTipo(self)
         return tipo, erro
 
 class Tipo_Bool(Tipo):
@@ -166,7 +198,12 @@ class Tipo_Bool(Tipo):
         
     def validarAcesso(self, tipoExpr):
         erro = AcessoTipo(self)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo = Tipo_Unknown()
+        erro = IteracaoTipo(self)
         return tipo, erro
 
 class Tipo_List(Tipo):
@@ -194,6 +231,11 @@ class Tipo_List(Tipo):
         tipo, _ = Tipo.fromNome(self._subtipos[0]._nome, self._subtipos[0]._subtipos)
         return tipo, erro
 
+    def validarIteracao(self):
+        tipo, _ = Tipo.fromNome(self._subtipos[0]._nome, self._subtipos[0]._subtipos)
+        erro = None
+        return tipo, erro
+
 class Tipo_Set(Tipo):
     def __init__(self, subtipos = None):
         super().__init__("Set", False, 1, subtipos)
@@ -212,7 +254,12 @@ class Tipo_Set(Tipo):
             
     def validarAcesso(self, tipoExpr):
         erro = AcessoTipo(self)
-        tipo = Tipo_Anything()
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo, _ = Tipo.fromNome(self._subtipos[0]._nome, self._subtipos[0]._subtipos)
+        erro = None
         return tipo, erro
 
 class Tipo_Map(Tipo):
@@ -240,6 +287,13 @@ class Tipo_Map(Tipo):
         tipo, _ = Tipo.fromNome(self._subtipos[1]._nome, self._subtipos[1]._subtipos)
         return tipo, erro
 
+    def validarIteracao(self):
+        tipo0, _ = Tipo.fromNome(self._subtipos[0]._nome, self._subtipos[0]._subtipos)
+        tipo1, _ = Tipo.fromNome(self._subtipos[1]._nome, self._subtipos[1]._subtipos)
+        tipo = Tipo_Tuple([tipo0, tipo1])
+        erro = None
+        return tipo, erro
+
 class Tipo_Tuple(Tipo):
     def __init__(self, subtipos = None):
         super().__init__("Tuple", True, 2, subtipos)
@@ -261,6 +315,11 @@ class Tipo_Tuple(Tipo):
         erro = None
         if not isinstance(tipoExpr, Tipo_Int):
             erro = AcessoTipoKey(self, tipoExpr, Tipo_Int())
-        # Obter o tipo do resultado (Tipo_Anything)
-        tipo = Tipo_Anything()
+        # Obter o tipo do resultado (Tipo_Unknown)
+        tipo = Tipo_Unknown()
+        return tipo, erro
+
+    def validarIteracao(self):
+        tipo = Tipo_Unknown()
+        erro = IteracaoTipo(self)
         return tipo, erro

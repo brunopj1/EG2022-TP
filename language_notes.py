@@ -92,18 +92,18 @@ class AcessoTipoKey(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
+class IteracaoTipo(LanguageNote):
+    def __init__(self, tipo):
+        super().__init__(
+			f"Iteracao invalida de um valor do tipo '{tipo}'",
+			LanguageNoteType.ERROR
+		)
+
 # TODO melhorar esta classe
 class TipoEstrutura(LanguageNote):
     def __init__(self, tipo1, tipo2):
         super().__init__(
 			f"Estrutura com elementos de tipos incompativeis '{tipo1}' e '{tipo2}'",
-			LanguageNoteType.ERROR
-		)
-
-class TipoAtribuicaoBinaria(LanguageNote):
-    def __init__(self, nomeVar):
-        super().__init__(
-			f"Variavel '{nomeVar}' de tipo nao numerico utilizada numa atribuicao binaria",
 			LanguageNoteType.ERROR
 		)
 

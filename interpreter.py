@@ -10,16 +10,22 @@ from tipos import *
 # TODO se tiver tempo fazer returns
 # TODO se tiver tempo fazer foreach
 # TODO se tiver tempo fazer warnings para variaveis nao usadas
-# TODO nao declarar a variavel quando o tipo é invalido
 
 class MyInterpreter(Interpreter):
+
+    def __init__(self):
+        super().__init__()
+
+        # Palavras reservadas
+        self.palavrasReservadas.update({ True, False })
+        self.palavrasReservadas.update(Tipo.getNomeTipos())
 
     #region Variaveis do Interpreter
 
     # Variaveis de controlo
     scopes = []
     funcoes = {}
-    palavrasReservadas = { "True", "False" }
+    palavrasReservadas = set() # Inseridas na funcao __init__
 
     # Variaveis de relatorio
     registoVariaveis = []
@@ -121,7 +127,7 @@ class MyInterpreter(Interpreter):
             # Se nao houver conversao
             else:
                 self.saveNote(TipoEstrutura(tipo1, tipo2))
-                return Tipo_Anything()
+                return Tipo_Unknown()
         # Retornar o tipo
         return subtipos.pop()
 
@@ -205,7 +211,6 @@ class MyInterpreter(Interpreter):
             tipo = self.visit(tree.children[idx])
             nome = tree.children[idx + 1].value
             self.definirVariavel(Variavel(nome, tipo, True))
-
             # Guardar a variavel
             args.append((tipo, nome))
         return args
@@ -216,14 +221,14 @@ class MyInterpreter(Interpreter):
         # Verificar se existe alguma funcao com o mesmo nome
         if nome not in self.funcoes:
             self.saveNote(FuncaoNaoDefinida(nome, args_tipo))
-            return Tipo_Anything()
+            return Tipo_Unknown()
         # Verificar se existe alguma funcao com o mesmo nome e argumentos
         for func in self.funcoes[nome]:
             if func.args_tipo == args_tipo:
                 return func.tipo_ret
         # A funcao nao existe
         self.saveNote(FuncaoNaoDefinida(nome, args_tipo))
-        return Tipo_Anything()
+        return Tipo_Unknown()
 
     def funcao_call_args(self, tree):
         tipos = []
@@ -283,9 +288,6 @@ class MyInterpreter(Interpreter):
             # Verificar se a variavel foi inicializada
             if not var.inicializada:
                 self.saveNote(VariavelNaoInicializada(nome))
-            # Verificar se a variavel pode ser utilizada numa atribuicao complexa
-            if not var.tipo.atribuicaoValida(Tipo_Float()):
-                self.saveNote(TipoAtribuicaoBinaria(nome))
 
         # Inicializar a variavel
         if not var.inicializada:
@@ -386,6 +388,29 @@ class MyInterpreter(Interpreter):
     def ciclo_for_head_3(self, tree):
         for element in tree.children:
             self.visit(element)
+
+    def ciclo_foreach(self, tree):
+        # Criar novo scope (para as variaveis definidas no head)
+        self.scopes.append(dict())
+        # Visitar a head e o corpo
+        self.visit(tree.children[0])
+        self.visit(tree.children[1])
+        # Apagar o scope
+        self.scopes.pop(len(self.scopes) - 1)
+
+    # type VAR_NOME "in" expr
+    def ciclo_foreach_head(self, tree):
+        # Declarar a variavel
+        tipoVar = self.visit(tree.children[0])
+        nomeVar = tree.children[1].value
+        self.definirVariavel(Variavel(nomeVar, tipoVar, True))
+        # Validar o tipo da variavel
+        tipoVal = self.visit(tree.children[2])
+        tipoIter, erro = tipoVal.validarIteracao()
+        if erro is not None:
+            self.saveNote(erro)
+        if not tipoIter.atribuicaoValida(tipoVar):
+            self.saveNote(TipoVariavel(nomeVar, tipoVar, tipoIter))
 
     #endregion
 
@@ -540,7 +565,7 @@ class MyInterpreter(Interpreter):
             # Verificar se a variavel existe
             if var is None:
                 self.saveNote(VariavelNaoDefinida(nome))
-                return Tipo_Anything()
+                return Tipo_Unknown()
             # Registar uma operacao de write
             var.num_writes += 1
             # Verificar se a variavel foi inicializada
@@ -556,9 +581,9 @@ class MyInterpreter(Interpreter):
             # Se estiver vazio
             if len(element.children) == 0:
                 if element.data == "map":
-                    subtipos = [Tipo_Anything(), Tipo_Anything()]
+                    subtipos = [Tipo_Unknown(), Tipo_Unknown()]
                 else:
-                    subtipos = [Tipo_Anything()]
+                    subtipos = [Tipo_Unknown()]
             # Se nao estiver vazio
             else:
                 if element.data == "map":
@@ -586,7 +611,7 @@ class MyInterpreter(Interpreter):
                 # Verificar se a variavel existe
                 if var is None:
                     self.saveNote(VariavelNaoDefinida(nome))
-                    tipoVal = Tipo_Anything()
+                    tipoVal = Tipo_Unknown()
                 else:
                     tipoVal = var.tipo
             else: # isinstance(element.children[0], Tree) and element.children[0].data == "struct"

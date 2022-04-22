@@ -3,7 +3,7 @@ from interpreter import MyInterpreter
 from lark import Lark
 from report_generator import generateReport
 
-_frase = """
+frase = """
 
 int foo(int a) {
     a++;
@@ -53,7 +53,7 @@ void foo() {
 int bar(int a) { }
 """
 
-_frase = """
+frase = """
 void main(bool b) {
     int a;
     int a;
@@ -111,6 +111,19 @@ void foo(List<List<float>> list) {
     }
 
     Map<int, List<int>> map;
+
+    int List = 1;
+}
+"""
+
+frase = """
+void main() {
+    foreach (List<int> i in [[1, 2], [3, 4], [5, 6]]) {
+        i++;
+    }
+
+    foreach(Tuple<int, List<int>> entry in { 1: [1, 2], 2: [3, 4], 3: [4, 5] }) {
+    }
 }
 """
 
