@@ -1,9 +1,12 @@
-from lark import Lark, Tree, Token
+from lark import Tree, Token
 from lark.visitors import Interpreter
 
 from aux_classes import *
 from aux_exceptions import *
 from tipos import *
+
+# TODO variaveis nao inicializadas esta mal feito (scopes)
+# TODO List l = [1, 2]; dá erro
 
 class MyInterpreter(Interpreter):
 
@@ -14,12 +17,13 @@ class MyInterpreter(Interpreter):
     scopes = []
 
     erros = []
-    warnings = []
-    infos = []
 
     #endregion
 
     #region Metodos Auxiliares
+
+    def saveErro(self, erro):
+        self.erros.append(erro)
 
     def getVariavel(self, nome):
         for scope in self.scopes:
@@ -30,11 +34,13 @@ class MyInterpreter(Interpreter):
     def definirVariavel(self, var):
         # Verificar se o nome da variavel e valido
         if var.nome in self.palavrasReservadas:
-            raise NomeProibidoException(var.nome)
+            self.saveErro(NomeProibido(var.nome))
+            return
         # Verificar se a variavel existe
         old_var = self.getVariavel(var.nome)
         if old_var is not None:
-            raise VariavelRedefinidaException(var.nome)
+            self.saveErro(VariavelRedefinida(var.nome))
+            return
         # Definir a variavel
         scope = len(self.scopes) - 1
         self.scopes[scope][var.nome] = var
@@ -42,39 +48,16 @@ class MyInterpreter(Interpreter):
     def definirFuncao(self, func):
         # Verificar se o nome da funcao e valido
         if func.nome in self.palavrasReservadas:
-            raise NomeProibidoException(func.nome)
+            self.saveErro(NomeProibido(func.nome))
+            return
         # Verificar se a funcao existe
         self.funcoes.setdefault(func.nome, [])
         for other_func in self.funcoes[func.nome]:
             if func.args_tipo == other_func.args_tipo:
-                raise FuncaoRedefinidaException(func.nome, func.args_tipo)
+                self.saveErro(FuncaoRedefinida(func.nome, func.args_tipo))
+                return
         # Definir a funcao
         self.funcoes[func.nome].append(func)
-
-    def validarFuncaoCall(self, nome, args_tipo):
-        # Verificar se existe alguma funcao com o mesmo nome
-        if nome not in self.funcoes:
-            raise FuncaoNaoDefinidaException(nome, args_tipo)
-        # Verificar se existe alguma funcao com o mesmo nome e argumentos
-        tipo_ret = None
-        for func in self.funcoes[nome]:
-            if func.args_tipo == args_tipo:
-                tipo_ret = func.tipo_ret
-                break
-        if tipo_ret is None:
-            raise FuncaoNaoDefinidaException(nome, args_tipo)
-        return tipo_ret
-    
-    def validarAtribuicao(self, nomeVar, tipoVar, tipoVal):
-        if not tipoVal.atribuicaoValida(tipoVar):
-            raise TipoVariavelException(nomeVar, tipoVar, tipoVal)
-
-    def validarCast(self, tipoCast, tipoExp):
-        if not tipoExp.castValido(tipoCast):
-            raise TipoCastException(tipoCast, tipoExp)
-
-    def isTipoNumero(self, tipo):
-        return isinstance(tipo, Tipo_Int) or isinstance(tipo, Tipo_Float)
 
     def getTipoNumeroComum(self, tipo1, tipo2):
         if isinstance(tipo1, Tipo_Float) or isinstance(tipo2, Tipo_Float):
@@ -106,7 +89,8 @@ class MyInterpreter(Interpreter):
                 subtipos.remove(tipo2)
             # Se nao houver conversao
             else:
-                raise TipoEstruturaException()
+                self.saveErro(TipoEstrutura(tipo1, tipo2))
+                return Tipo_Anything()
         # Retornar o tipo
         return subtipos.pop()
 
@@ -115,11 +99,7 @@ class MyInterpreter(Interpreter):
     #region Start
 
     def start(self, tree):
-        try:
-            self.visit(tree.children[0])
-            print("O código é válido")
-        except LanguageException as e:
-            print(f"Erro: {e}")
+        self.visit(tree.children[0])
 
     def codigo(self, tree):
         # Criar um scope para as variaveis globais
@@ -142,6 +122,7 @@ class MyInterpreter(Interpreter):
         self.definirFuncao(Funcao(nome, tipo_return, args))
         # Criar um scope para os args e adiciona-los
         self.scopes.append(dict())
+        # Definir as variaveis
         for tipo, nome in args:
             self.definirVariavel(Variavel(nome, tipo, True))
         # Validar o corpo
@@ -160,9 +141,17 @@ class MyInterpreter(Interpreter):
     def funcao_call(self, tree):
         nome = tree.children[0].value
         args_tipo = self.visit(tree.children[1])
-        # Validar a funcao
-        tipo_ret = self.validarFuncaoCall(nome, args_tipo)
-        return tipo_ret
+        # Verificar se existe alguma funcao com o mesmo nome
+        if nome not in self.funcoes:
+            self.saveErro(FuncaoNaoDefinida(nome, args_tipo))
+            return Tipo_Anything()
+        # Verificar se existe alguma funcao com o mesmo nome e argumentos
+        for func in self.funcoes[nome]:
+            if func.args_tipo == args_tipo:
+                return func.tipo_ret
+        # A funcao nao existe
+        self.saveErro(FuncaoNaoDefinida(nome, args_tipo))
+        return Tipo_Anything()
 
     def funcao_call_args(self, tree):
         tipos = []
@@ -188,38 +177,42 @@ class MyInterpreter(Interpreter):
         # Validar variavel
         nome = tree.children[1].value
         tipo = self.visit(tree.children[0])
+        # Definir a variavel
         self.definirVariavel(Variavel(nome, tipo, False))
     
     def decl_atrib(self, tree):
         # Definir a variavel
-        nome = tree.children[1].value
-        tipo = self.visit(tree.children[0])
-        self.definirVariavel(Variavel(nome, tipo, True))
+        nomeVar = tree.children[1].value
+        tipoVar = self.visit(tree.children[0])
+        self.definirVariavel(Variavel(nomeVar, tipoVar, True))
         # Validar expressao
         tipoExpr = self.visit(tree.children[2])
-        self.validarAtribuicao(nome, tipo, tipoExpr)
+        if not tipoExpr.atribuicaoValida(tipoVar):
+            self.saveErro(TipoVariavel(nomeVar, tipoVar, tipoExpr))
 
     def atrib(self, tree):
-        # Validar a variavel
+
         nome = tree.children[0].value
         var = self.getVariavel(nome)
+        tipoExpr = self.visit(tree.children[1])
 
         # Verificar se a variavel existe
         if var is None:
-            raise VariavelNaoDefinidaException(nome)
+            self.saveErro(VariavelNaoDefinida(nome))
+            return
 
         # Verificar se o tipo da expressao é valido
-        tipoExpr = self.visit(tree.children[1])
-        self.validarAtribuicao(nome, var.tipo, tipoExpr)
+        if not tipoExpr.atribuicaoValida(var.tipo):
+            self.saveErro(TipoVariavel(nome, var.tipo, tipoExpr))
         
         # Se a atribuicao for binaria ou unaria
         if tree.children[1].children[0].data != "atrib_simples":
             # Verificar se a variavel foi inicializada
             if not var.inicializada:
-                raise VariavelNaoInicializadaException(nome)
+                self.saveErro(VariavelNaoInicializada(nome))
             # Verificar se a variavel pode ser utilizada numa atribuicao complexa
-            if not self.isTipoNumero(var.tipo):
-                raise TipoAtribuicaoBinariaException(nome)
+            if not var.tipo.atribuicaoValida(Tipo_Float()):
+                self.saveErro(TipoAtribuicaoBinaria(nome))
 
         # Inicializar a variavel
         if not var.inicializada:
@@ -251,7 +244,7 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do If
         if not isinstance(tipo, Tipo_Bool):
-            raise CondicaoIfException()
+            self.saveErro(CondicaoIf())
         self.visit(tree.children[1])
 
     def cond_else_if(self, tree):
@@ -268,14 +261,14 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
         if not isinstance(tipo, Tipo_Bool):
-            raise CondicaoWhileException()
+            self.saveErro(CondicaoWhile())
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
         if not isinstance(tipo, Tipo_Bool):
-            raise CondicaoWhileException()
+            self.saveErro(CondicaoWhile())
         self.visit(tree.children[1])
 
     #endregion
@@ -303,7 +296,7 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do For
         if not isinstance(tipo, Tipo_Bool):
-            raise CondicaoForException()
+            self.saveErro(CondicaoFor())
     
     def ciclo_for_head_3(self, tree):
         for element in tree.children:
@@ -321,11 +314,10 @@ class MyInterpreter(Interpreter):
         if len(tree.children) == 1:
             return self.visit(tree.children[0])
         else:
-            # TODO trocar isto para utilizar a funcao de atribuicao valida
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if not isinstance(tipoEsq, Tipo_Bool) or not isinstance(tipoDir, Tipo_Bool):
-                raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
+            if not tipoEsq.atribuicaoValida(Tipo_Bool()) or not tipoDir.atribuicaoValida(Tipo_Bool()):
+                self.saveErro(TipoOperadorBin(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_and(self, tree):
@@ -334,8 +326,8 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if not isinstance(tipoEsq, Tipo_Bool) or not isinstance(tipoDir, Tipo_Bool):
-                raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
+            if not tipoEsq.atribuicaoValida(Tipo_Bool()) or not tipoDir.atribuicaoValida(Tipo_Bool()):
+                self.saveErro(TipoOperadorBin(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_eq(self, tree):
@@ -344,8 +336,8 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if isinstance(tipoEsq, Tipo_Void) or isinstance(tipoDir, Tipo_Void):
-                raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
+            if tipoEsq.atribuicaoValida(Tipo_Void()) or tipoDir.atribuicaoValida(Tipo_Void()):
+                self.saveErro(TipoOperadorBin(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_ord(self, tree):
@@ -354,8 +346,8 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if not self.isTipoNumero(tipoEsq) or not self.isTipoNumero(tipoDir):
-                raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
+            if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
+                self.saveErro(TipoOperadorBin(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_add(self, tree):
@@ -364,8 +356,8 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if not self.isTipoNumero(tipoEsq) or not self.isTipoNumero(tipoDir):
-                raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
+            if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
+                self.saveErro(TipoOperadorBin(operador, tipoEsq, tipoDir))
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
     
     def expr_mul(self, tree):
@@ -374,8 +366,8 @@ class MyInterpreter(Interpreter):
         else:
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
-            if not self.isTipoNumero(tipoEsq) or not self.isTipoNumero(tipoDir):
-                raise TipoOperadorBinException(operador, tipoEsq, tipoDir)
+            if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
+                self.saveErro(TipoOperadorBin(operador, tipoEsq, tipoDir))
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
 
     def expr_un(self, tree):
@@ -391,20 +383,21 @@ class MyInterpreter(Interpreter):
             if isinstance(operador, Tree) and operador.data == "op_expr_cast":
                 tipoCast = self.visit(operador.children[0])
                 # Verificar se o cast e valido
-                self.validarCast(tipoCast, tipoExp)
+                if not tipoExp.castValido(tipoCast):
+                    self.saveErro(TipoCast(tipoCast, tipoExp))
                 return tipoCast
 
             # Se for "+" ou "-"
             elif operador.value in {"+", "-"}:
                 # Verificar se do operador e valido
-                if not self.isTipoNumero(tipoExp):
-                    raise TipoOperadorUnException(operador.value, tipoExp)
+                if not tipoExp.atribuicaoValida(Tipo_Float()):
+                    self.saveErro(TipoOperadorUn(operador.value, tipoExp))
                 return tipoExp
             # Se for "!" converter para int
             elif operador.value == "!":
                 # Verificar se do operador e valido
-                if not isinstance(tipoExp, Tipo_Bool):
-                    raise TipoOperadorUnException(operador.value, tipoExp)
+                if not tipoExp.atribuicaoValida(Tipo_Bool()):
+                    self.saveErro(TipoOperadorUn(operador.value, tipoExp))
                 return tipoExp
 
     def expr_symb(self, tree):
@@ -423,7 +416,9 @@ class MyInterpreter(Interpreter):
         else:
             subtipos = []
         # Validar o tipo
-        tipo = Tipo.fromNome(nome, subtipos)
+        tipo, erro = Tipo.fromNome(nome, subtipos)
+        if erro is not None:
+            self.saveErro(erro)
         return tipo
 
     # Retorna a lista de subtipos
@@ -459,10 +454,11 @@ class MyInterpreter(Interpreter):
             var = self.getVariavel(nome)
             # Verificar se a variavel existe
             if var is None:
-                raise VariavelNaoDefinidaException(nome)
+                self.saveErro(VariavelNaoDefinida(nome))
+                return Tipo_Anything()
             # Verificar se a variavel foi inicializada
             if not var.inicializada:
-                raise VariavelNaoInicializadaException(nome)
+                self.saveErro(VariavelNaoInicializada(nome))
             return var.tipo
 
         # Se for um tipo complexo
@@ -488,7 +484,9 @@ class MyInterpreter(Interpreter):
                     subtipos = [self.determinarSubtipoComum(element.children)]
             # Retornar
             nome_tipo = element.data.capitalize()
-            tipo = Tipo.fromNome(nome_tipo, subtipos)
+            tipo, erro = Tipo.fromNome(nome_tipo, subtipos)
+            if erro is not None:
+                self.saveErro(erro)
             return tipo
 
         # Se for um acesso a um tipo complexo
@@ -500,8 +498,10 @@ class MyInterpreter(Interpreter):
                 var = self.getVariavel(nome)
                 # Verificar se a variavel existe
                 if var is None:
-                    raise VariavelNaoDefinidaException(nome)
-                tipoVal = var.tipo
+                    self.saveErro(VariavelNaoDefinida(nome))
+                    tipoVal = Tipo_Anything()
+                else:
+                    tipoVal = var.tipo
             else: # isinstance(element.children[0], Tree) and element.children[0].data == "struct"
                 tipoVal = self.visit(element.children[0])
             
@@ -509,7 +509,10 @@ class MyInterpreter(Interpreter):
             tipoExpr = self.visit(element.children[1])
 
             # Validar o tipo final do acesso
-            tipoFinal = tipoVal.validarAcesso(tipoExpr)
+            tipoFinal, erro = tipoVal.validarAcesso(tipoExpr)
+            if erro is not None:
+                self.saveErro(erro)
+
             return tipoFinal
 
         # Se for uma function call

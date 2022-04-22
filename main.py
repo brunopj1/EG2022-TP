@@ -1,7 +1,8 @@
 from gramatica import grammar
-from interpreter import Lark, MyInterpreter
+from interpreter import MyInterpreter
+from lark import Lark
 
-frase = """
+_frase = """
 
 int foo(int a) {
     a++;
@@ -46,10 +47,31 @@ void foo() {
 
     Tuple<bool, bool, int> tuple = ( True, False, (int) 12.0 );
     int b1 = tuple[0];
-    int b2 = tuple[0] * 2;
 }
 
 int bar(int a) { }
+"""
+
+frase = """
+void main(bool b) {
+    int a;
+    int a;
+    c += True;
+}
+
+void main(bool c) {
+    int x = y + 2.1;
+    int y = x[0];
+    List<int> l = [1, 2, 3];
+    x = l[3.1];
+}
+
+int foo() {
+    List<int, int> l1;
+    l1 = [2.1, 3];
+    Tuple<int> t = (1);
+    Ola<int> ola = 1;
+}
 """
 
 l = Lark(grammar)
@@ -57,3 +79,7 @@ i = MyInterpreter()
 
 tree = l.parse(frase)
 i.visit(tree)
+
+print("Erros:")
+for erro in i.erros:
+    print(erro.message)
