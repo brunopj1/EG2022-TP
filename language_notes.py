@@ -31,8 +31,8 @@ class VariavelRedefinida(LanguageNote):
 class VariavelNaoInicializada(LanguageNote):
     def __init__(self, nomeVar):
         super().__init__(
-			f"Variavel '{nomeVar}' nao inicializada",
-			LanguageNoteType.WARNING
+			f"Variavel '{nomeVar}' lida mas nao inicializada",
+			LanguageNoteType.ERROR
 		)
 
 class VariavelNaoUtilizada(LanguageNote):
@@ -78,56 +78,56 @@ class TipoInvalido(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
-class TipoAtribuicao(LanguageNote):
+class AtribuicaoInvalida(LanguageNote):
     def __init__(self, tipoIn, tipoOut):
         super().__init__(
 			f"Atribuicao invalida de uma expressao do tipo {tipoIn} para o tipo {tipoOut}",
 			LanguageNoteType.ERROR
 		)
 
-class TipoCast(LanguageNote):
+class CastInvalido(LanguageNote):
     def __init__(self, tipoCast, tipoExp):
         super().__init__(
 			f"Cast invalido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}",
 			LanguageNoteType.ERROR
 		)
 
-class AcessoTipo(LanguageNote):
+class AcessoInvalido(LanguageNote):
     def __init__(self, tipo):
         super().__init__(
 			f"Acesso invalido a um valor do tipo '{tipo}'",
 			LanguageNoteType.ERROR
 		)
 
-class AcessoTipoKey(LanguageNote):
+class ChaveAcessoInvalida(LanguageNote):
     def __init__(self, tipoEstrutura, tipoKey, tipoKeyEsperada):
         super().__init__(
 			f"Acesso invalido a uma estrutura do tipo '{tipoEstrutura}' com uma chave do tipo '{tipoKey}' (esperada uma chave do tipo '{tipoKeyEsperada}')",
 			LanguageNoteType.ERROR
 		)
 
-class IteracaoTipo(LanguageNote):
+class IteracaoInvalida(LanguageNote):
     def __init__(self, tipo):
         super().__init__(
 			f"Iteracao invalida de um valor do tipo '{tipo}'",
 			LanguageNoteType.ERROR
 		)
 
-class TipoEstrutura(LanguageNote):
+class EstruturaTiposIncompativeis(LanguageNote):
     def __init__(self, tipo1, tipo2):
         super().__init__(
 			f"Estrutura com elementos de tipos incompativeis '{tipo1}' e '{tipo2}'",
 			LanguageNoteType.ERROR
 		)
 
-class TipoOperadorBin(LanguageNote):
+class OperadorBinarioInvalido(LanguageNote):
     def __init__(self, operador, tipoEsq, tipoDir):
         super().__init__(
 			f"Tipos de dados '{tipoEsq}' e '{tipoDir}' invalidos no operador binario '{operador}'",
 			LanguageNoteType.ERROR
 		)
 
-class TipoOperadorUn(LanguageNote):
+class OperadorUnarioInvalido(LanguageNote):
     def __init__(self, operador, tipo):
         super().__init__(
 			f"Tipo de dados '{tipo}' invalido no operador unario '{operador}'",
@@ -138,29 +138,28 @@ class TipoOperadorUn(LanguageNote):
 
 #region Operacoes
 
-
-class CondicaoIf(LanguageNote):
+class CondicaoIfInvalida(LanguageNote):
     def __init__(self):
         super().__init__(
 			f"A condicao da operacao If nao corresponde a um valor do tipo bool",
 			LanguageNoteType.WARNING
 		)
 
-class CondicaoWhile(LanguageNote):
+class CondicaoWhileInvalida(LanguageNote):
     def __init__(self):
         super().__init__(
 			f"A condicao do ciclo While nao corresponde a um valor do tipo bool",
 			LanguageNoteType.WARNING
 		)
 
-class CondicaoFor(LanguageNote):
+class CondicaoForInvalida(LanguageNote):
     def __init__(self):
         super().__init__(
 			f"A condicao do ciclo For nao corresponde a um valor do tipo bool",
 			LanguageNoteType.WARNING
 		)
 
-class IfsAninhados(LanguageNote):
+class IfsAninhadosAgrupaveis(LanguageNote):
     def __init__(self):
         super().__init__(
 			f"Os If's aninhados podem ser agrupados num so If",
@@ -202,7 +201,6 @@ class NumeroTipos(LanguageNote):
 			message,
 			LanguageNoteType.INFO
 		)
-
 
 class NumeroOperacoes(LanguageNote):
 	def __init__(self, numOperacoes, operacoes):

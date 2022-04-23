@@ -184,11 +184,31 @@ void main() {
 }
 """
 
+testes = [
+    (
+        # Titulo
+        "VariavelNaoDefinida", 
+        # Codigo
+        """
+        void main() {
+            int a = 23 - (b * 10);
+        }
+        """
+    )
+]
+
 l = Lark(grammar)
-i = MyInterpreter()
 
-tree = l.parse(frase)
-i.visit(tree)
+for titulo, codigo in testes:
+    tree = l.parse(codigo)
+    i = MyInterpreter()
+    i.visit(tree)
+    i.gerarNotesInfo()
+    generateReport(i.notas, titulo)
 
-i.gerarNotesInfo()
-generateReport(i.notas)
+#l = Lark(grammar)
+#tree = l.parse(frase)
+#i = MyInterpreter()
+#i.visit(tree)
+#i.gerarNotesInfo()
+#generateReport(i.notas)

@@ -63,7 +63,6 @@ class MyInterpreter(Interpreter):
             self.proximoScope = self.scopeAtual.pop(idx) + 1
         # Processar Warnings das variaveis
         for var in vars.values():
-            print(f"Var {var.nome}: {var.num_reads} reads, {var.num_writes} writes")
             if var.num_reads == 0:
                 if var.num_writes == 0:
                     self.saveNote(VariavelNaoUtilizada(var.nome))

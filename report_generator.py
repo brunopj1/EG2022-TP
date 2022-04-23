@@ -32,7 +32,7 @@ templateNota = '''
 
 #endregion
 
-def generateReport(notas):
+def generateReport(notas, nomeFicheiro):
 
     content = ""
 
@@ -56,6 +56,6 @@ def generateReport(notas):
 
     page = templatePage.replace("$(NOTAS)", content, 1)
 
-    f = open("output.html", "w")
+    f = open(nomeFicheiro + ".html", "w")
     f.write(page)
     f.close
