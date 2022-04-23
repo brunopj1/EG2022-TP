@@ -4,31 +4,33 @@ from language_notes import LanguageNoteType
 
 templatePage = '''
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Report</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="w3.css">
-    </head>
-    <body>
-        $(NOTAS)
-    </body>
+<head>
+    <title>Report</title>
+    <meta charset="UTF-8">
+</head>
+<style>
+    body { display: flex; flex-direction: column; gap: 20px; }
+    .note { margin: 20px; padding: 0px 20px 0px 20px; border-radius: 20px; width: 85%; margin: auto; position: relative; background-color: white; border: 4px solid; border-width: 4px; }
+    .note-titulo { position: relative; top: -15px; }
+    .note-descricao { position: relative; top: -15px; }
+    .note-codigo { padding: 10px; border-radius: 10px; position: relative; top: -15px; background-color: rgb(180, 180, 180); }
+    .note-codigo-highlight { color: blue; }
+    .note-posicao { position: absolute; top: 5px; right: 10px; }
+</style>
+<body>$(NOTAS)</body>
 </html>
 '''
 
 templateNota = '''
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid $(COLOR);">
-    <h3 style="display:inline-block">
-        $(NOME)
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        $(POSICAO)
+<div class="note" style="border-color: $(COLOR);">
+    <h1 class="note-titulo">$(NOME)</h1>
+    <p class="note-descricao">$(DESCRICAO)</p>
+    <div class="note-codigo"><code><pre>$(CODIGO)</pre></code></div>
+    <div class="note-posicao">$(POSICAO)</div>
     </div>
-    <p>
-        $(DESCRICAO)
-    </p> 
-</div>
 '''
+
+# TODO <span class="note-codigo-highlight">print("ola");</span>
 
 #endregion
 
@@ -49,8 +51,9 @@ def generateReport(notas, nomeFicheiro):
             posicao = ""
 
         contentNota = templateNota.replace("$(NOME)", n.__class__.__name__, 1)
-        contentNota = contentNota.replace("$(POSICAO)", posicao, 1)
         contentNota = contentNota.replace("$(DESCRICAO)", n.message, 1)
+        contentNota = contentNota.replace("$(CODIGO)", "Teste ;)", 1)
+        contentNota = contentNota.replace("$(POSICAO)", posicao, 1)
         contentNota = contentNota.replace("$(COLOR)", color, 1)
         content += contentNota
 

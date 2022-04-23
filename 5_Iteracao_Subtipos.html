@@ -1,132 +1,87 @@
 
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Report</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="w3.css">
-    </head>
-    <body>
-        
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid orange;">
-    <h3 style="display:inline-block">
-        VariavelNaoUtilizada
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 11, Coluna: 19
+<head>
+    <title>Report</title>
+    <meta charset="UTF-8">
+</head>
+<style>
+    body { display: flex; flex-direction: column; gap: 20px; }
+    .note { margin: 20px; padding: 0px 20px 0px 20px; border-radius: 20px; width: 85%; margin: auto; position: relative; background-color: white; border: 4px solid; border-width: 4px; }
+    .note-titulo { position: relative; top: -15px; }
+    .note-descricao { position: relative; top: -15px; }
+    .note-codigo { padding: 10px; border-radius: 10px; position: relative; top: -15px; background-color: rgb(180, 180, 180); }
+    .note-codigo-highlight { color: blue; }
+    .note-posicao { position: absolute; top: 5px; right: 10px; }
+</style>
+<body>
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoUtilizada</h1>
+    <p class="note-descricao">Variavel 'f' nao utilizada</p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao">Linha: 11, Coluna: 19</div>
     </div>
-    <p>
-        Variavel 'f' nao utilizada
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid red;">
-    <h3 style="display:inline-block">
-        AtribuicaoInvalida
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 13, Coluna: 19
+<div class="note" style="border-color: red;">
+    <h1 class="note-titulo">AtribuicaoInvalida</h1>
+    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo Tuple&lt;float, float&gt; para o tipo float</p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao">Linha: 13, Coluna: 19</div>
     </div>
-    <p>
-        Atribuicao invalida de uma expressao do tipo Tuple&lt;float, float&gt; para o tipo float
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid orange;">
-    <h3 style="display:inline-block">
-        VariavelNaoUtilizada
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 13, Coluna: 19
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoUtilizada</h1>
+    <p class="note-descricao">Variavel 'f' nao utilizada</p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao">Linha: 13, Coluna: 19</div>
     </div>
-    <p>
-        Variavel 'f' nao utilizada
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid orange;">
-    <h3 style="display:inline-block">
-        VariavelNaoUtilizada
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 15, Coluna: 33
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoUtilizada</h1>
+    <p class="note-descricao">Variavel 'entry' nao utilizada</p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao">Linha: 15, Coluna: 33</div>
     </div>
-    <p>
-        Variavel 'entry' nao utilizada
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid red;">
-    <h3 style="display:inline-block">
-        IteracaoInvalida
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 17, Coluna: 22
+<div class="note" style="border-color: red;">
+    <h1 class="note-titulo">IteracaoInvalida</h1>
+    <p class="note-descricao">Iteracao invalida de um valor do tipo 'int'</p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao">Linha: 17, Coluna: 22</div>
     </div>
-    <p>
-        Iteracao invalida de um valor do tipo 'int'
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid orange;">
-    <h3 style="display:inline-block">
-        VariavelNaoUtilizada
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 17, Coluna: 17
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoUtilizada</h1>
+    <p class="note-descricao">Variavel 'i' nao utilizada</p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao">Linha: 17, Coluna: 17</div>
     </div>
-    <p>
-        Variavel 'i' nao utilizada
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid blue;">
-    <h3 style="display:inline-block">
-        NumeroAcessosVariaveis
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
+    <p class="note-descricao">Variavel '<b>l</b>' do tipo <b>List&lt;float&gt;</b>: 1 reads; 1 writes.<br>Variavel '<b>m</b>' do tipo <b>Map&lt;float, float&gt;</b>: 2 reads; 1 writes.<br>Variavel '<b>f</b>' do tipo <b>float</b>: 0 reads; 0 writes.<br>Variavel '<b>f</b>' do tipo <b>float</b>: 0 reads; 0 writes.<br>Variavel '<b>entry</b>' do tipo <b>Tuple&lt;float, float&gt;</b>: 0 reads; 0 writes.<br>Variavel '<b>i</b>' do tipo <b>int</b>: 0 reads; 0 writes.<br></p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao"></div>
     </div>
-    <p>
-        Variavel '<b>l</b>' do tipo <b>List&lt;float&gt;</b>: 1 reads; 1 writes.<br>Variavel '<b>m</b>' do tipo <b>Map&lt;float, float&gt;</b>: 2 reads; 1 writes.<br>Variavel '<b>f</b>' do tipo <b>float</b>: 0 reads; 0 writes.<br>Variavel '<b>f</b>' do tipo <b>float</b>: 0 reads; 0 writes.<br>Variavel '<b>entry</b>' do tipo <b>Tuple&lt;float, float&gt;</b>: 0 reads; 0 writes.<br>Variavel '<b>i</b>' do tipo <b>int</b>: 0 reads; 0 writes.<br>
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid blue;">
-    <h3 style="display:inline-block">
-        NumeroTipos
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroTipos</h1>
+    <p class="note-descricao">O codigo contem <b>5 tipos</b> diferentes.<br><br>Ocorreram 1 ocorrencias do tipo <b>List&lt;float&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>Map&lt;float, float&gt;</b>.<br>Ocorreram 2 ocorrencias do tipo <b>float</b>.<br>Ocorreram 1 ocorrencias do tipo <b>Tuple&lt;float, float&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>int</b>.<br></p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao"></div>
     </div>
-    <p>
-        O codigo contem <b>5 tipos</b> diferentes.<br><br>Ocorreram 1 ocorrencias do tipo <b>List&lt;float&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>Map&lt;float, float&gt;</b>.<br>Ocorreram 2 ocorrencias do tipo <b>float</b>.<br>Ocorreram 1 ocorrencias do tipo <b>Tuple&lt;float, float&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>int</b>.<br>
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid blue;">
-    <h3 style="display:inline-block">
-        NumeroOperacoes
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroOperacoes</h1>
+    <p class="note-descricao">O codigo contem <b>7 operacoes</b>.<br><br>Ocorreram 1 operacoes do tipo <b>funcao</b>.<br>Ocorreram 2 operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram 4 operacoes do tipo <b>ciclo_foreach</b>.<br></p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao"></div>
     </div>
-    <p>
-        O codigo contem <b>7 operacoes</b>.<br><br>Ocorreram 1 operacoes do tipo <b>funcao</b>.<br>Ocorreram 2 operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram 4 operacoes do tipo <b>ciclo_foreach</b>.<br>
-    </p> 
-</div>
 
-<div class="w3-round-xlarge w3-panel" style="border: 2px solid blue;">
-    <h3 style="display:inline-block">
-        NumeroOperacoesDepth
-    </h3>
-    <div style="display: inline-block; text-align: right; float:right"> 
-        
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroOperacoesDepth</h1>
+    <p class="note-descricao">Ocorreram <b>1</b> operacoes com <b>profundeza 0</b>.<br>Ocorreram <b>6</b> operacoes com <b>profundeza 1</b>.<br>Ocorreram <b>0</b> operacoes com <b>profundeza 2</b>.<br></p>
+    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-posicao"></div>
     </div>
-    <p>
-        Ocorreram <b>1</b> operacoes com <b>profundeza 0</b>.<br>Ocorreram <b>6</b> operacoes com <b>profundeza 1</b>.<br>Ocorreram <b>0</b> operacoes com <b>profundeza 2</b>.<br>
-    </p> 
-</div>
-
-    </body>
+</body>
 </html>

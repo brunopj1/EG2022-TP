@@ -6,9 +6,11 @@ from aux_classes import *
 from language_notes import *
 from tipos import *
 
-# TODO adicionar posicaoEnd aos erros
+# TODO adicionar posicaoFim aos erros
 
 class MyInterpreter(Interpreter):
+
+    #region Interpreter Setup
 
     def __init__(self):
         super().__init__()
@@ -39,7 +41,7 @@ class MyInterpreter(Interpreter):
 
         self.notas = []
 
-    #region Variaveis do Interpreter
+    #endregion
 
     #region Metodos Auxiliares do Interpreter
 
@@ -63,9 +65,15 @@ class MyInterpreter(Interpreter):
         for var in vars.values():
             if var.num_reads == 0:
                 if var.num_writes == 0:
-                    self.saveNote(VariavelNaoUtilizada(var.nome), var.posicaoCriacao)
+                    erro = VariavelNaoUtilizada(var.nome)
+                    posicao = var.posicaoCriacao
+                    posicaoFim = (var.posicaoCriacao[0], var.posicaoCriacao[1] + len(var.nome))
+                    self.saveNote(erro, posicao, posicaoFim)
                 else:
-                    self.saveNote(VariavelNaoLida(var.nome), var.posicaoCriacao)
+                    erro = VariavelNaoLida(var.nome)
+                    posicao = var.posicaoCriacao
+                    posicaoFim = (var.posicaoCriacao[0], var.posicaoCriacao[1] + len(var.nome))
+                    self.saveNote(erro, posicao, posicaoFim)
 
     def getVariavel(self, nome):
         for scope in self.variaveis:
@@ -76,13 +84,18 @@ class MyInterpreter(Interpreter):
     def definirVariavel(self, var):
         # Verificar se o nome da variavel e valido
         if var.nome in self.palavrasReservadas:
-            self.saveNote(NomeProibido(var.nome), var.posicaoCriacao)
+            erro = NomeProibido(var.nome)
+            posicao = var.posicaoCriacao
+            posicaoFim = (var.posicaoCriacao[0], var.posicaoCriacao[1] + len(var.nome))
+            self.saveNote(erro, posicao, posicaoFim)
             return
         # Verificar se a variavel existe
         other_var = self.getVariavel(var.nome)
         if other_var is not None:
             erro = VariavelRedefinida(var.nome, other_var.posicaoCriacao)
-            self.saveNote(erro, var.posicaoCriacao)
+            posicao = var.posicaoCriacao
+            posicaoFim = (var.posicaoCriacao[0], var.posicaoCriacao[1] + len(var.nome))
+            self.saveNote(erro, posicao, posicaoFim)
             return
         # Definir a variavel
         scope = len(self.variaveis) - 1
@@ -96,14 +109,19 @@ class MyInterpreter(Interpreter):
     def definirFuncao(self, func):
         # Verificar se o nome da funcao e valido
         if func.nome in self.palavrasReservadas:
-            self.saveNote(NomeProibido(func.nome), func.posicaoCriacao)
+            erro = NomeProibido(func.nome)
+            posicao = func.posicaoCriacao
+            posicaoFim = (func.posicaoCriacao[0], func.posicaoCriacao[1] + len(func.nome))
+            self.saveNote(erro, posicao, posicaoFim)
             return 
         # Verificar se a funcao existe
         self.funcoes.setdefault(func.nome, [])
         for other_func in self.funcoes[func.nome]:
             if func.args_tipo == other_func.args_tipo:
                 erro = FuncaoRedefinida(func.nome, func.args_tipo, other_func.posicaoCriacao)
-                self.saveNote(erro, func.posicaoCriacao)
+                posicao = func.posicaoCriacao
+                posicaoFim = (func.posicaoCriacao[0], func.posicaoCriacao[1] + len(func.nome))
+                self.saveNote(erro, posicao, posicaoFim)
                 return
         # Definir a funcao
         self.funcoes[func.nome].append(func)
@@ -147,15 +165,16 @@ class MyInterpreter(Interpreter):
 
     #region Metodos Auxiliares de Relatorio
 
-    def saveNote(self, note, posicao):
+    def saveNote(self, note, posicao, posicaoFim):
         note.posicao = posicao
+        note.posicaoFim = posicaoFim
         self.notas.append(note)
 
     def gerarNotesInfo(self):
-        self.saveNote(NumeroAcessosVariaveis(self.registoVariaveis)               , None)
-        self.saveNote(NumeroTipos(self.registoTipos)                              , None)
-        self.saveNote(NumeroOperacoes(self.numeroOperacoes, self.registoOperacoes), None)
-        self.saveNote(NumeroOperacoesDepth(self.registoDepths)                    , None)
+        self.saveNote(NumeroAcessosVariaveis(self.registoVariaveis)               , None, None)
+        self.saveNote(NumeroTipos(self.registoTipos)                              , None, None)
+        self.saveNote(NumeroOperacoes(self.numeroOperacoes, self.registoOperacoes), None, None)
+        self.saveNote(NumeroOperacoesDepth(self.registoDepths)                    , None, None)
     
     #endregion
 
@@ -249,7 +268,8 @@ class MyInterpreter(Interpreter):
         if nome not in self.funcoes:
             erro = FuncaoNaoDefinida(nome, args_tipo)
             posicao = (tree.children[0].line, tree.children[0].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
             return Tipo_Unknown()
         # Verificar se existe alguma funcao com o mesmo nome e argumentos
         for func in self.funcoes[nome]:
@@ -264,7 +284,8 @@ class MyInterpreter(Interpreter):
         # A funcao nao existe
         erro = FuncaoNaoDefinida(nome, args_tipo)
         posicao = (tree.children[0].line, tree.children[0].column)
-        self.saveNote(erro, posicao)
+        posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+        self.saveNote(erro, posicao, posicaoFim)
         return Tipo_Unknown()
 
     def funcao_call_args(self, tree):
@@ -299,7 +320,8 @@ class MyInterpreter(Interpreter):
         if not tipoExpr.atribuicaoValida(tipoVar):
             erro = AtribuicaoInvalida(tipoExpr, tipoVar)
             posicao = (tree.children[1].line, tree.children[1].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
 
     def atrib(self, tree):
         varInicializada = None
@@ -309,8 +331,10 @@ class MyInterpreter(Interpreter):
             var = self.getVariavel(nome)
             # Verificar se a variavel existe
             if var is None:
+                erro = VariavelNaoDefinida(nome)
                 posicao = (tree.children[0].line, tree.children[0].column)
-                self.saveNote(VariavelNaoDefinida(nome), posicao)
+                posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+                self.saveNote(erro, posicao, posicaoFim)
                 return
             tipoVar = var.tipo
             tipoVal = self.visit(tree.children[1].children[0])
@@ -322,7 +346,8 @@ class MyInterpreter(Interpreter):
                 if not var.isInicializada(self.scopeAtual):
                     erro = VariavelNaoInicializada(nome)
                     posicao = (tree.children[0].line, tree.children[0].column)
-                    self.saveNote(erro, posicao)
+                    posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+                    self.saveNote(erro, posicao, posicaoFim)
             # Inicializar a variavel
             var.inicializar(self.scopeAtual)
             varInicializada = var
@@ -335,7 +360,8 @@ class MyInterpreter(Interpreter):
         if not tipoVal.atribuicaoValida(tipoVar):
             erro = AtribuicaoInvalida(tipoVal, tipoVar)
             posicao = (tree.children[0].line, tree.children[0].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
 
         # Retornar a variavel inicializada
         return varInicializada
@@ -380,7 +406,8 @@ class MyInterpreter(Interpreter):
         if not isinstance(tipo, Tipo_Bool):
             erro = CondicaoIfInvalida()
             posicao = (tree.children[0].line, tree.children[0].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
         # Verificar se os If's se podem juntar
         operacoesCorpo = tree.children[1].children
         if len(operacoesCorpo) == 1:
@@ -388,7 +415,8 @@ class MyInterpreter(Interpreter):
             if operacao.data == "cond" and len(operacao.children) == 1:
                 erro = IfsAninhadosAgrupaveis()
                 posicao = (tree.line, tree.column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.end_line, tree.end_column)
+                self.saveNote(erro, posicao, posicaoFim)
         # Visitar o corpo
         varsInicializadas = self.visit(tree.children[1])
         # Retornar as variaveis inicializadas
@@ -414,7 +442,8 @@ class MyInterpreter(Interpreter):
         if not isinstance(tipo, Tipo_Bool):
             erro = CondicaoWhileInvalida(False)
             posicao = (tree.children[0].line, tree.children[0].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
@@ -423,7 +452,8 @@ class MyInterpreter(Interpreter):
         if not isinstance(tipo, Tipo_Bool):
             erro = CondicaoWhileInvalida(True)
             posicao = (tree.children[1].line, tree.children[1].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
         self.visit(tree.children[0])
 
     #endregion
@@ -453,7 +483,8 @@ class MyInterpreter(Interpreter):
         if not isinstance(tipo, Tipo_Bool):
             erro = CondicaoForInvalida()
             posicao = (tree.children[0].line, tree.children[0].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
     
     def ciclo_for_head_3(self, tree):
         for element in tree.children:
@@ -479,11 +510,13 @@ class MyInterpreter(Interpreter):
         tipoIter, erro = tipoVal.validarIteracao()
         if erro is not None:
             posicao = (tree.children[2].line, tree.children[2].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[2].end_line, tree.children[2].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
         if not tipoIter.atribuicaoValida(tipoVar):
             erro = AtribuicaoInvalida(tipoIter, tipoVar)
             posicao = (tree.children[1].line, tree.children[1].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
+            self.saveNote(erro, posicao, posicaoFim)
 
     #endregion
 
@@ -502,7 +535,8 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Bool()) or not tipoDir.atribuicaoValida(Tipo_Bool()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
+                self.saveNote(erro, posicao, posicaoFim)
             return Tipo_Bool()
     
     def expr_and(self, tree):
@@ -514,7 +548,8 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Bool()) or not tipoDir.atribuicaoValida(Tipo_Bool()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
+                self.saveNote(erro, posicao, posicaoFim)
             return Tipo_Bool()
     
     def expr_eq(self, tree):
@@ -526,7 +561,8 @@ class MyInterpreter(Interpreter):
             if tipoEsq.atribuicaoValida(Tipo_Void()) or tipoDir.atribuicaoValida(Tipo_Void()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
+                self.saveNote(erro, posicao, posicaoFim)
             return Tipo_Bool()
     
     def expr_ord(self, tree):
@@ -538,7 +574,8 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_line)
+                self.saveNote(erro, posicao, posicaoFim)
             return Tipo_Bool()
     
     def expr_add(self, tree):
@@ -550,7 +587,8 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_line)
+                self.saveNote(erro, posicao, posicaoFim)
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
     
     def expr_mul(self, tree):
@@ -562,7 +600,8 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_line)
+                self.saveNote(erro, posicao, posicaoFim)
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
 
     def expr_un(self, tree):
@@ -581,7 +620,8 @@ class MyInterpreter(Interpreter):
                 if not tipoExp.castValido(tipoCast):
                     erro = CastInvalido(tipoCast, tipoExp)
                     posicao = (operador.line, operador.column)
-                    self.saveNote(erro, posicao)
+                    posicaoFim = (operador.end_line, operador.end_line)
+                    self.saveNote(erro, posicao, posicaoFim)
                 return tipoCast
 
             # Se for "+" ou "-"
@@ -590,7 +630,8 @@ class MyInterpreter(Interpreter):
                 if not tipoExp.atribuicaoValida(Tipo_Float()):
                     erro = OperadorUnarioInvalido(operador.value, tipoExp)
                     posicao = (operador.line, operador.column)
-                    self.saveNote(erro, posicao)
+                    posicaoFim = (operador.end_line, operador.end_line)
+                    self.saveNote(erro, posicao, posicaoFim)
                     return Tipo_Int()
                 return tipoExp
             # Se for "!" converter para int
@@ -599,7 +640,8 @@ class MyInterpreter(Interpreter):
                 if not tipoExp.atribuicaoValida(Tipo_Bool()):
                     erro = OperadorUnarioInvalido(operador.value, tipoExp)
                     posicao = (operador.line, operador.column)
-                    self.saveNote(erro, posicao)
+                    posicaoFim = (operador.end_line, operador.end_line)
+                    self.saveNote(erro, posicao, posicaoFim)
                 return Tipo_Bool()
 
     def expr_symb(self, tree):
@@ -615,7 +657,8 @@ class MyInterpreter(Interpreter):
             tipoFinal, erro = tipoVal.validarAcesso(tipoKey)
             if erro is not None:
                 posicao = (tree.children[0].line, tree.children[0].column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (tree.children[0].end_line, tree.children[0].end_line)
+                self.saveNote(erro, posicao, posicaoFim)
             return tipoFinal
 
     #endregion
@@ -634,7 +677,8 @@ class MyInterpreter(Interpreter):
         tipo, erro = Tipo.fromNome(nome, subtipos)
         if erro is not None:
             posicao = (tree.children[0].line, tree.children[0].column)
-            self.saveNote(erro, posicao)
+            posicaoFim = (tree.children[0].end_line, tree.children[0].end_line)
+            self.saveNote(erro, posicao, posicaoFim)
         return tipo
 
     # Retorna a lista de subtipos
@@ -670,8 +714,10 @@ class MyInterpreter(Interpreter):
             var = self.getVariavel(nome)
             # Verificar se a variavel existe
             if var is None:
+                erro = VariavelNaoDefinida(nome)
                 posicao = (element.line, element.column)
-                self.saveNote(VariavelNaoDefinida(nome), posicao)
+                posicaoFim = (element.end_line, element.end_line)
+                self.saveNote(erro, posicao, posicaoFim)
                 return Tipo_Unknown()
             # Registar uma operacao de write
             var.num_reads += 1
@@ -679,7 +725,8 @@ class MyInterpreter(Interpreter):
             if not var.isInicializada(self.scopeAtual):
                 erro = VariavelNaoInicializada(nome)
                 posicao = (element.line, element.column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (element.end_line, element.end_line)
+                self.saveNote(erro, posicao, posicaoFim)
             return var.tipo
 
         # Se for um tipo complexo
@@ -701,10 +748,12 @@ class MyInterpreter(Interpreter):
                     subtipos = [subtipo1, subtipo2]
                     if erro1 is not None:
                         posicao = (element.line, element.column)
-                        self.saveNote(erro1, posicao)
+                        posicaoFim = (element.end_line, element.end_line)
+                        self.saveNote(erro1, posicao, posicaoFim)
                     if erro2 is not None:
                         posicao = (element.line, element.column)
-                        self.saveNote(erro2, posicao)
+                        posicaoFim = (element.end_line, element.end_line)
+                        self.saveNote(erro2, posicao, posicaoFim)
 
                 elif element.data == "tuple":
                     subtipos = list(map(lambda elem : self.visit(elem), element.children))
@@ -713,14 +762,16 @@ class MyInterpreter(Interpreter):
                     subtipos = [subtipos]
                     if erro is not None:
                         posicao = (element.line, element.column)
-                        self.saveNote(erro, posicao)
+                        posicaoFim = (element.end_line, element.end_line)
+                        self.saveNote(erro, posicao, posicaoFim)
 
             # Retornar
             nome_tipo = element.data.capitalize()
             tipo, erro = Tipo.fromNome(nome_tipo, subtipos)
             if erro is not None:
                 posicao = (element.line, element.column)
-                self.saveNote(erro, posicao)
+                posicaoFim = (element.end_line, element.end_line)
+                self.saveNote(erro, posicao, posicaoFim)
             return tipo
 
         # Se for uma function call

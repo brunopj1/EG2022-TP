@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+    <title>Report</title>
+    <meta charset="UTF-8">
+</head>
+<style>
+    body { display: flex; flex-direction: column; gap: 20px; }
+    .note { margin: 20px; padding: 0px 20px 0px 20px; border-radius: 20px; width: 85%; margin: auto; position: relative; background-color: white; border: solid; border-width: 4px; border-color: red; }
+    .note-titulo { position: relative; top: -15px; }
+    .note-descricao { position: relative; top: -15px; }
+    .note-codigo { padding: 10px; border-radius: 10px; position: relative; top: -15px; background-color: rgb(180, 180, 180); }
+    .note-codigo-highlight { color: blue; }
+    .note-posicao { position: absolute; top: 5px; right: 10px; }
+</style>
+<body>
+    <div class="note">
+        <h1 class="note-titulo">Titulo</h1>
+        <p class="note-descricao">Descricao 1<br>Descricao 2</p>
+        <div class="note-codigo">
+            <code><pre>
+void main() {
+    <span class="note-codigo-highlight">print("ola");</span>
+}
+            </pre></code>
+        </div>
+        <div class="note-posicao">Linha 100, Coluna 100</div>
+    </div>
+</body>
+</html>

@@ -7,10 +7,11 @@ class LanguageNoteType(Enum):
     INFO    = 2
 
 class LanguageNote():
-    def __init__(self, message, tipo):
-        self.message = message
-        self.tipo = tipo
-        self.posicao = None
+	def __init__(self, message, tipo):
+		self.message = message
+		self.tipo = tipo
+		self.posicao = None
+		self.posicaoFim = None
 
 #region Variaveis
 
