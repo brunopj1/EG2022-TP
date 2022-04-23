@@ -215,13 +215,13 @@ class MyInterpreter(Interpreter):
     #region Funcoes
 
     def funcao(self, tree):
+        # Criar um scope para os args
+        self.addScope(False)
+        # Definir a funcao
         nome = tree.children[1].value
         tipo_return = self.visit(tree.children[0])
         args = self.visit(tree.children[2])
-        # Definir a funcao
         self.definirFuncao(Funcao(nome, tipo_return, args))
-        # Criar um scope para os args e adiciona-los
-        self.addScope(False)
         # Validar o corpo
         self.visit(tree.children[3])
         # Apagar o scope
@@ -247,8 +247,14 @@ class MyInterpreter(Interpreter):
             return Tipo_Unknown()
         # Verificar se existe alguma funcao com o mesmo nome e argumentos
         for func in self.funcoes[nome]:
-            if func.args_tipo == args_tipo:
-                return func.tipo_ret
+            if len(func.args_tipo) == len(args_tipo):
+                funcaoValida = True
+                for func_arg, call_arg in zip(func.args_tipo, args_tipo):
+                    if not call_arg.atribuicaoValida(func_arg):
+                        funcaoValida = False
+                        break
+                if funcaoValida:
+                    return func.tipo_ret
         # A funcao nao existe
         self.saveNote(FuncaoNaoDefinida(nome, args_tipo))
         return Tipo_Unknown()

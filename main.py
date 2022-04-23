@@ -190,11 +190,32 @@ testes = [
         "Variaveis", 
         # Codigo
         """
+        int a = b;
+
         void main() {
-            int a = b;
             int b;
             int a = b;
             int c;
+        }
+        """
+    ),
+    (
+        # Titulo
+        "Funcoes", 
+        # Codigo
+        """
+        void foo() { }
+        bool foo() { }
+
+        bool foo(int a) { }
+        void foo(int b) { }
+
+        bool foo(float a, int b) { }
+
+        void main() {
+            int x = 2;
+            bool b1 = foo(1, x);
+            bool b2 = bar();
         }
         """
     )
