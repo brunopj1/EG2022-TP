@@ -139,6 +139,46 @@ void bar() {
 
 """
 
+frase = """
+void main() {
+    int i;
+    int j;
+
+    while (True) {
+        i = 0;
+        j = 1;
+        i++;
+    }
+
+    if (True) {
+        i++;
+    }
+    i++;
+}
+"""
+
+frase = """
+void main() {
+    int i;
+    int j;
+
+    if (True) {
+        i = 0;
+    }
+    else if (False) {
+        i = 1;
+        j = 0;
+    }
+    else {
+        i = 2;
+        j = 1;
+    }
+
+    i++;
+    j++;
+}
+"""
+
 l = Lark(grammar)
 i = MyInterpreter()
 
@@ -147,7 +187,3 @@ i.visit(tree)
 
 i.gerarNotesInfo()
 generateReport(i.notas)
-
-#print("Notas:")
-#for erro in i.notas:
-#    print(erro.message)

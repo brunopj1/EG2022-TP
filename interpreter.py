@@ -1,5 +1,6 @@
 from lark import Tree, Token
 from lark.visitors import Interpreter
+from functools import reduce
 
 from aux_classes import *
 from language_notes import *
@@ -22,7 +23,7 @@ class MyInterpreter(Interpreter):
     #region Variaveis do Interpreter
 
     # Variaveis de controlo
-    scopes = []
+    variaveis = []
     funcoes = {}
     palavrasReservadas = set() # Inseridas na funcao __init__
 
@@ -36,6 +37,9 @@ class MyInterpreter(Interpreter):
 
     registoDepths = {}
     depth = 0
+
+    scopeAtual = [0]
+    proximoScope = 0
 
     notas = []
 
@@ -57,7 +61,7 @@ class MyInterpreter(Interpreter):
     #region Metodos Auxiliares do Interpreter
 
     def getVariavel(self, nome):
-        for scope in self.scopes:
+        for scope in self.variaveis:
             if nome in scope.keys():
                 return scope[nome]
         return None
@@ -73,8 +77,8 @@ class MyInterpreter(Interpreter):
             self.saveNote(VariavelRedefinida(var.nome))
             return
         # Definir a variavel
-        scope = len(self.scopes) - 1
-        self.scopes[scope][var.nome] = var
+        scope = len(self.variaveis) - 1
+        self.variaveis[scope][var.nome] = var
         # Guardar o registo da variavel
         self.registoVariaveis.append(var)
         # Guardar o registo do tipo
@@ -130,6 +134,14 @@ class MyInterpreter(Interpreter):
         # Retornar o tipo
         return subtipos.pop()
 
+    def mesmoScope(self, scope1, scope2):
+        if len(scope1) != len(scope2):
+            return False
+        for a, b in zip(scope1, scope2):
+            if a != b:
+                return False
+        return True
+
     #endregion
 
     #region Start
@@ -139,7 +151,7 @@ class MyInterpreter(Interpreter):
 
     def codigo(self, tree):
         # Criar um scope para as variaveis globais
-        self.scopes.append(dict())
+        self.variaveis.append(dict())
         # Inicializar a depth 0
         self.registoDepths[0] = 0
         # Processar as operacoes
@@ -156,14 +168,18 @@ class MyInterpreter(Interpreter):
             # Visitar a operacao
             self.visit(elem)
         # Apagar o scope
-        self.scopes.pop(len(self.scopes) - 1)
+        self.variaveis.pop(len(self.variaveis) - 1)
 
     def corpo(self, tree):
         # Criar novo scope
-        self.scopes.append(dict())
+        self.variaveis.append(dict())
+        self.scopeAtual.append(self.proximoScope)
+        self.proximoScope = 0
         # Incrementar a depth
         self.depth += 1
         self.registoDepths.setdefault(self.depth, 0)
+        # Set de variaveis inicializadas no corpo
+        varsInicializadas = set()
         # Validar operacoes
         for elem in tree.children:
             elem = elem.children[0]
@@ -180,11 +196,18 @@ class MyInterpreter(Interpreter):
             if _elem.data != "cond":
                 self.registoDepths[self.depth] += 1
             # Visitar a operacao
-            self.visit(elem)
+            var = self.visit(elem)
+            if var is not None:
+                varsInicializadas.add(var)
         # Apagar o scope
-        self.scopes.pop(len(self.scopes) - 1)
+        self.variaveis.pop(len(self.variaveis) - 1)
+        idx = len(self.scopeAtual) - 1
+        self.proximoScope = self.scopeAtual[idx] + 1
+        self.scopeAtual.pop(idx)
         # Decrementar a depth
         self.depth -= 1
+        # Retornar as variaveis inicializadas no corpo
+        return varsInicializadas
 
     #endregion
 
@@ -197,11 +220,11 @@ class MyInterpreter(Interpreter):
         # Definir a funcao
         self.definirFuncao(Funcao(nome, tipo_return, args))
         # Criar um scope para os args e adiciona-los
-        self.scopes.append(dict())
+        self.variaveis.append(dict())
         # Validar o corpo
         self.visit(tree.children[3])
         # Apagar o scope
-        self.scopes.pop(len(self.scopes) - 1)
+        self.variaveis.pop(len(self.variaveis) - 1)
 
     def funcao_args(self, tree):
         args = []
@@ -209,7 +232,7 @@ class MyInterpreter(Interpreter):
             # Definir a variavel
             tipo = self.visit(tree.children[idx])
             nome = tree.children[idx + 1].value
-            self.definirVariavel(Variavel(nome, tipo, True))
+            self.definirVariavel(Variavel(nome, tipo, self.scopeAtual, True))
             # Guardar a variavel
             args.append((tipo, nome))
         return args
@@ -245,13 +268,13 @@ class MyInterpreter(Interpreter):
         nome = tree.children[1].value
         tipo = self.visit(tree.children[0])
         # Definir a variavel
-        self.definirVariavel(Variavel(nome, tipo, False))
+        self.definirVariavel(Variavel(nome, tipo, self.scopeAtual, False))
     
     def decl_atrib(self, tree):
         # Definir a variavel
         nomeVar = tree.children[1].value
         tipoVar = self.visit(tree.children[0])
-        var = Variavel(nomeVar, tipoVar, True)
+        var = Variavel(nomeVar, tipoVar, self.scopeAtual, True)
         self.definirVariavel(var)
         # Registar uma operacao de write
         var.num_writes += 1
@@ -261,6 +284,7 @@ class MyInterpreter(Interpreter):
             self.saveNote(TipoAtribuicao(tipoExpr, tipoVar))
 
     def atrib(self, tree):
+        varInicializada = None
         # Se for uma variavel
         if isinstance(tree.children[0], Token):
             nome = tree.children[0].value
@@ -279,11 +303,11 @@ class MyInterpreter(Interpreter):
             # Se a atribuicao for binaria ou unaria
             if tree.children[1].children[0].data != "atrib_simples":
                 # Verificar se a variavel foi inicializada
-                if not var.inicializada:
+                if not var.isInicializada(self.scopeAtual):
                     self.saveNote(VariavelNaoInicializada(nome))
             # Inicializar a variavel
-            if not var.inicializada:
-                var.inicializada = True
+            var.inicializar(self.scopeAtual)
+            varInicializada = var
         # Se for uma expressao
         else: # isinstance(tree.children[0], Tree):
             tipoVar = self.visit(tree.children[0])
@@ -292,6 +316,9 @@ class MyInterpreter(Interpreter):
         # Verificar se o tipo da expressao é valido
         if not tipoVal.atribuicaoValida(tipoVar):
             self.saveNote(TipoAtribuicao(tipoVal, tipoVar))
+
+        # Retornar a variavel inicializada
+        return varInicializada
 
     def atrib_simples(self, tree):
         tipoExpr = self.visit(tree.children[0])
@@ -309,6 +336,7 @@ class MyInterpreter(Interpreter):
     #region Condicionais
 
     def cond(self, tree):
+        varsInicializadas = []
         for elem in tree.children:
             # Registar a operacao
             self.registoOperacoes.setdefault(elem.data, 0)
@@ -318,7 +346,13 @@ class MyInterpreter(Interpreter):
             # Registar a operacao na depth atual
             self.registoDepths[self.depth] += 1
             # Visitar
-            self.visit(elem)
+            varsInicializadas.append(self.visit(elem))
+        # Verificar se alguma variavel deve ser inicializada no scope externo
+        if tree.children[len(tree.children) - 1].data == "cond_else":
+            varsParaInicializar = reduce(lambda x, y: x.intersection(y), varsInicializadas)
+            for var in varsParaInicializar:
+                var.inicializar(self.scopeAtual)
+
 
     def cond_if(self, tree):
         # Validar a condicao do If
@@ -332,13 +366,19 @@ class MyInterpreter(Interpreter):
             if operacao.data == "cond" and len(operacao.children) == 1:
                 self.saveNote(IfsAninhados())
         # Visitar o corpo
-        self.visit(tree.children[1])
+        varsInicializadas = self.visit(tree.children[1])
+        # Retornar as variaveis inicializadas
+        return varsInicializadas
 
     def cond_else_if(self, tree):
-        self.visit(tree.children[0])
+        varsInicializadas = self.visit(tree.children[0])
+        # Retornar as variaveis inicializadas
+        return varsInicializadas
 
     def cond_else(self, tree):
-        self.visit(tree.children[0])
+        varsInicializadas = self.visit(tree.children[0])
+        # Retornar as variaveis inicializadas
+        return varsInicializadas
 
     #endregion
 
@@ -364,12 +404,12 @@ class MyInterpreter(Interpreter):
 
     def ciclo_for(self, tree):
         # Criar novo scope (para as variaveis definidas no head)
-        self.scopes.append(dict())
+        self.variaveis.append(dict())
         # Visitar o head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
         # Apagar o scope
-        self.scopes.pop(len(self.scopes) - 1)
+        self.variaveis.pop(len(self.variaveis) - 1)
     
     def ciclo_for_head(self, tree):
         for element in tree.children:
@@ -391,19 +431,19 @@ class MyInterpreter(Interpreter):
 
     def ciclo_foreach(self, tree):
         # Criar novo scope (para as variaveis definidas no head)
-        self.scopes.append(dict())
+        self.variaveis.append(dict())
         # Visitar a head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
         # Apagar o scope
-        self.scopes.pop(len(self.scopes) - 1)
+        self.variaveis.pop(len(self.variaveis) - 1)
 
     # type VAR_NOME "in" expr
     def ciclo_foreach_head(self, tree):
         # Declarar a variavel
         tipoVar = self.visit(tree.children[0])
         nomeVar = tree.children[1].value
-        self.definirVariavel(Variavel(nomeVar, tipoVar, True))
+        self.definirVariavel(Variavel(nomeVar, tipoVar, self.scopeAtual, True))
         # Validar o tipo da variavel
         tipoVal = self.visit(tree.children[2])
         tipoIter, erro = tipoVal.validarIteracao()
@@ -581,7 +621,7 @@ class MyInterpreter(Interpreter):
             # Registar uma operacao de write
             var.num_writes += 1
             # Verificar se a variavel foi inicializada
-            if not var.inicializada:
+            if not var.isInicializada(self.scopeAtual):
                 self.saveNote(VariavelNaoInicializada(nome))
             return var.tipo
 
