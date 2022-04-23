@@ -54,30 +54,6 @@ int bar(int a) { }
 """
 
 frase = """
-void main(bool b) {
-    int a;
-    int a;
-    c += True;
-}
-
-void main(bool c) {
-    int x = y + 2.1;
-    int y = x[0];
-    List<int> l = [1, 2, 3];
-    x = l[3.1];
-}
-
-int foo() {
-    List<int, int> l1;
-    l1 = [2.1, 3];
-    Tuple<int> t = (1);
-    Ola<int> ola = 1;
-    List l = [1, 2];
-    if (1) { }
-}
-"""
-
-frase = """
 void main(int a) {
     a = 0;
 }
@@ -158,9 +134,38 @@ void main() {
 """
 
 frase = """
+void main(bool b) {
+    int a;
+    int a;
+    c += True;
+}
+
+void main(bool c) {
+    int x = y + 2.1;
+    int y = x[0];
+    List<int> l = [1, 2, 3];
+    x = l[3.1];
+    
+    foreach(int i in l) {
+        
+    }
+}
+
+int foo() {
+    List<int, int> l1;
+    l1 = [2.1, 3];
+    Tuple<int> t = (1);
+    Ola<int> ola = 1;
+    List l = [1, 2];
+    if (1) { }
+}
+"""
+
+frase = """
 void main() {
     int i;
     int j;
+    int k;
 
     if (True) {
         i = 0;

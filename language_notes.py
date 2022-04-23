@@ -35,6 +35,20 @@ class VariavelNaoInicializada(LanguageNote):
 			LanguageNoteType.WARNING
 		)
 
+class VariavelNaoUtilizada(LanguageNote):
+    def __init__(self, nomeVar):
+        super().__init__(
+			f"Variavel '{nomeVar}' nao utilizada",
+			LanguageNoteType.WARNING
+		)
+
+class VariavelNaoLida(LanguageNote):
+    def __init__(self, nomeVar):
+        super().__init__(
+			f"Variavel '{nomeVar}' atribuida mas nao lida",
+			LanguageNoteType.WARNING
+		)
+
 #endregion
 
 #region Funcoes

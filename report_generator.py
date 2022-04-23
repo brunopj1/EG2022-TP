@@ -1,7 +1,5 @@
 from language_notes import LanguageNoteType
 
-# TODO remover a linha / coluna de INFOs
-
 #region Templates HTML
 
 templatePage = '''
@@ -24,7 +22,7 @@ templateNota = '''
         $(NOME)
     </h3>
     <div style="display: inline-block; text-align: right; float:right"> 
-        Linha: 0, Coluna: 0
+        $(POSICAO)
     </div>
     <p>
         $(DESCRICAO)
@@ -42,12 +40,16 @@ def generateReport(notas):
 
         if n.tipo == LanguageNoteType.ERROR:
             color = "red"
+            posicao = "Linha: 0, Coluna: 0"
         elif n.tipo == LanguageNoteType.WARNING:
             color = "orange"
+            posicao = "Linha: 0, Coluna: 0"
         else: #n.tipo == LanguageNoteType.INFO
             color = "blue"
+            posicao = ""
 
         contentNota = templateNota.replace("$(NOME)", n.__class__.__name__, 1)
+        contentNota = contentNota.replace("$(POSICAO)", posicao, 1)
         contentNota = contentNota.replace("$(DESCRICAO)", n.message, 1)
         contentNota = contentNota.replace("$(COLOR)", color, 1)
         content += contentNota

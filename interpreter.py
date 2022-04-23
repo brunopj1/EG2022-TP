@@ -7,9 +7,7 @@ from language_notes import *
 from tipos import *
 
 # TODO adicionar a linha e coluna do erro
-# TODO variaveis nao inicializadas esta mal feito (scopes)
 # TODO se tiver tempo fazer returns
-# TODO se tiver tempo fazer warnings para variaveis nao usadas
 
 class MyInterpreter(Interpreter):
 
@@ -36,29 +34,41 @@ class MyInterpreter(Interpreter):
     numeroOperacoes = 0
 
     registoDepths = {}
-    depth = 0
+    depth = -1
 
-    scopeAtual = [0]
+    scopeAtual = []
     proximoScope = 0
 
     notas = []
 
     #endregion
 
-    #region Metodos Auxiliares de Relatorio
-
-    def saveNote(self, note):
-        self.notas.append(note)
-
-    def gerarNotesInfo(self):
-        self.saveNote(NumeroAcessosVariaveis(self.registoVariaveis))
-        self.saveNote(NumeroTipos(self.registoTipos))
-        self.saveNote(NumeroOperacoes(self.numeroOperacoes, self.registoOperacoes))
-        self.saveNote(NumeroOperacoesDepth(self.registoDepths))
-    
-    #endregion
-
     #region Metodos Auxiliares do Interpreter
+
+    def addScope(self, mudarDepth):
+        self.variaveis.append(dict())
+        # Mudar a depth
+        if mudarDepth:
+            self.depth += 1
+            self.registoDepths.setdefault(self.depth, 0)
+            self.scopeAtual.append(self.proximoScope)
+            self.proximoScope = 0
+
+    def popScope(self, mudarDepth):
+        vars = self.variaveis.pop(len(self.variaveis) - 1)
+        # Mudar a depth
+        if mudarDepth:
+            self.depth -= 1
+            idx = len(self.scopeAtual) - 1
+            self.proximoScope = self.scopeAtual.pop(idx) + 1
+        # Processar Warnings das variaveis
+        for var in vars.values():
+            print(f"Var {var.nome}: {var.num_reads} reads, {var.num_writes} writes")
+            if var.num_reads == 0:
+                if var.num_writes == 0:
+                    self.saveNote(VariavelNaoUtilizada(var.nome))
+                else:
+                    self.saveNote(VariavelNaoLida(var.nome))
 
     def getVariavel(self, nome):
         for scope in self.variaveis:
@@ -134,14 +144,19 @@ class MyInterpreter(Interpreter):
         # Retornar o tipo
         return subtipos.pop()
 
-    def mesmoScope(self, scope1, scope2):
-        if len(scope1) != len(scope2):
-            return False
-        for a, b in zip(scope1, scope2):
-            if a != b:
-                return False
-        return True
+    #endregion
 
+    #region Metodos Auxiliares de Relatorio
+
+    def saveNote(self, note):
+        self.notas.append(note)
+
+    def gerarNotesInfo(self):
+        self.saveNote(NumeroAcessosVariaveis(self.registoVariaveis))
+        self.saveNote(NumeroTipos(self.registoTipos))
+        self.saveNote(NumeroOperacoes(self.numeroOperacoes, self.registoOperacoes))
+        self.saveNote(NumeroOperacoesDepth(self.registoDepths))
+    
     #endregion
 
     #region Start
@@ -150,10 +165,8 @@ class MyInterpreter(Interpreter):
         self.visit(tree.children[0])
 
     def codigo(self, tree):
-        # Criar um scope para as variaveis globais
-        self.variaveis.append(dict())
-        # Inicializar a depth 0
-        self.registoDepths[0] = 0
+        # Criar um scope
+        self.addScope(True)
         # Processar as operacoes
         for elem in tree.children:
             # Registar a operacao
@@ -168,16 +181,11 @@ class MyInterpreter(Interpreter):
             # Visitar a operacao
             self.visit(elem)
         # Apagar o scope
-        self.variaveis.pop(len(self.variaveis) - 1)
+        self.popScope(True)
 
     def corpo(self, tree):
         # Criar novo scope
-        self.variaveis.append(dict())
-        self.scopeAtual.append(self.proximoScope)
-        self.proximoScope = 0
-        # Incrementar a depth
-        self.depth += 1
-        self.registoDepths.setdefault(self.depth, 0)
+        self.addScope(True)
         # Set de variaveis inicializadas no corpo
         varsInicializadas = set()
         # Validar operacoes
@@ -200,12 +208,7 @@ class MyInterpreter(Interpreter):
             if var is not None:
                 varsInicializadas.add(var)
         # Apagar o scope
-        self.variaveis.pop(len(self.variaveis) - 1)
-        idx = len(self.scopeAtual) - 1
-        self.proximoScope = self.scopeAtual[idx] + 1
-        self.scopeAtual.pop(idx)
-        # Decrementar a depth
-        self.depth -= 1
+        self.popScope(True)
         # Retornar as variaveis inicializadas no corpo
         return varsInicializadas
 
@@ -220,11 +223,11 @@ class MyInterpreter(Interpreter):
         # Definir a funcao
         self.definirFuncao(Funcao(nome, tipo_return, args))
         # Criar um scope para os args e adiciona-los
-        self.variaveis.append(dict())
+        self.addScope(False)
         # Validar o corpo
         self.visit(tree.children[3])
         # Apagar o scope
-        self.variaveis.pop(len(self.variaveis) - 1)
+        self.popScope(False)
 
     def funcao_args(self, tree):
         args = []
@@ -289,17 +292,14 @@ class MyInterpreter(Interpreter):
         if isinstance(tree.children[0], Token):
             nome = tree.children[0].value
             var = self.getVariavel(nome)
-            tipoVar = var.tipo
-            tipoVal = self.visit(tree.children[1].children[0])
             # Verificar se a variavel existe
             if var is None:
                 self.saveNote(VariavelNaoDefinida(nome))
                 return
+            tipoVar = var.tipo
+            tipoVal = self.visit(tree.children[1].children[0])
             # Registar uma operacao de write
             var.num_writes += 1
-            # Registar uma operacao de read
-            if tree.children[1].children[0].data != "atrib_simples":
-                var.num_reads += 1
             # Se a atribuicao for binaria ou unaria
             if tree.children[1].children[0].data != "atrib_simples":
                 # Verificar se a variavel foi inicializada
@@ -404,12 +404,12 @@ class MyInterpreter(Interpreter):
 
     def ciclo_for(self, tree):
         # Criar novo scope (para as variaveis definidas no head)
-        self.variaveis.append(dict())
+        self.addScope(False)
         # Visitar o head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
         # Apagar o scope
-        self.variaveis.pop(len(self.variaveis) - 1)
+        self.popScope(False)
     
     def ciclo_for_head(self, tree):
         for element in tree.children:
@@ -431,12 +431,12 @@ class MyInterpreter(Interpreter):
 
     def ciclo_foreach(self, tree):
         # Criar novo scope (para as variaveis definidas no head)
-        self.variaveis.append(dict())
+        self.addScope(False)
         # Visitar a head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
         # Apagar o scope
-        self.variaveis.pop(len(self.variaveis) - 1)
+        self.popScope(False)
 
     # type VAR_NOME "in" expr
     def ciclo_foreach_head(self, tree):
