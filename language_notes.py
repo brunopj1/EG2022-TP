@@ -22,9 +22,9 @@ class VariavelNaoDefinida(LanguageNote):
 		)
 
 class VariavelRedefinida(LanguageNote):
-    def __init__(self, nomeVar):
+    def __init__(self, nomeVar, posicaoPrimeiraDef):
         super().__init__(
-			f"Variavel '{nomeVar}' redefinida",
+			f"Variavel '{nomeVar}' redefinida.<br>Definida previamente na linha {posicaoPrimeiraDef[0]}, coluna {posicaoPrimeiraDef[1]}",
 			LanguageNoteType.ERROR
 		)
 
@@ -61,9 +61,9 @@ class FuncaoNaoDefinida(LanguageNote):
 		)
 
 class FuncaoRedefinida(LanguageNote):
-    def __init__(self, nomeFunc, argsFunc):
+    def __init__(self, nomeFunc, argsFunc, posicaoPrimeiraDef):
         super().__init__(
-			f"Funcao '{nomeFunc}' com os argumentos {argsFunc} redefinida",
+			f"Funcao '{nomeFunc}' com os argumentos {argsFunc} redefinida.<br>Definida previamente na linha {posicaoPrimeiraDef[0]}, coluna {posicaoPrimeiraDef[1]}",
 			LanguageNoteType.ERROR
 		)
 

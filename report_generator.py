@@ -40,10 +40,10 @@ def generateReport(notas, nomeFicheiro):
 
         if n.tipo == LanguageNoteType.ERROR:
             color = "red"
-            posicao = "Linha: 0, Coluna: 0"
+            posicao = f"Linha: {n.posicao[0]}, Coluna: {n.posicao[1]}"
         elif n.tipo == LanguageNoteType.WARNING:
             color = "orange"
-            posicao = "Linha: 0, Coluna: 0"
+            posicao = f"Linha: {n.posicao[0]}, Coluna: {n.posicao[1]}"
         else: #n.tipo == LanguageNoteType.INFO
             color = "blue"
             posicao = ""

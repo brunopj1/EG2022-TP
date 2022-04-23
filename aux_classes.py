@@ -2,12 +2,14 @@ from re import S
 
 
 class Variavel:
-    def __init__(self, nome, tipo, scopeCriacao, inicializada):
+    def __init__(self, nome, tipo, scopeCriacao, inicializada, posicaoCriacao):
         self.nome = nome
         self.tipo = tipo
 
         self._scopeCriacao = scopeCriacao.copy()
         self._scopeInicializacao = scopeCriacao.copy() if inicializada else None
+
+        self.posicaoCriacao = posicaoCriacao
 
         self.num_reads = 0
         self.num_writes = 0
@@ -53,7 +55,7 @@ class Variavel:
     #endregion
 
 class Funcao:
-    def __init__(self, nome, tipo_ret, args):
+    def __init__(self, nome, tipo_ret, args, posicaoCriacao):
         self.nome = nome
         self.tipo_ret = tipo_ret
         self.args_tipo = []
@@ -61,3 +63,5 @@ class Funcao:
         for tipo, nome in args:
             self.args_tipo.append(tipo)
             self.args_nome.append(nome)
+
+        self.posicaoCriacao = posicaoCriacao
