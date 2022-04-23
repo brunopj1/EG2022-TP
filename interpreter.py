@@ -13,35 +13,34 @@ class MyInterpreter(Interpreter):
 
     def __init__(self):
         super().__init__()
+        self.setupVariables()
 
-        # Palavras reservadas
+    def setupVariables(self):
+        # Variaveis do interpreter
+
+        self.palavrasReservadas = set()
         self.palavrasReservadas.update({ True, False })
         self.palavrasReservadas.update(Tipo.getNomeTipos())
+        
+        self.variaveis = []
+        self.funcoes = {}
+
+        self.scopeAtual = []
+        self.proximoScope = 0
+
+        self.depth = -1
+
+        # Variaveis de relatorio
+
+        self.registoVariaveis = []
+        self.registoTipos = {}
+        self.registoOperacoes = {}
+        self.numeroOperacoes = 0
+        self.registoDepths = {}
+
+        self.notas = []
 
     #region Variaveis do Interpreter
-
-    # Variaveis de controlo
-    variaveis = []
-    funcoes = {}
-    palavrasReservadas = set() # Inseridas na funcao __init__
-
-    # Variaveis de relatorio
-    registoVariaveis = []
-
-    registoTipos = {}
-
-    registoOperacoes = {}
-    numeroOperacoes = 0
-
-    registoDepths = {}
-    depth = -1
-
-    scopeAtual = []
-    proximoScope = 0
-
-    notas = []
-
-    #endregion
 
     #region Metodos Auxiliares do Interpreter
 
@@ -618,7 +617,7 @@ class MyInterpreter(Interpreter):
                 self.saveNote(VariavelNaoDefinida(nome))
                 return Tipo_Unknown()
             # Registar uma operacao de write
-            var.num_writes += 1
+            var.num_reads += 1
             # Verificar se a variavel foi inicializada
             if not var.isInicializada(self.scopeAtual):
                 self.saveNote(VariavelNaoInicializada(nome))

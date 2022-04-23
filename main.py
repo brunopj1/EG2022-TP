@@ -187,23 +187,28 @@ void main() {
 testes = [
     (
         # Titulo
-        "VariavelNaoDefinida", 
+        "Variaveis", 
         # Codigo
         """
         void main() {
-            int a = 23 - (b * 10);
+            int a = b;
+            int b;
+            int a = b;
+            int c;
         }
         """
     )
 ]
 
 l = Lark(grammar)
+i = MyInterpreter()
 
-for titulo, codigo in testes:
+for num, (tag, codigo) in enumerate(testes):
     tree = l.parse(codigo)
-    i = MyInterpreter()
+    i.setupVariables()
     i.visit(tree)
     i.gerarNotesInfo()
+    titulo = str(num) + "_" + tag
     generateReport(i.notas, titulo)
 
 #l = Lark(grammar)
