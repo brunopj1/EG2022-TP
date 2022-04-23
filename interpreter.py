@@ -19,7 +19,7 @@ class MyInterpreter(Interpreter):
         # Variaveis do interpreter
 
         self.palavrasReservadas = set()
-        self.palavrasReservadas.update({ True, False })
+        self.palavrasReservadas.update({ "True", "False" })
         self.palavrasReservadas.update(Tipo.getNomeTipos())
         
         self.variaveis = []
@@ -392,14 +392,14 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
         if not isinstance(tipo, Tipo_Bool):
-            self.saveNote(CondicaoWhileInvalida())
+            self.saveNote(CondicaoWhileInvalida(False))
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
         if not isinstance(tipo, Tipo_Bool):
-            self.saveNote(CondicaoWhileInvalida())
+            self.saveNote(CondicaoWhileInvalida(True))
         self.visit(tree.children[1])
 
     #endregion
@@ -546,13 +546,14 @@ class MyInterpreter(Interpreter):
                 # Verificar se do operador e valido
                 if not tipoExp.atribuicaoValida(Tipo_Float()):
                     self.saveNote(OperadorUnarioInvalido(operador.value, tipoExp))
+                    return Tipo_Int()
                 return tipoExp
             # Se for "!" converter para int
             elif operador.value == "!":
                 # Verificar se do operador e valido
                 if not tipoExp.atribuicaoValida(Tipo_Bool()):
                     self.saveNote(OperadorUnarioInvalido(operador.value, tipoExp))
-                return tipoExp
+                return Tipo_Bool()
 
     def expr_symb(self, tree):
         # Se for um valor ou uma expressao entre parenteses

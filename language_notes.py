@@ -78,6 +78,13 @@ class TipoInvalido(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
+class EstruturaTiposIncompativeis(LanguageNote):
+    def __init__(self, tipo1, tipo2):
+        super().__init__(
+			f"Estrutura com elementos de tipos incompativeis '{tipo1}' e '{tipo2}'",
+			LanguageNoteType.ERROR
+		)
+
 class AtribuicaoInvalida(LanguageNote):
     def __init__(self, tipoIn, tipoOut):
         super().__init__(
@@ -113,12 +120,9 @@ class IteracaoInvalida(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
-class EstruturaTiposIncompativeis(LanguageNote):
-    def __init__(self, tipo1, tipo2):
-        super().__init__(
-			f"Estrutura com elementos de tipos incompativeis '{tipo1}' e '{tipo2}'",
-			LanguageNoteType.ERROR
-		)
+#endregion
+
+#region Operacoes
 
 class OperadorBinarioInvalido(LanguageNote):
     def __init__(self, operador, tipoEsq, tipoDir):
@@ -134,10 +138,6 @@ class OperadorUnarioInvalido(LanguageNote):
 			LanguageNoteType.ERROR
 		)
 
-#endregion
-
-#region Operacoes
-
 class CondicaoIfInvalida(LanguageNote):
     def __init__(self):
         super().__init__(
@@ -146,9 +146,10 @@ class CondicaoIfInvalida(LanguageNote):
 		)
 
 class CondicaoWhileInvalida(LanguageNote):
-    def __init__(self):
-        super().__init__(
-			f"A condicao do ciclo While nao corresponde a um valor do tipo bool",
+	def __init__(self, isDoWhile):
+		ciclo = "Do_While" if isDoWhile else "While"
+		super().__init__(
+			f"A condicao do ciclo {ciclo} nao corresponde a um valor do tipo bool",
 			LanguageNoteType.WARNING
 		)
 

@@ -281,7 +281,7 @@ class Tipo_Map(Tipo):
     def validarAcesso(self, tipoExpr):
         # Validar o tipo da expressao
         erro = None
-        if type(tipoExpr) is not type(self._subtipos[0]):
+        if not tipoExpr.atribuicaoValida(self._subtipos[0]):
             erro = ChaveAcessoInvalida(self, tipoExpr, self._subtipos[0])
         # Obter o tipo do resultado
         tipo, _ = Tipo.fromNome(self._subtipos[1]._nome, self._subtipos[1]._subtipos)
