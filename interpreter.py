@@ -138,7 +138,7 @@ class MyInterpreter(Interpreter):
                 subtipos.remove(tipo2)
             # Se nao houver conversao
             else:
-                self.saveNote(TipoEstrutura(tipo1, tipo2))
+                self.saveNote(EstruturaTiposIncompativeis(tipo1, tipo2))
                 return Tipo_Unknown()
         # Retornar o tipo
         return subtipos.pop()
@@ -283,7 +283,7 @@ class MyInterpreter(Interpreter):
         # Validar expressao
         tipoExpr = self.visit(tree.children[2])
         if not tipoExpr.atribuicaoValida(tipoVar):
-            self.saveNote(TipoAtribuicao(tipoExpr, tipoVar))
+            self.saveNote(AtribuicaoInvalida(tipoExpr, tipoVar))
 
     def atrib(self, tree):
         varInicializada = None
@@ -314,7 +314,7 @@ class MyInterpreter(Interpreter):
         
         # Verificar se o tipo da expressao é valido
         if not tipoVal.atribuicaoValida(tipoVar):
-            self.saveNote(TipoAtribuicao(tipoVal, tipoVar))
+            self.saveNote(AtribuicaoInvalida(tipoVal, tipoVar))
 
         # Retornar a variavel inicializada
         return varInicializada
@@ -357,13 +357,13 @@ class MyInterpreter(Interpreter):
         # Validar a condicao do If
         tipo = self.visit(tree.children[0])
         if not isinstance(tipo, Tipo_Bool):
-            self.saveNote(CondicaoIf())
+            self.saveNote(CondicaoIfInvalida())
         # Verificar se os If's se podem juntar
         operacoesCorpo = tree.children[1].children
         if len(operacoesCorpo) == 1:
             operacao = operacoesCorpo[0].children[0]
             if operacao.data == "cond" and len(operacao.children) == 1:
-                self.saveNote(IfsAninhados())
+                self.saveNote(IfsAninhadosAgrupaveis())
         # Visitar o corpo
         varsInicializadas = self.visit(tree.children[1])
         # Retornar as variaveis inicializadas
@@ -387,14 +387,14 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
         if not isinstance(tipo, Tipo_Bool):
-            self.saveNote(CondicaoWhile())
+            self.saveNote(CondicaoWhileInvalida())
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do While
         if not isinstance(tipo, Tipo_Bool):
-            self.saveNote(CondicaoWhile())
+            self.saveNote(CondicaoWhileInvalida())
         self.visit(tree.children[1])
 
     #endregion
@@ -422,7 +422,7 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         # Validar a condicao do For
         if not isinstance(tipo, Tipo_Bool):
-            self.saveNote(CondicaoFor())
+            self.saveNote(CondicaoForInvalida())
     
     def ciclo_for_head_3(self, tree):
         for element in tree.children:
@@ -449,7 +449,7 @@ class MyInterpreter(Interpreter):
         if erro is not None:
             self.saveNote(erro)
         if not tipoIter.atribuicaoValida(tipoVar):
-            self.saveNote(TipoAtribuicao(tipoIter, tipoVar))
+            self.saveNote(AtribuicaoInvalida(tipoIter, tipoVar))
 
     #endregion
 
@@ -466,7 +466,7 @@ class MyInterpreter(Interpreter):
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if not tipoEsq.atribuicaoValida(Tipo_Bool()) or not tipoDir.atribuicaoValida(Tipo_Bool()):
-                self.saveNote(TipoOperadorBin(operador, tipoEsq, tipoDir))
+                self.saveNote(OperadorBinarioInvalido(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_and(self, tree):
@@ -476,7 +476,7 @@ class MyInterpreter(Interpreter):
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if not tipoEsq.atribuicaoValida(Tipo_Bool()) or not tipoDir.atribuicaoValida(Tipo_Bool()):
-                self.saveNote(TipoOperadorBin(operador, tipoEsq, tipoDir))
+                self.saveNote(OperadorBinarioInvalido(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_eq(self, tree):
@@ -486,7 +486,7 @@ class MyInterpreter(Interpreter):
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if tipoEsq.atribuicaoValida(Tipo_Void()) or tipoDir.atribuicaoValida(Tipo_Void()):
-                self.saveNote(TipoOperadorBin(operador, tipoEsq, tipoDir))
+                self.saveNote(OperadorBinarioInvalido(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_ord(self, tree):
@@ -496,7 +496,7 @@ class MyInterpreter(Interpreter):
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
-                self.saveNote(TipoOperadorBin(operador, tipoEsq, tipoDir))
+                self.saveNote(OperadorBinarioInvalido(operador, tipoEsq, tipoDir))
             return Tipo_Bool()
     
     def expr_add(self, tree):
@@ -506,7 +506,7 @@ class MyInterpreter(Interpreter):
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
-                self.saveNote(TipoOperadorBin(operador, tipoEsq, tipoDir))
+                self.saveNote(OperadorBinarioInvalido(operador, tipoEsq, tipoDir))
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
     
     def expr_mul(self, tree):
@@ -516,7 +516,7 @@ class MyInterpreter(Interpreter):
             tipoEsq, tipoDir, operador = self.getMembrosExprBin(tree)
             # Validar tipos
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
-                self.saveNote(TipoOperadorBin(operador, tipoEsq, tipoDir))
+                self.saveNote(OperadorBinarioInvalido(operador, tipoEsq, tipoDir))
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
 
     def expr_un(self, tree):
@@ -533,20 +533,20 @@ class MyInterpreter(Interpreter):
                 tipoCast = self.visit(operador.children[0])
                 # Verificar se o cast e valido
                 if not tipoExp.castValido(tipoCast):
-                    self.saveNote(TipoCast(tipoCast, tipoExp))
+                    self.saveNote(CastInvalido(tipoCast, tipoExp))
                 return tipoCast
 
             # Se for "+" ou "-"
             elif operador.value in {"+", "-"}:
                 # Verificar se do operador e valido
                 if not tipoExp.atribuicaoValida(Tipo_Float()):
-                    self.saveNote(TipoOperadorUn(operador.value, tipoExp))
+                    self.saveNote(OperadorUnarioInvalido(operador.value, tipoExp))
                 return tipoExp
             # Se for "!" converter para int
             elif operador.value == "!":
                 # Verificar se do operador e valido
                 if not tipoExp.atribuicaoValida(Tipo_Bool()):
-                    self.saveNote(TipoOperadorUn(operador.value, tipoExp))
+                    self.saveNote(OperadorUnarioInvalido(operador.value, tipoExp))
                 return tipoExp
 
     def expr_symb(self, tree):
