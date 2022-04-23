@@ -116,13 +116,13 @@ class Tipo_Void(Tipo):
         return False
 
     def validarAcesso(self, tipoExpr):
-        erro = AcessoTipo(self)
+        erro = AcessoInvalido(self)
         tipo = Tipo_Unknown()
         return tipo, erro
 
     def validarIteracao(self):
         tipo = Tipo_Unknown()
-        erro = IteracaoTipo(self)
+        erro = IteracaoInvalida(self)
         return tipo, erro
 
 # Utilizado para listas vazias e erros
@@ -137,13 +137,13 @@ class Tipo_Unknown(Tipo):
         return True
         
     def validarAcesso(self, tipoExpr):
-        erro = AcessoTipo(self)
+        erro = AcessoInvalido(self)
         tipo = Tipo_Unknown()
         return tipo, erro
 
     def validarIteracao(self):
         tipo = Tipo_Unknown()
-        erro = IteracaoTipo(self)
+        erro = IteracaoInvalida(self)
         return tipo, erro
 
 class Tipo_Int(Tipo):
@@ -157,13 +157,13 @@ class Tipo_Int(Tipo):
         return tipoFinal.isAnyOf({ Tipo_Int, Tipo_Float })
         
     def validarAcesso(self, tipoExpr):
-        erro = AcessoTipo(self)
+        erro = AcessoInvalido(self)
         tipo = Tipo_Unknown()
         return tipo, erro
 
     def validarIteracao(self):
         tipo = Tipo_Unknown()
-        erro = IteracaoTipo(self)
+        erro = IteracaoInvalida(self)
         return tipo, erro
 
 class Tipo_Float(Tipo):
@@ -177,13 +177,13 @@ class Tipo_Float(Tipo):
         return tipoFinal.isAnyOf({ Tipo_Int, Tipo_Float })
         
     def validarAcesso(self, tipoExpr):
-        erro = AcessoTipo(self)
+        erro = AcessoInvalido(self)
         tipo = Tipo_Unknown()
         return tipo, erro
 
     def validarIteracao(self):
         tipo = Tipo_Unknown()
-        erro = IteracaoTipo(self)
+        erro = IteracaoInvalida(self)
         return tipo, erro
 
 class Tipo_Bool(Tipo):
@@ -197,13 +197,13 @@ class Tipo_Bool(Tipo):
         return tipoFinal.isAnyOf({ Tipo_Bool })
         
     def validarAcesso(self, tipoExpr):
-        erro = AcessoTipo(self)
+        erro = AcessoInvalido(self)
         tipo = Tipo_Unknown()
         return tipo, erro
 
     def validarIteracao(self):
         tipo = Tipo_Unknown()
-        erro = IteracaoTipo(self)
+        erro = IteracaoInvalida(self)
         return tipo, erro
 
 class Tipo_List(Tipo):
@@ -226,7 +226,7 @@ class Tipo_List(Tipo):
         # Validar o tipo da expressao
         erro = None
         if not isinstance(tipoExpr, Tipo_Int):
-            erro = AcessoTipoKey(self, tipoExpr, Tipo_Int())
+            erro = ChaveAcessoInvalida(self, tipoExpr, Tipo_Int())
         # Obter o tipo do resultado
         tipo, _ = Tipo.fromNome(self._subtipos[0]._nome, self._subtipos[0]._subtipos)
         return tipo, erro
@@ -253,7 +253,7 @@ class Tipo_Set(Tipo):
             return False
             
     def validarAcesso(self, tipoExpr):
-        erro = AcessoTipo(self)
+        erro = AcessoInvalido(self)
         tipo = Tipo_Unknown()
         return tipo, erro
 
@@ -282,7 +282,7 @@ class Tipo_Map(Tipo):
         # Validar o tipo da expressao
         erro = None
         if type(tipoExpr) is not type(self._subtipos[0]):
-            erro = AcessoTipoKey(self, tipoExpr, self._subtipos[0])
+            erro = ChaveAcessoInvalida(self, tipoExpr, self._subtipos[0])
         # Obter o tipo do resultado
         tipo, _ = Tipo.fromNome(self._subtipos[1]._nome, self._subtipos[1]._subtipos)
         return tipo, erro
@@ -314,12 +314,12 @@ class Tipo_Tuple(Tipo):
         # Validar o tipo da expressao
         erro = None
         if not isinstance(tipoExpr, Tipo_Int):
-            erro = AcessoTipoKey(self, tipoExpr, Tipo_Int())
+            erro = ChaveAcessoInvalida(self, tipoExpr, Tipo_Int())
         # Obter o tipo do resultado (Tipo_Unknown)
         tipo = Tipo_Unknown()
         return tipo, erro
 
     def validarIteracao(self):
         tipo = Tipo_Unknown()
-        erro = IteracaoTipo(self)
+        erro = IteracaoInvalida(self)
         return tipo, erro
