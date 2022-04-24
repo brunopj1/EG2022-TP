@@ -176,6 +176,7 @@ l = Lark(grammar, propagate_positions=True)
 i = MyInterpreter()
 
 for num, (tag, codigo) in enumerate(testes):
+    codigo = codigo[1:-1]
     tree = l.parse(codigo)
     i.setupVariables()
     i.visit(tree)

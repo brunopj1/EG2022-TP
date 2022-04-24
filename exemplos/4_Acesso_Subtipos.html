@@ -20,82 +20,82 @@
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">ChaveAcessoInvalida</h1>
     <p class="note-descricao">Acesso invalido a uma estrutura do tipo <b>List&lt;float&gt;</b> com uma chave do tipo <b>float</b>.<br>Esperada uma chave do tipo <b>int</b>.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 4 |     float f1 = l[2];</pre>
-<pre class="codigo-odd"> 5 |     float f2 = <b class="note-codigo-highlight">l</b>[2.1];</pre>
-<pre class="codigo-even"> 6 | </pre></code></div>
-    <div class="note-posicao">Linha: 5, Coluna: 16</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 3 |     float f1 = l[2];</pre>
+<pre class="codigo-odd"> 4 |     float f2 = <b class="note-codigo-highlight">l</b>[2.1];</pre>
+<pre class="codigo-even"> 5 | </pre></code></div>
+    <div class="note-posicao">Linha: 4, Coluna: 16</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">ChaveAcessoInvalida</h1>
     <p class="note-descricao">Acesso invalido a uma estrutura do tipo <b>Map&lt;float, float&gt;</b> com uma chave do tipo <b>bool</b>.<br>Esperada uma chave do tipo <b>float</b>.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 14 |     float f4 = m[1];</pre>
-<pre class="codigo-odd"> 15 |     float f5 = <b class="note-codigo-highlight">m</b>[True];</pre>
-<pre class="codigo-even"> 16 | </pre></code></div>
-    <div class="note-posicao">Linha: 15, Coluna: 16</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 13 |     float f4 = m[1];</pre>
+<pre class="codigo-odd"> 14 |     float f5 = <b class="note-codigo-highlight">m</b>[True];</pre>
+<pre class="codigo-even"> 15 | </pre></code></div>
+    <div class="note-posicao">Linha: 14, Coluna: 16</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">AcessoInvalido</h1>
     <p class="note-descricao">Acesso invalido a um valor do tipo <b>int</b>.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 16 | </pre>
-<pre class="codigo-odd"> 17 |     int i = <b class="note-codigo-highlight">1</b>[0];</pre>
-<pre class="codigo-even"> 18 | }</pre></code></div>
-    <div class="note-posicao">Linha: 17, Coluna: 13</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 15 | </pre>
+<pre class="codigo-odd"> 16 |     int i = <b class="note-codigo-highlight">1</b>[0];</pre>
+<pre class="codigo-even"> 17 | }</pre></code></div>
+    <div class="note-posicao">Linha: 16, Coluna: 13</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>f1</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 3 |     List&lt;float&gt; l = [ 1, 2, 3 ];</pre>
-<pre class="codigo-odd"> 4 |     float <b class="note-codigo-highlight">f1</b> = l[2];</pre>
-<pre class="codigo-even"> 5 |     float f2 = l[2.1];</pre></code></div>
-    <div class="note-posicao">Linha: 4, Coluna: 11</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 2 |     List&lt;float&gt; l = [ 1, 2, 3 ];</pre>
+<pre class="codigo-odd"> 3 |     float <b class="note-codigo-highlight">f1</b> = l[2];</pre>
+<pre class="codigo-even"> 4 |     float f2 = l[2.1];</pre></code></div>
+    <div class="note-posicao">Linha: 3, Coluna: 11</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>f2</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 4 |     float f1 = l[2];</pre>
-<pre class="codigo-odd"> 5 |     float <b class="note-codigo-highlight">f2</b> = l[2.1];</pre>
-<pre class="codigo-even"> 6 | </pre></code></div>
-    <div class="note-posicao">Linha: 5, Coluna: 11</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 3 |     float f1 = l[2];</pre>
+<pre class="codigo-odd"> 4 |     float <b class="note-codigo-highlight">f2</b> = l[2.1];</pre>
+<pre class="codigo-even"> 5 | </pre></code></div>
+    <div class="note-posicao">Linha: 4, Coluna: 11</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>f3</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 12 | </pre>
-<pre class="codigo-odd"> 13 |     float <b class="note-codigo-highlight">f3</b> = m[1.0];</pre>
-<pre class="codigo-even"> 14 |     float f4 = m[1];</pre></code></div>
-    <div class="note-posicao">Linha: 13, Coluna: 11</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 11 | </pre>
+<pre class="codigo-odd"> 12 |     float <b class="note-codigo-highlight">f3</b> = m[1.0];</pre>
+<pre class="codigo-even"> 13 |     float f4 = m[1];</pre></code></div>
+    <div class="note-posicao">Linha: 12, Coluna: 11</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>f4</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 13 |     float f3 = m[1.0];</pre>
-<pre class="codigo-odd"> 14 |     float <b class="note-codigo-highlight">f4</b> = m[1];</pre>
-<pre class="codigo-even"> 15 |     float f5 = m[True];</pre></code></div>
-    <div class="note-posicao">Linha: 14, Coluna: 11</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 12 |     float f3 = m[1.0];</pre>
+<pre class="codigo-odd"> 13 |     float <b class="note-codigo-highlight">f4</b> = m[1];</pre>
+<pre class="codigo-even"> 14 |     float f5 = m[True];</pre></code></div>
+    <div class="note-posicao">Linha: 13, Coluna: 11</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>f5</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 14 |     float f4 = m[1];</pre>
-<pre class="codigo-odd"> 15 |     float <b class="note-codigo-highlight">f5</b> = m[True];</pre>
-<pre class="codigo-even"> 16 | </pre></code></div>
-    <div class="note-posicao">Linha: 15, Coluna: 11</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 13 |     float f4 = m[1];</pre>
+<pre class="codigo-odd"> 14 |     float <b class="note-codigo-highlight">f5</b> = m[True];</pre>
+<pre class="codigo-even"> 15 | </pre></code></div>
+    <div class="note-posicao">Linha: 14, Coluna: 11</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>i</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 16 | </pre>
-<pre class="codigo-odd"> 17 |     int <b class="note-codigo-highlight">i</b> = 1[0];</pre>
-<pre class="codigo-even"> 18 | }</pre></code></div>
-    <div class="note-posicao">Linha: 17, Coluna: 9</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 15 | </pre>
+<pre class="codigo-odd"> 16 |     int <b class="note-codigo-highlight">i</b> = 1[0];</pre>
+<pre class="codigo-even"> 17 | }</pre></code></div>
+    <div class="note-posicao">Linha: 16, Coluna: 9</div>
 </div>
 
 <div class="note" style="border-color: blue;">

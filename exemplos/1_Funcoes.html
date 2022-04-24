@@ -19,101 +19,101 @@
 <body>
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">FuncaoRedefinida</h1>
-    <p class="note-descricao">Funcao <b>foo (  )</b> redefinida.<br>Definida previamente na linha 2, coluna 1.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 2 | void foo() { }</pre>
-<pre class="codigo-odd"> 3 | <b class="note-codigo-highlight">bool foo()</b> { }</pre>
-<pre class="codigo-even"> 4 | </pre></code></div>
-    <div class="note-posicao">Linha: 3, Coluna: 1</div>
+    <p class="note-descricao">Funcao <b>foo (  )</b> redefinida.<br>Definida previamente na linha 1, coluna 1.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 1 | void foo() { }</pre>
+<pre class="codigo-odd"> 2 | <b class="note-codigo-highlight">bool foo()</b> { }</pre>
+<pre class="codigo-even"> 3 | </pre></code></div>
+    <div class="note-posicao">Linha: 2, Coluna: 1</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>a</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 4 | </pre>
-<pre class="codigo-odd"> 5 | bool foo(int <b class="note-codigo-highlight">a</b>, List&lt;bool&gt; b) { }</pre>
-<pre class="codigo-even"> 6 | void foo(int a1, List&lt;bool&gt; b1) { }</pre></code></div>
-    <div class="note-posicao">Linha: 5, Coluna: 14</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 3 | </pre>
+<pre class="codigo-odd"> 4 | bool foo(int <b class="note-codigo-highlight">a</b>, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-even"> 5 | void foo(int a1, List&lt;bool&gt; b1) { }</pre></code></div>
+    <div class="note-posicao">Linha: 4, Coluna: 14</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>b</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 4 | </pre>
-<pre class="codigo-odd"> 5 | bool foo(int a, List&lt;bool&gt; <b class="note-codigo-highlight">b</b>) { }</pre>
-<pre class="codigo-even"> 6 | void foo(int a1, List&lt;bool&gt; b1) { }</pre></code></div>
-    <div class="note-posicao">Linha: 5, Coluna: 28</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 3 | </pre>
+<pre class="codigo-odd"> 4 | bool foo(int a, List&lt;bool&gt; <b class="note-codigo-highlight">b</b>) { }</pre>
+<pre class="codigo-even"> 5 | void foo(int a1, List&lt;bool&gt; b1) { }</pre></code></div>
+    <div class="note-posicao">Linha: 4, Coluna: 28</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">FuncaoRedefinida</h1>
-    <p class="note-descricao">Funcao <b>foo ( int, List&lt;bool&gt; )</b> redefinida.<br>Definida previamente na linha 5, coluna 1.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
-<pre class="codigo-odd"> 6 | <b class="note-codigo-highlight">void foo(int a1, List&lt;bool&gt; b1)</b> { }</pre>
-<pre class="codigo-even"> 7 | </pre></code></div>
-    <div class="note-posicao">Linha: 6, Coluna: 1</div>
+    <p class="note-descricao">Funcao <b>foo ( int, List&lt;bool&gt; )</b> redefinida.<br>Definida previamente na linha 4, coluna 1.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 4 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-odd"> 5 | <b class="note-codigo-highlight">void foo(int a1, List&lt;bool&gt; b1)</b> { }</pre>
+<pre class="codigo-even"> 6 | </pre></code></div>
+    <div class="note-posicao">Linha: 5, Coluna: 1</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>a1</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
-<pre class="codigo-odd"> 6 | void foo(int <b class="note-codigo-highlight">a1</b>, List&lt;bool&gt; b1) { }</pre>
-<pre class="codigo-even"> 7 | </pre></code></div>
-    <div class="note-posicao">Linha: 6, Coluna: 14</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 4 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-odd"> 5 | void foo(int <b class="note-codigo-highlight">a1</b>, List&lt;bool&gt; b1) { }</pre>
+<pre class="codigo-even"> 6 | </pre></code></div>
+    <div class="note-posicao">Linha: 5, Coluna: 14</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>b1</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
-<pre class="codigo-odd"> 6 | void foo(int a1, List&lt;bool&gt; <b class="note-codigo-highlight">b1</b>) { }</pre>
-<pre class="codigo-even"> 7 | </pre></code></div>
-    <div class="note-posicao">Linha: 6, Coluna: 29</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 4 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-odd"> 5 | void foo(int a1, List&lt;bool&gt; <b class="note-codigo-highlight">b1</b>) { }</pre>
+<pre class="codigo-even"> 6 | </pre></code></div>
+    <div class="note-posicao">Linha: 5, Coluna: 29</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>a</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even">  7 | </pre>
-<pre class="codigo-odd">  8 | bool foo(float <b class="note-codigo-highlight">a</b>, int b) { }</pre>
-<pre class="codigo-even">  9 | </pre></code></div>
-    <div class="note-posicao">Linha: 8, Coluna: 16</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
+<pre class="codigo-odd"> 7 | bool foo(float <b class="note-codigo-highlight">a</b>, int b) { }</pre>
+<pre class="codigo-even"> 8 | </pre></code></div>
+    <div class="note-posicao">Linha: 7, Coluna: 16</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>b</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even">  7 | </pre>
-<pre class="codigo-odd">  8 | bool foo(float a, int <b class="note-codigo-highlight">b</b>) { }</pre>
-<pre class="codigo-even">  9 | </pre></code></div>
-    <div class="note-posicao">Linha: 8, Coluna: 23</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
+<pre class="codigo-odd"> 7 | bool foo(float a, int <b class="note-codigo-highlight">b</b>) { }</pre>
+<pre class="codigo-even"> 8 | </pre></code></div>
+    <div class="note-posicao">Linha: 7, Coluna: 23</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">FuncaoNaoDefinida</h1>
     <p class="note-descricao">Funcao <b>bar (  )</b> nao definida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 12 |     bool b1 = foo(1, x);</pre>
-<pre class="codigo-odd"> 13 |     bool b2 = <b class="note-codigo-highlight">bar</b>();</pre>
-<pre class="codigo-even"> 14 | }</pre></code></div>
-    <div class="note-posicao">Linha: 13, Coluna: 15</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 11 |     bool b1 = foo(1, x);</pre>
+<pre class="codigo-odd"> 12 |     bool b2 = <b class="note-codigo-highlight">bar</b>();</pre>
+<pre class="codigo-even"> 13 | }</pre></code></div>
+    <div class="note-posicao">Linha: 12, Coluna: 15</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>b1</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 11 |     int x = 2;</pre>
-<pre class="codigo-odd"> 12 |     bool <b class="note-codigo-highlight">b1</b> = foo(1, x);</pre>
-<pre class="codigo-even"> 13 |     bool b2 = bar();</pre></code></div>
-    <div class="note-posicao">Linha: 12, Coluna: 10</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 10 |     int x = 2;</pre>
+<pre class="codigo-odd"> 11 |     bool <b class="note-codigo-highlight">b1</b> = foo(1, x);</pre>
+<pre class="codigo-even"> 12 |     bool b2 = bar();</pre></code></div>
+    <div class="note-posicao">Linha: 11, Coluna: 10</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel <b>b2</b> atribuida mas nao lida.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 12 |     bool b1 = foo(1, x);</pre>
-<pre class="codigo-odd"> 13 |     bool <b class="note-codigo-highlight">b2</b> = bar();</pre>
-<pre class="codigo-even"> 14 | }</pre></code></div>
-    <div class="note-posicao">Linha: 13, Coluna: 10</div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 11 |     bool b1 = foo(1, x);</pre>
+<pre class="codigo-odd"> 12 |     bool <b class="note-codigo-highlight">b2</b> = bar();</pre>
+<pre class="codigo-even"> 13 | }</pre></code></div>
+    <div class="note-posicao">Linha: 12, Coluna: 10</div>
 </div>
 
 <div class="note" style="border-color: blue;">
