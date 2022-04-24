@@ -39,20 +39,13 @@ ciclo_foreach      : "foreach" "(" ciclo_foreach_head ")" "{" corpo "}"
 ciclo_foreach_head : type VAR_NOME "in" expr
 
 expr      : expr_or
-expr_or   : (expr_or OP_EXPR_OR expr_or)
-          | expr_and
-expr_and  : (expr_and OP_EXPR_AND expr_and)
-          | expr_eq
-expr_eq   : (expr_eq OP_EXPR_EQ expr_eq)
-          | expr_ord
-expr_ord  : (expr_ord OP_EXPR_ORD expr_ord)
-          | expr_add
-expr_add  : (expr_add OP_EXPR_ADD expr_add)
-          | expr_mul
-expr_mul  : (expr_mul OP_EXPR_MUL expr_mul)
-          | expr_un
-expr_un   : expr_op_un expr_un
-          | expr_symb
+expr_or   : (expr_or OP_EXPR_OR expr_or)    | expr_and
+expr_and  : (expr_and OP_EXPR_AND expr_and) | expr_eq
+expr_eq   : (expr_eq OP_EXPR_EQ expr_eq)    | expr_ord
+expr_ord  : (expr_ord OP_EXPR_ORD expr_ord) | expr_add
+expr_add  : (expr_add OP_EXPR_ADD expr_add) | expr_mul
+expr_mul  : (expr_mul OP_EXPR_MUL expr_mul) | expr_un
+expr_un   : expr_op_un expr_un              | expr_symb
 expr_symb : val
           | expr "[" expr "]"
           | "(" expr ")"
@@ -68,15 +61,15 @@ OP_EXPR_ADD : "+" | "-"
 OP_EXPR_MUL : "*" | "/" | "%"
 OP_EXPR_UN  : "+" | "-" | "!"
 
-type    : TYPE_NOME subtype?
-subtype : "<" type ("," type)* ">"
-
 val    : num | BOOL | VAR_NOME | struct | funcao_call
 struct : list | set | map | tuple
 num    : INT | FLOAT
 INT    : /\d+/
 FLOAT  : /\d+\.\d+/
 BOOL   : "True" | "False"
+
+type    : TYPE_NOME subtype?
+subtype : "<" type ("," type)* ">"
 
 list  : "[" (expr ("," expr)*)? "]"
 set   : "«" (expr ("," expr)*)? "»"
