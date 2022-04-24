@@ -30,27 +30,45 @@
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel <b>a</b> nao utilizada.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 4 | </pre>
-<pre class="codigo-odd"> 5 | bool foo(int <b class="note-codigo-highlight">a</b>) { }</pre>
-<pre class="codigo-even"> 6 | void foo(int b) { }</pre></code></div>
+<pre class="codigo-odd"> 5 | bool foo(int <b class="note-codigo-highlight">a</b>, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-even"> 6 | void foo(int a1, List&lt;bool&gt; b1) { }</pre></code></div>
     <div class="note-posicao">Linha: 5, Coluna: 14</div>
+</div>
+
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoUtilizada</h1>
+    <p class="note-descricao">Variavel <b>b</b> nao utilizada.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 4 | </pre>
+<pre class="codigo-odd"> 5 | bool foo(int a, List&lt;bool&gt; <b class="note-codigo-highlight">b</b>) { }</pre>
+<pre class="codigo-even"> 6 | void foo(int a1, List&lt;bool&gt; b1) { }</pre></code></div>
+    <div class="note-posicao">Linha: 5, Coluna: 28</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">FuncaoRedefinida</h1>
-    <p class="note-descricao">Funcao <b>foo ( int )</b> redefinida.<br>Definida previamente na linha 5, coluna 1.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a) { }</pre>
-<pre class="codigo-odd"> 6 | <b class="note-codigo-highlight">void foo(int b)</b> { }</pre>
+    <p class="note-descricao">Funcao <b>foo ( int, List&lt;bool&gt; )</b> redefinida.<br>Definida previamente na linha 5, coluna 1.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-odd"> 6 | <b class="note-codigo-highlight">void foo(int a1, List&lt;bool&gt; b1)</b> { }</pre>
 <pre class="codigo-even"> 7 | </pre></code></div>
     <div class="note-posicao">Linha: 6, Coluna: 1</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
-    <p class="note-descricao">Variavel <b>b</b> nao utilizada.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a) { }</pre>
-<pre class="codigo-odd"> 6 | void foo(int <b class="note-codigo-highlight">b</b>) { }</pre>
+    <p class="note-descricao">Variavel <b>a1</b> nao utilizada.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-odd"> 6 | void foo(int <b class="note-codigo-highlight">a1</b>, List&lt;bool&gt; b1) { }</pre>
 <pre class="codigo-even"> 7 | </pre></code></div>
     <div class="note-posicao">Linha: 6, Coluna: 14</div>
+</div>
+
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoUtilizada</h1>
+    <p class="note-descricao">Variavel <b>b1</b> nao utilizada.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 5 | bool foo(int a, List&lt;bool&gt; b) { }</pre>
+<pre class="codigo-odd"> 6 | void foo(int a1, List&lt;bool&gt; <b class="note-codigo-highlight">b1</b>) { }</pre>
+<pre class="codigo-even"> 7 | </pre></code></div>
+    <div class="note-posicao">Linha: 6, Coluna: 29</div>
 </div>
 
 <div class="note" style="border-color: orange;">
@@ -100,14 +118,14 @@
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
-    <p class="note-descricao">Variavel <b>a</b> do tipo <b>int</b>: 0 reads; 0 writes.<br>Variavel <b>b</b> do tipo <b>int</b>: 0 reads; 0 writes.<br>Variavel <b>a</b> do tipo <b>float</b>: 0 reads; 0 writes.<br>Variavel <b>b</b> do tipo <b>int</b>: 0 reads; 0 writes.<br>Variavel <b>x</b> do tipo <b>int</b>: 1 reads; 1 writes.<br>Variavel <b>b1</b> do tipo <b>bool</b>: 0 reads; 1 writes.<br>Variavel <b>b2</b> do tipo <b>bool</b>: 0 reads; 1 writes.</p>
+    <p class="note-descricao">Variavel <b>a</b> do tipo <b>int</b>: 0 reads; 0 writes.<br>Variavel <b>b</b> do tipo <b>List&lt;bool&gt;</b>: 0 reads; 0 writes.<br>Variavel <b>a1</b> do tipo <b>int</b>: 0 reads; 0 writes.<br>Variavel <b>b1</b> do tipo <b>List&lt;bool&gt;</b>: 0 reads; 0 writes.<br>Variavel <b>a</b> do tipo <b>float</b>: 0 reads; 0 writes.<br>Variavel <b>b</b> do tipo <b>int</b>: 0 reads; 0 writes.<br>Variavel <b>x</b> do tipo <b>int</b>: 1 reads; 1 writes.<br>Variavel <b>b1</b> do tipo <b>bool</b>: 0 reads; 1 writes.<br>Variavel <b>b2</b> do tipo <b>bool</b>: 0 reads; 1 writes.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroTipos</h1>
-    <p class="note-descricao">O codigo contem <b>3 tipos</b> diferentes.<br><br>Ocorreram <b>4</b> ocorrencias do tipo <b>int</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>float</b>.<br>Ocorreram <b>2</b> ocorrencias do tipo <b>bool</b>.</p>
+    <p class="note-descricao">O codigo contem <b>4 tipos</b> diferentes.<br><br>Ocorreram <b>4</b> ocorrencias do tipo <b>int</b>.<br>Ocorreram <b>2</b> ocorrencias do tipo <b>List&lt;bool&gt;</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>float</b>.<br>Ocorreram <b>2</b> ocorrencias do tipo <b>bool</b>.</p>
     
     <div class="note-posicao"></div>
 </div>

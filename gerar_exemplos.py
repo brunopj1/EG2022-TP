@@ -26,8 +26,8 @@ void main() {
 void foo() { }
 bool foo() { }
 
-bool foo(int a) { }
-void foo(int b) { }
+bool foo(int a, List<bool> b) { }
+void foo(int a1, List<bool> b1) { }
 
 bool foo(float a, int b) { }
 
