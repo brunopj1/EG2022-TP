@@ -1,6 +1,8 @@
 from email import message
 from enum import Enum
 
+# TODO deixar o html bonito
+
 class LanguageNoteType(Enum):
     ERROR   = 0
     WARNING = 1

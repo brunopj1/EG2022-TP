@@ -6,8 +6,6 @@ from aux_classes import *
 from language_notes import *
 from tipos import *
 
-# TODO adicionar posicaoFim aos erros
-
 class MyInterpreter(Interpreter):
 
     #region Interpreter Setup
@@ -111,7 +109,7 @@ class MyInterpreter(Interpreter):
         if func.nome in self.palavrasReservadas:
             erro = NomeProibido(func.nome)
             posicao = func.posicaoCriacao
-            posicaoFim = (func.posicaoCriacao[0], func.posicaoCriacao[1] + len(func.nome))
+            posicaoFim = func.posicaoCriacaoFim
             self.saveNote(erro, posicao, posicaoFim)
             return 
         # Verificar se a funcao existe
@@ -120,7 +118,7 @@ class MyInterpreter(Interpreter):
             if func.args_tipo == other_func.args_tipo:
                 erro = FuncaoRedefinida(func.nome, func.args_tipo, other_func.posicaoCriacao)
                 posicao = func.posicaoCriacao
-                posicaoFim = (func.posicaoCriacao[0], func.posicaoCriacao[1] + len(func.nome))
+                posicaoFim = func.posicaoCriacaoFim
                 self.saveNote(erro, posicao, posicaoFim)
                 return
         # Definir a funcao
@@ -241,11 +239,12 @@ class MyInterpreter(Interpreter):
         # Definir a funcao
         nome = tree.children[1].value
         tipo_return = self.visit(tree.children[0])
-        args = self.visit(tree.children[2])
-        posicaoCriacao = (tree.children[1].line, tree.children[1].column)
-        self.definirFuncao(Funcao(nome, tipo_return, args, posicaoCriacao))
+        args = self.visit(tree.children[3])
+        posicaoCriacao = (tree.children[0].line, tree.children[0].column)
+        posicaoCriacaoFim = (tree.children[4].end_line, tree.children[4].end_column)
+        self.definirFuncao(Funcao(nome, tipo_return, args, posicaoCriacao, posicaoCriacaoFim))
         # Validar o corpo
-        self.visit(tree.children[3])
+        self.visit(tree.children[6])
         # Apagar o scope
         self.popScope(False)
 
@@ -574,7 +573,7 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                posicaoFim = (tree.children[1].end_line, tree.children[1].end_line)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
                 self.saveNote(erro, posicao, posicaoFim)
             return Tipo_Bool()
     
@@ -587,7 +586,7 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                posicaoFim = (tree.children[1].end_line, tree.children[1].end_line)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
                 self.saveNote(erro, posicao, posicaoFim)
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
     
@@ -600,7 +599,7 @@ class MyInterpreter(Interpreter):
             if not tipoEsq.atribuicaoValida(Tipo_Float()) or not tipoDir.atribuicaoValida(Tipo_Float()):
                 erro = OperadorBinarioInvalido(operador, tipoEsq, tipoDir)
                 posicao = (tree.children[1].line, tree.children[1].column)
-                posicaoFim = (tree.children[1].end_line, tree.children[1].end_line)
+                posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
                 self.saveNote(erro, posicao, posicaoFim)
             return self.getTipoNumeroComum(tipoEsq, tipoDir)
 
@@ -620,7 +619,7 @@ class MyInterpreter(Interpreter):
                 if not tipoExp.castValido(tipoCast):
                     erro = CastInvalido(tipoCast, tipoExp)
                     posicao = (operador.line, operador.column)
-                    posicaoFim = (operador.end_line, operador.end_line)
+                    posicaoFim = (operador.end_line, operador.end_column)
                     self.saveNote(erro, posicao, posicaoFim)
                 return tipoCast
 
@@ -630,7 +629,7 @@ class MyInterpreter(Interpreter):
                 if not tipoExp.atribuicaoValida(Tipo_Float()):
                     erro = OperadorUnarioInvalido(operador.value, tipoExp)
                     posicao = (operador.line, operador.column)
-                    posicaoFim = (operador.end_line, operador.end_line)
+                    posicaoFim = (operador.end_line, operador.end_column)
                     self.saveNote(erro, posicao, posicaoFim)
                     return Tipo_Int()
                 return tipoExp
@@ -640,7 +639,7 @@ class MyInterpreter(Interpreter):
                 if not tipoExp.atribuicaoValida(Tipo_Bool()):
                     erro = OperadorUnarioInvalido(operador.value, tipoExp)
                     posicao = (operador.line, operador.column)
-                    posicaoFim = (operador.end_line, operador.end_line)
+                    posicaoFim = (operador.end_line, operador.end_column)
                     self.saveNote(erro, posicao, posicaoFim)
                 return Tipo_Bool()
 
@@ -657,7 +656,7 @@ class MyInterpreter(Interpreter):
             tipoFinal, erro = tipoVal.validarAcesso(tipoKey)
             if erro is not None:
                 posicao = (tree.children[0].line, tree.children[0].column)
-                posicaoFim = (tree.children[0].end_line, tree.children[0].end_line)
+                posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
                 self.saveNote(erro, posicao, posicaoFim)
             return tipoFinal
 
@@ -677,7 +676,8 @@ class MyInterpreter(Interpreter):
         tipo, erro = Tipo.fromNome(nome, subtipos)
         if erro is not None:
             posicao = (tree.children[0].line, tree.children[0].column)
-            posicaoFim = (tree.children[0].end_line, tree.children[0].end_line)
+            idxFim = 1 if len(tree.children) == 2 else 0
+            posicaoFim = (tree.children[idxFim].end_line, tree.children[idxFim].end_column)
             self.saveNote(erro, posicao, posicaoFim)
         return tipo
 
@@ -716,7 +716,7 @@ class MyInterpreter(Interpreter):
             if var is None:
                 erro = VariavelNaoDefinida(nome)
                 posicao = (element.line, element.column)
-                posicaoFim = (element.end_line, element.end_line)
+                posicaoFim = (element.end_line, element.end_column)
                 self.saveNote(erro, posicao, posicaoFim)
                 return Tipo_Unknown()
             # Registar uma operacao de write
@@ -725,7 +725,7 @@ class MyInterpreter(Interpreter):
             if not var.isInicializada(self.scopeAtual):
                 erro = VariavelNaoInicializada(nome)
                 posicao = (element.line, element.column)
-                posicaoFim = (element.end_line, element.end_line)
+                posicaoFim = (element.end_line, element.end_column)
                 self.saveNote(erro, posicao, posicaoFim)
             return var.tipo
 
@@ -748,11 +748,11 @@ class MyInterpreter(Interpreter):
                     subtipos = [subtipo1, subtipo2]
                     if erro1 is not None:
                         posicao = (element.line, element.column)
-                        posicaoFim = (element.end_line, element.end_line)
+                        posicaoFim = (element.end_line, element.end_column)
                         self.saveNote(erro1, posicao, posicaoFim)
                     if erro2 is not None:
                         posicao = (element.line, element.column)
-                        posicaoFim = (element.end_line, element.end_line)
+                        posicaoFim = (element.end_line, element.end_column)
                         self.saveNote(erro2, posicao, posicaoFim)
 
                 elif element.data == "tuple":
@@ -762,7 +762,7 @@ class MyInterpreter(Interpreter):
                     subtipos = [subtipos]
                     if erro is not None:
                         posicao = (element.line, element.column)
-                        posicaoFim = (element.end_line, element.end_line)
+                        posicaoFim = (element.end_line, element.end_column)
                         self.saveNote(erro, posicao, posicaoFim)
 
             # Retornar
@@ -770,7 +770,7 @@ class MyInterpreter(Interpreter):
             tipo, erro = Tipo.fromNome(nome_tipo, subtipos)
             if erro is not None:
                 posicao = (element.line, element.column)
-                posicaoFim = (element.end_line, element.end_line)
+                posicaoFim = (element.end_line, element.end_column)
                 self.saveNote(erro, posicao, posicaoFim)
             return tipo
 

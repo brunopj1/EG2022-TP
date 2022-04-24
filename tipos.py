@@ -78,7 +78,7 @@ class Tipo:
 
     #endregion
 
-    #region Metodos internos
+    #region Metodos Internos
 
     def __repr__(self):
         if self._num_subtipos == 0:

@@ -2,7 +2,7 @@ grammar = """
 start  : codigo
 codigo : (funcao | (decl_atrib ";"))*
 
-funcao           : type FUNC_NOME "(" funcao_args ")" "{" corpo "}"
+!funcao           : type FUNC_NOME "(" funcao_args ")" "{" corpo "}"
 funcao_args      : (type VAR_NOME ("," type VAR_NOME)*)?
 funcao_call      : FUNC_NOME "(" funcao_call_args ")"
 funcao_call_args : (expr ("," expr)*)?

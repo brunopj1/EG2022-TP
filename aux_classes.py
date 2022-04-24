@@ -55,7 +55,7 @@ class Variavel:
     #endregion
 
 class Funcao:
-    def __init__(self, nome, tipo_ret, args, posicaoCriacao):
+    def __init__(self, nome, tipo_ret, args, posicaoCriacao, posicaoCriacaoFim):
         self.nome = nome
         self.tipo_ret = tipo_ret
         self.args_tipo = []
@@ -65,3 +65,4 @@ class Funcao:
             self.args_nome.append(nome)
 
         self.posicaoCriacao = posicaoCriacao
+        self.posicaoCriacaoFim = posicaoCriacaoFim

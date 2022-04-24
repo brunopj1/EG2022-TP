@@ -5,97 +5,116 @@
     <meta charset="UTF-8">
 </head>
 <style>
-    body { display: flex; flex-direction: column; gap: 20px; }
-    .note { margin: 20px; padding: 0px 20px 0px 20px; border-radius: 20px; width: 85%; margin: auto; position: relative; background-color: white; border: 4px solid; border-width: 4px; }
+    body { display: flex; flex-direction: column; gap: 20px; font-family: Verdana, sans-serif; font-size: 15px; line-height: 1.5 }
+    pre {margin: 0px;}
+    .note { margin: 20px; padding: 0px 20px 0px 20px; border-radius: 20px; width: 85%; margin: auto; position: relative; background-color: white; border: solid; border-width: 4px; border-color: red; }
     .note-titulo { position: relative; top: -15px; }
     .note-descricao { position: relative; top: -15px; }
-    .note-codigo { padding: 10px; border-radius: 10px; position: relative; top: -15px; background-color: rgb(180, 180, 180); }
-    .note-codigo-highlight { color: blue; }
+    .note-codigo { padding: 10px; border-radius: 10px; position: relative; top: -15px; border: 2px solid black; }
+    .codigo-even { background-color: rgb(200, 200, 200); }
+    .codigo-odd { background-color: rgb(225, 225, 225); }
+    .note-codigo-highlight { color: red; }
     .note-posicao { position: absolute; top: 5px; right: 10px; }
 </style>
 <body>
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">TipoInvalido</h1>
     <p class="note-descricao">Utilizacao de um tipo invalido 'Batata'</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
+<pre class="codigo-odd"> 3 |     <b class="note-codigo-highlight">Batata</b> b1;</pre>
+<pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre></code></div>
     <div class="note-posicao">Linha: 3, Coluna: 5</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">TipoInvalido</h1>
     <p class="note-descricao">Utilizacao de um tipo invalido 'Batata&lt;int&gt;'</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 3 |     Batata b1;</pre>
+<pre class="codigo-odd"> 4 |     <b class="note-codigo-highlight">Batata&lt;int&gt;</b> b2;</pre>
+<pre class="codigo-even"> 5 |     List&lt;int, float&gt; l1;</pre></code></div>
     <div class="note-posicao">Linha: 4, Coluna: 5</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">TipoInvalido</h1>
     <p class="note-descricao">Utilizacao de um tipo invalido 'List&lt;int, float&gt;'</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre>
+<pre class="codigo-odd"> 5 |     <b class="note-codigo-highlight">List&lt;int, float&gt;</b> l1;</pre>
+<pre class="codigo-even"> 6 | </pre></code></div>
     <div class="note-posicao">Linha: 5, Coluna: 5</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">EstruturaTiposIncompativeis</h1>
     <p class="note-descricao">Estrutura com elementos de tipos incompativeis 'int' e 'bool'</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
+<pre class="codigo-odd"> 7 |     List&lt;int&gt; l2 = <b class="note-codigo-highlight">[ 1, True, 3 ]</b>;</pre>
+<pre class="codigo-even"> 8 | }</pre></code></div>
     <div class="note-posicao">Linha: 7, Coluna: 20</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel 'b1' nao utilizada</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
+<pre class="codigo-odd"> 3 |     Batata <b class="note-codigo-highlight">b1</b>;</pre>
+<pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre></code></div>
     <div class="note-posicao">Linha: 3, Coluna: 12</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel 'b2' nao utilizada</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 3 |     Batata b1;</pre>
+<pre class="codigo-odd"> 4 |     Batata&lt;int&gt; <b class="note-codigo-highlight">b2</b>;</pre>
+<pre class="codigo-even"> 5 |     List&lt;int, float&gt; l1;</pre></code></div>
     <div class="note-posicao">Linha: 4, Coluna: 17</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
     <p class="note-descricao">Variavel 'l1' nao utilizada</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre>
+<pre class="codigo-odd"> 5 |     List&lt;int, float&gt; <b class="note-codigo-highlight">l1</b>;</pre>
+<pre class="codigo-even"> 6 | </pre></code></div>
     <div class="note-posicao">Linha: 5, Coluna: 22</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
     <p class="note-descricao">Variavel 'l2' atribuida mas nao lida</p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
+<pre class="codigo-odd"> 7 |     List&lt;int&gt; <b class="note-codigo-highlight">l2</b> = [ 1, True, 3 ];</pre>
+<pre class="codigo-even"> 8 | }</pre></code></div>
     <div class="note-posicao">Linha: 7, Coluna: 15</div>
-    </div>
+</div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
     <p class="note-descricao">Variavel '<b>b1</b>' do tipo <b>unknown</b>: 0 reads; 0 writes.<br>Variavel '<b>b2</b>' do tipo <b>unknown</b>: 0 reads; 0 writes.<br>Variavel '<b>l1</b>' do tipo <b>List&lt;unknown&gt;</b>: 0 reads; 0 writes.<br>Variavel '<b>l2</b>' do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br></p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    
     <div class="note-posicao"></div>
-    </div>
+</div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroTipos</h1>
     <p class="note-descricao">O codigo contem <b>3 tipos</b> diferentes.<br><br>Ocorreram 2 ocorrencias do tipo <b>unknown</b>.<br>Ocorreram 1 ocorrencias do tipo <b>List&lt;unknown&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>List&lt;int&gt;</b>.<br></p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    
     <div class="note-posicao"></div>
-    </div>
+</div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoes</h1>
     <p class="note-descricao">O codigo contem <b>5 operacoes</b>.<br><br>Ocorreram 1 operacoes do tipo <b>funcao</b>.<br>Ocorreram 3 operacoes do tipo <b>decl</b>.<br>Ocorreram 1 operacoes do tipo <b>decl_atrib</b>.<br></p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    
     <div class="note-posicao"></div>
-    </div>
+</div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoesDepth</h1>
     <p class="note-descricao">Ocorreram <b>1</b> operacoes com <b>profundeza 0</b>.<br>Ocorreram <b>4</b> operacoes com <b>profundeza 1</b>.<br></p>
-    <div class="note-codigo"><code><pre>Teste ;)</pre></code></div>
+    
     <div class="note-posicao"></div>
-    </div>
+</div>
 </body>
 </html>
