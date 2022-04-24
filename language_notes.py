@@ -93,7 +93,7 @@ class EstruturaTiposIncompativeis(LanguageNote):
 class AtribuicaoInvalida(LanguageNote):
     def __init__(self, tipoIn, tipoOut):
         super().__init__(
-			f"Atribuicao invalida de uma expressao do tipo <b>{tipoIn}</b> para o tipo </b>{tipoOut}</b>.",
+			f"Atribuicao invalida de uma expressao do tipo <b>{tipoIn}</b> para o tipo <b>{tipoOut}</b>.",
 			LanguageNoteType.ERROR
 		)
 
