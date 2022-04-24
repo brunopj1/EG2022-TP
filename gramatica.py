@@ -2,7 +2,7 @@ grammar = """
 start  : codigo
 codigo : (funcao | (decl_atrib ";"))*
 
-!funcao           : type FUNC_NOME "(" funcao_args ")" "{" corpo "}"
+!funcao          : type FUNC_NOME "(" funcao_args ")" "{" corpo "}"
 funcao_args      : (type VAR_NOME ("," type VAR_NOME)*)?
 funcao_call      : FUNC_NOME "(" funcao_call_args ")"
 funcao_call_args : (expr ("," expr)*)?
@@ -71,12 +71,12 @@ OP_EXPR_UN  : "+" | "-" | "!"
 type    : TYPE_NOME subtype?
 subtype : "<" type ("," type)* ">"
 
-val           : num | BOOL | VAR_NOME | struct | funcao_call
-struct        : list | set | map | tuple
-num           : INT | FLOAT
-INT           : /\d+/
-FLOAT         : /\d+\.\d+/
-BOOL          : "True" | "False"
+val    : num | BOOL | VAR_NOME | struct | funcao_call
+struct : list | set | map | tuple
+num    : INT | FLOAT
+INT    : /\d+/
+FLOAT  : /\d+\.\d+/
+BOOL   : "True" | "False"
 
 list  : "[" (expr ("," expr)*)? "]"
 set   : "«" (expr ("," expr)*)? "»"
