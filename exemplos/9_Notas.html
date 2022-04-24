@@ -17,66 +17,30 @@
     .note-posicao { position: absolute; top: 5px; right: 10px; }
 </style>
 <body>
-<div class="note" style="border-color: red;">
-    <h1 class="note-titulo">NomeProibido</h1>
-    <p class="note-descricao">A palavra <b>float</b> nao pode ser utilizada como o nome de uma variavel.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 1 | void main() {</pre>
-<pre class="codigo-odd"> 2 |     float <b class="note-codigo-highlight">float</b> = 3.5;</pre>
-<pre class="codigo-even"> 3 |     int bool = 2;</pre></code></div>
-    <div class="note-posicao">Linha: 2, Coluna: 11</div>
-</div>
-
-<div class="note" style="border-color: red;">
-    <h1 class="note-titulo">NomeProibido</h1>
-    <p class="note-descricao">A palavra <b>bool</b> nao pode ser utilizada como o nome de uma variavel.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 2 |     float float = 3.5;</pre>
-<pre class="codigo-odd"> 3 |     int <b class="note-codigo-highlight">bool</b> = 2;</pre>
-<pre class="codigo-even"> 4 |     int List = 3 + 2;</pre></code></div>
-    <div class="note-posicao">Linha: 3, Coluna: 9</div>
-</div>
-
-<div class="note" style="border-color: red;">
-    <h1 class="note-titulo">NomeProibido</h1>
-    <p class="note-descricao">A palavra <b>List</b> nao pode ser utilizada como o nome de uma variavel.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 3 |     int bool = 2;</pre>
-<pre class="codigo-odd"> 4 |     int <b class="note-codigo-highlight">List</b> = 3 + 2;</pre>
-<pre class="codigo-even"> 5 |     bool True = False;</pre></code></div>
-    <div class="note-posicao">Linha: 4, Coluna: 9</div>
-</div>
-
-<div class="note" style="border-color: red;">
-    <h1 class="note-titulo">NomeProibido</h1>
-    <p class="note-descricao">A palavra <b>True</b> nao pode ser utilizada como o nome de uma variavel.</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 4 |     int List = 3 + 2;</pre>
-<pre class="codigo-odd"> 5 |     bool <b class="note-codigo-highlight">True</b> = False;</pre>
-<pre class="codigo-even"> 6 | }</pre></code></div>
-    <div class="note-posicao">Linha: 5, Coluna: 10</div>
-</div>
-
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
-    <p class="note-descricao"></p>
+    <p class="note-descricao">Variavel <b>i</b> do tipo <b>int</b>: 1 reads; 2 writes.<br>Variavel <b>l</b> do tipo <b>List&lt;float&gt;</b>: 1 reads; 1 writes.<br>Variavel <b>j</b> do tipo <b>int</b>: 2 reads; 2 writes.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroTipos</h1>
-    <p class="note-descricao">O codigo contem <b>0 tipos</b> diferentes.<br></p>
+    <p class="note-descricao">O codigo contem <b>2 tipos</b> diferentes.<br><br>Ocorreram <b>2</b> ocorrencias do tipo <b>int</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>List&lt;float&gt;</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoes</h1>
-    <p class="note-descricao">O codigo contem <b>5 operacoes</b>.<br><br>Ocorreram <b>1</b> operacoes do tipo <b>funcao</b>.<br>Ocorreram <b>4</b> operacoes do tipo <b>decl_atrib</b>.</p>
+    <p class="note-descricao">O codigo contem <b>8 operacoes</b>.<br><br>Ocorreram <b>1</b> operacoes do tipo <b>funcao</b>.<br>Ocorreram <b>2</b> operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>cond</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>cond_if</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>atrib_un</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>cond_else</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>ciclo_for</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>atrib_bin</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoesDepth</h1>
-    <p class="note-descricao">Ocorreram <b>1</b> operacoes com profundeza <b>0</b>.<br>Ocorreram <b>4</b> operacoes com profundeza <b>1</b>.</p>
+    <p class="note-descricao">Ocorreram <b>1</b> operacoes com profundeza <b>0</b>.<br>Ocorreram <b>3</b> operacoes com profundeza <b>1</b>.<br>Ocorreram <b>3</b> operacoes com profundeza <b>2</b>.<br>Ocorreram <b>1</b> operacoes com profundeza <b>3</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
