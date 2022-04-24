@@ -59,6 +59,7 @@ void main() {
     int i = 2.1;
     i = (int) 2.1;
     i = (int) True;
+    i = 1 * 1.0;
 
     List<int> l1 = [ 2.1, 4, 5 ];
     List<int> l2 = (List<int>) [ 2.1, 4, 5 ];

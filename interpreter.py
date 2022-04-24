@@ -82,7 +82,7 @@ class MyInterpreter(Interpreter):
     def definirVariavel(self, var):
         # Verificar se o nome da variavel e valido
         if var.nome in self.palavrasReservadas:
-            erro = NomeProibido(var.nome)
+            erro = NomeProibido(var.nome, True)
             posicao = var.posicaoCriacao
             posicaoFim = (var.posicaoCriacao[0], var.posicaoCriacao[1] + len(var.nome))
             self.saveNote(erro, posicao, posicaoFim)
@@ -107,7 +107,7 @@ class MyInterpreter(Interpreter):
     def definirFuncao(self, func):
         # Verificar se o nome da funcao e valido
         if func.nome in self.palavrasReservadas:
-            erro = NomeProibido(func.nome)
+            erro = NomeProibido(func.nome, False)
             posicao = func.posicaoCriacao
             posicaoFim = func.posicaoCriacaoFim
             self.saveNote(erro, posicao, posicaoFim)

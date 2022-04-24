@@ -19,7 +19,7 @@
 <body>
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">OperadorBinarioInvalido</h1>
-    <p class="note-descricao">Tipos de dados 'int' e 'bool' invalidos no operador binario '*'</p>
+    <p class="note-descricao">Tipos de dados <b>int</b> e <b>bool</b> invalidos no operador binario <b>*</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
 <pre class="codigo-odd"> 3 |     int i = 1 <b class="note-codigo-highlight">*</b> True;</pre>
 <pre class="codigo-even"> 4 |     bool b = ! 2.0;</pre></code></div>
@@ -28,7 +28,7 @@
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">OperadorUnarioInvalido</h1>
-    <p class="note-descricao">Tipo de dados 'float' invalido no operador unario '!'</p>
+    <p class="note-descricao">Tipo de dados <b>float</b> invalido no operador unario <b>!</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 3 |     int i = 1 * True;</pre>
 <pre class="codigo-odd"> 4 |     bool b = <b class="note-codigo-highlight">!</b> 2.0;</pre>
 <pre class="codigo-even"> 5 |     int j = - True;</pre></code></div>
@@ -37,7 +37,7 @@
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">OperadorUnarioInvalido</h1>
-    <p class="note-descricao">Tipo de dados 'bool' invalido no operador unario '-'</p>
+    <p class="note-descricao">Tipo de dados <b>bool</b> invalido no operador unario <b>-</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 4 |     bool b = ! 2.0;</pre>
 <pre class="codigo-odd"> 5 |     int j = <b class="note-codigo-highlight">-</b> True;</pre>
 <pre class="codigo-even"> 6 | </pre></code></div>
@@ -46,7 +46,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">CondicaoIfInvalida</h1>
-    <p class="note-descricao">A condicao da operacao If nao corresponde a um valor do tipo bool</p>
+    <p class="note-descricao">A condicao da operacao <b>If</b> nao corresponde a um valor do tipo <b>bool</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
 <pre class="codigo-odd"> 7 |     if (<b class="note-codigo-highlight">1</b>) { }</pre>
 <pre class="codigo-even"> 8 |     while (1) { }</pre></code></div>
@@ -55,7 +55,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">CondicaoWhileInvalida</h1>
-    <p class="note-descricao">A condicao do ciclo While nao corresponde a um valor do tipo bool</p>
+    <p class="note-descricao">A condicao do ciclo <b>While</b> nao corresponde a um valor do tipo <b>bool</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even">  7 |     if (1) { }</pre>
 <pre class="codigo-odd">  8 |     while (<b class="note-codigo-highlight">1</b>) { }</pre>
 <pre class="codigo-even">  9 |     do { } while (1);</pre></code></div>
@@ -64,7 +64,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">CondicaoWhileInvalida</h1>
-    <p class="note-descricao">A condicao do ciclo Do_While nao corresponde a um valor do tipo bool</p>
+    <p class="note-descricao">A condicao do ciclo <b>Do While</b> nao corresponde a um valor do tipo <b>bool</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even">  8 |     while (1) { }</pre>
 <pre class="codigo-odd">  9 |     do { } while (<b class="note-codigo-highlight">1</b>);</pre>
 <pre class="codigo-even"> 10 |     for (int a = 0; 1; a++) { }</pre></code></div>
@@ -73,7 +73,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">CondicaoForInvalida</h1>
-    <p class="note-descricao">A condicao do ciclo For nao corresponde a um valor do tipo bool</p>
+    <p class="note-descricao">A condicao do ciclo <b>For</b> nao corresponde a um valor do tipo <b>bool</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even">  9 |     do { } while (1);</pre>
 <pre class="codigo-odd"> 10 |     for (int a = 0; <b class="note-codigo-highlight">1</b>; a++) { }</pre>
 <pre class="codigo-even"> 11 | }</pre></code></div>
@@ -82,7 +82,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'a' atribuida mas nao lida</p>
+    <p class="note-descricao">Variavel <b>a</b> atribuida mas nao lida.</p>
     <div class="note-codigo"><code><pre class="codigo-even">  9 |     do { } while (1);</pre>
 <pre class="codigo-odd"> 10 |     for (int <b class="note-codigo-highlight">a</b> = 0; 1; a++) { }</pre>
 <pre class="codigo-even"> 11 | }</pre></code></div>
@@ -91,7 +91,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'i' atribuida mas nao lida</p>
+    <p class="note-descricao">Variavel <b>i</b> atribuida mas nao lida.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
 <pre class="codigo-odd"> 3 |     int <b class="note-codigo-highlight">i</b> = 1 * True;</pre>
 <pre class="codigo-even"> 4 |     bool b = ! 2.0;</pre></code></div>
@@ -100,7 +100,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'b' atribuida mas nao lida</p>
+    <p class="note-descricao">Variavel <b>b</b> atribuida mas nao lida.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 3 |     int i = 1 * True;</pre>
 <pre class="codigo-odd"> 4 |     bool <b class="note-codigo-highlight">b</b> = ! 2.0;</pre>
 <pre class="codigo-even"> 5 |     int j = - True;</pre></code></div>
@@ -109,7 +109,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'j' atribuida mas nao lida</p>
+    <p class="note-descricao">Variavel <b>j</b> atribuida mas nao lida.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 4 |     bool b = ! 2.0;</pre>
 <pre class="codigo-odd"> 5 |     int <b class="note-codigo-highlight">j</b> = - True;</pre>
 <pre class="codigo-even"> 6 | </pre></code></div>
@@ -118,28 +118,28 @@
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
-    <p class="note-descricao">Variavel '<b>i</b>' do tipo <b>int</b>: 0 reads; 1 writes.<br>Variavel '<b>b</b>' do tipo <b>bool</b>: 0 reads; 1 writes.<br>Variavel '<b>j</b>' do tipo <b>int</b>: 0 reads; 1 writes.<br>Variavel '<b>a</b>' do tipo <b>int</b>: 0 reads; 2 writes.<br></p>
+    <p class="note-descricao">Variavel <b>i</b> do tipo <b>int</b>: 0 reads; 1 writes.<br>Variavel <b>b</b> do tipo <b>bool</b>: 0 reads; 1 writes.<br>Variavel <b>j</b> do tipo <b>int</b>: 0 reads; 1 writes.<br>Variavel <b>a</b> do tipo <b>int</b>: 0 reads; 2 writes.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroTipos</h1>
-    <p class="note-descricao">O codigo contem <b>2 tipos</b> diferentes.<br><br>Ocorreram 3 ocorrencias do tipo <b>int</b>.<br>Ocorreram 1 ocorrencias do tipo <b>bool</b>.<br></p>
+    <p class="note-descricao">O codigo contem <b>2 tipos</b> diferentes.<br><br>Ocorreram <b>3</b> ocorrencias do tipo <b>int</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>bool</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoes</h1>
-    <p class="note-descricao">O codigo contem <b>8 operacoes</b>.<br><br>Ocorreram 1 operacoes do tipo <b>funcao</b>.<br>Ocorreram 3 operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram 1 operacoes do tipo <b>cond</b>.<br>Ocorreram 1 operacoes do tipo <b>cond_if</b>.<br>Ocorreram 1 operacoes do tipo <b>ciclo_while</b>.<br>Ocorreram 1 operacoes do tipo <b>ciclo_do_while</b>.<br>Ocorreram 1 operacoes do tipo <b>ciclo_for</b>.<br></p>
+    <p class="note-descricao">O codigo contem <b>8 operacoes</b>.<br><br>Ocorreram <b>1</b> operacoes do tipo <b>funcao</b>.<br>Ocorreram <b>3</b> operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>cond</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>cond_if</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>ciclo_while</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>ciclo_do_while</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>ciclo_for</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoesDepth</h1>
-    <p class="note-descricao">Ocorreram <b>1</b> operacoes com <b>profundeza 0</b>.<br>Ocorreram <b>7</b> operacoes com <b>profundeza 1</b>.<br>Ocorreram <b>0</b> operacoes com <b>profundeza 2</b>.<br></p>
+    <p class="note-descricao">Ocorreram <b>1</b> operacoes com profundeza <b>0</b>.<br>Ocorreram <b>7</b> operacoes com profundeza <b>1</b>.<br>Ocorreram <b>0</b> operacoes com profundeza <b>2</b>.</p>
     
     <div class="note-posicao"></div>
 </div>

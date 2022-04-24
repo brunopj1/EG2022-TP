@@ -1,8 +1,6 @@
 from email import message
 from enum import Enum
 
-# TODO deixar o html bonito
-
 class LanguageNoteType(Enum):
     ERROR   = 0
     WARNING = 1
@@ -20,35 +18,35 @@ class LanguageNote():
 class VariavelNaoDefinida(LanguageNote):
     def __init__(self, nomeVar):
         super().__init__(
-			f"Variavel '{nomeVar}' nao definida",
+			f"Variavel <b>{nomeVar}</b> nao definida.",
             LanguageNoteType.ERROR			
 		)
 
 class VariavelRedefinida(LanguageNote):
     def __init__(self, nomeVar, posicaoPrimeiraDef):
         super().__init__(
-			f"Variavel '{nomeVar}' redefinida.<br>Definida previamente na linha {posicaoPrimeiraDef[0]}, coluna {posicaoPrimeiraDef[1]}",
+			f"Variavel <b>{nomeVar}</b> redefinida.<br>Definida previamente na linha {posicaoPrimeiraDef[0]}, coluna {posicaoPrimeiraDef[1]}.",
 			LanguageNoteType.ERROR
 		)
 
 class VariavelNaoInicializada(LanguageNote):
     def __init__(self, nomeVar):
         super().__init__(
-			f"Variavel '{nomeVar}' lida mas nao inicializada",
+			f"Variavel <b>{nomeVar}</b> lida mas nao inicializada.",
 			LanguageNoteType.ERROR
 		)
 
 class VariavelNaoUtilizada(LanguageNote):
     def __init__(self, nomeVar):
         super().__init__(
-			f"Variavel '{nomeVar}' nao utilizada",
+			f"Variavel <b>{nomeVar}</b> nao utilizada.",
 			LanguageNoteType.WARNING
 		)
 
 class VariavelNaoLida(LanguageNote):
     def __init__(self, nomeVar):
         super().__init__(
-			f"Variavel '{nomeVar}' atribuida mas nao lida",
+			f"Variavel <b>{nomeVar}</b> atribuida mas nao lida.",
 			LanguageNoteType.WARNING
 		)
 
@@ -57,16 +55,20 @@ class VariavelNaoLida(LanguageNote):
 #region Funcoes
 
 class FuncaoNaoDefinida(LanguageNote):
-    def __init__(self, nomeFunc, argsFunc):
-        super().__init__(
-			f"Funcao '{nomeFunc}' com os argumentos {argsFunc} nao definida",
+	def __init__(self, nomeFunc, argsFunc):
+		args = ", ".join([str(x) for x in argsFunc])
+		funcao = nomeFunc + " ( " + args + " )"
+		super().__init__(
+			f"Funcao <b>{funcao}</b> nao definida.",
 			LanguageNoteType.ERROR
 		)
 
 class FuncaoRedefinida(LanguageNote):
-    def __init__(self, nomeFunc, argsFunc, posicaoPrimeiraDef):
-        super().__init__(
-			f"Funcao '{nomeFunc}' com os argumentos {argsFunc} redefinida.<br>Definida previamente na linha {posicaoPrimeiraDef[0]}, coluna {posicaoPrimeiraDef[1]}",
+	def __init__(self, nomeFunc, argsFunc, posicaoPrimeiraDef):
+		args = ", ".join([str(x) for x in argsFunc])
+		funcao = nomeFunc + " ( " + args + " )"
+		super().__init__(
+			f"Funcao <b>{funcao}</b> redefinida.<br>Definida previamente na linha {posicaoPrimeiraDef[0]}, coluna {posicaoPrimeiraDef[1]}.",
 			LanguageNoteType.ERROR
 		)
 
@@ -77,49 +79,49 @@ class FuncaoRedefinida(LanguageNote):
 class TipoInvalido(LanguageNote):
     def __init__(self, tipo):
         super().__init__(
-			f"Utilizacao de um tipo invalido '{tipo}'",
+			f"Utilizacao de um tipo invalido <b>{tipo}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class EstruturaTiposIncompativeis(LanguageNote):
     def __init__(self, tipo1, tipo2):
         super().__init__(
-			f"Estrutura com elementos de tipos incompativeis '{tipo1}' e '{tipo2}'",
+			f"Estrutura com elementos de tipos incompativeis <b>{tipo1}</b> e <b>{tipo2}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class AtribuicaoInvalida(LanguageNote):
     def __init__(self, tipoIn, tipoOut):
         super().__init__(
-			f"Atribuicao invalida de uma expressao do tipo {tipoIn} para o tipo {tipoOut}",
+			f"Atribuicao invalida de uma expressao do tipo <b>{tipoIn}</b> para o tipo </b>{tipoOut}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class CastInvalido(LanguageNote):
     def __init__(self, tipoCast, tipoExp):
         super().__init__(
-			f"Cast invalido de uma expressao do tipo {tipoExp} para o tipo {tipoCast}",
+			f"Cast invalido de uma expressao do tipo <b>{tipoExp}</b> para o tipo <b>{tipoCast}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class AcessoInvalido(LanguageNote):
     def __init__(self, tipo):
         super().__init__(
-			f"Acesso invalido a um valor do tipo '{tipo}'",
+			f"Acesso invalido a um valor do tipo <b>{tipo}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class ChaveAcessoInvalida(LanguageNote):
     def __init__(self, tipoEstrutura, tipoKey, tipoKeyEsperada):
         super().__init__(
-			f"Acesso invalido a uma estrutura do tipo '{tipoEstrutura}' com uma chave do tipo '{tipoKey}' (esperada uma chave do tipo '{tipoKeyEsperada}')",
+			f"Acesso invalido a uma estrutura do tipo <b>{tipoEstrutura}</b> com uma chave do tipo <b>{tipoKey}</b>.<br>Esperada uma chave do tipo <b>{tipoKeyEsperada}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class IteracaoInvalida(LanguageNote):
     def __init__(self, tipo):
         super().__init__(
-			f"Iteracao invalida de um valor do tipo '{tipo}'",
+			f"Iteracao invalida de um valor do tipo <b>{tipo}</b>.",
 			LanguageNoteType.ERROR
 		)
 
@@ -130,43 +132,43 @@ class IteracaoInvalida(LanguageNote):
 class OperadorBinarioInvalido(LanguageNote):
     def __init__(self, operador, tipoEsq, tipoDir):
         super().__init__(
-			f"Tipos de dados '{tipoEsq}' e '{tipoDir}' invalidos no operador binario '{operador}'",
+			f"Tipos de dados <b>{tipoEsq}</b> e <b>{tipoDir}</b> invalidos no operador binario <b>{operador}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class OperadorUnarioInvalido(LanguageNote):
     def __init__(self, operador, tipo):
         super().__init__(
-			f"Tipo de dados '{tipo}' invalido no operador unario '{operador}'",
+			f"Tipo de dados <b>{tipo}</b> invalido no operador unario <b>{operador}</b>.",
 			LanguageNoteType.ERROR
 		)
 
 class CondicaoIfInvalida(LanguageNote):
     def __init__(self):
         super().__init__(
-			f"A condicao da operacao If nao corresponde a um valor do tipo bool",
+			f"A condicao da operacao <b>If</b> nao corresponde a um valor do tipo <b>bool</b>.",
 			LanguageNoteType.WARNING
 		)
 
 class CondicaoWhileInvalida(LanguageNote):
 	def __init__(self, isDoWhile):
-		ciclo = "Do_While" if isDoWhile else "While"
+		ciclo = "Do While" if isDoWhile else "While"
 		super().__init__(
-			f"A condicao do ciclo {ciclo} nao corresponde a um valor do tipo bool",
+			f"A condicao do ciclo <b>{ciclo}</b> nao corresponde a um valor do tipo <b>bool</b>.",
 			LanguageNoteType.WARNING
 		)
 
 class CondicaoForInvalida(LanguageNote):
     def __init__(self):
         super().__init__(
-			f"A condicao do ciclo For nao corresponde a um valor do tipo bool",
+			f"A condicao do ciclo <b>For</b> nao corresponde a um valor do tipo <b>bool</b>.",
 			LanguageNoteType.WARNING
 		)
 
 class IfsAninhadosAgrupaveis(LanguageNote):
     def __init__(self):
         super().__init__(
-			f"Os If's aninhados podem ser agrupados num so If",
+			f"Os <b>If</b>s aninhados podem ser agrupados num so <b>If</b>.",
 			LanguageNoteType.WARNING
 		)
 
@@ -175,9 +177,10 @@ class IfsAninhadosAgrupaveis(LanguageNote):
 #region Outras
 
 class NomeProibido(LanguageNote):
-    def __init__(self, nome):
-        super().__init__(
-			f"A palavra '{nome}' nao pode ser utilizada como nome de variavel / funcao",
+	def __init__(self, nome, isVariavel):
+		tipo = "variavel" if isVariavel else "funcao"
+		super().__init__(
+			f"A palavra <b>{nome}</b> nao pode ser utilizada como o nome de uma {tipo}.",
 			LanguageNoteType.ERROR
 		)
 
@@ -187,9 +190,10 @@ class NomeProibido(LanguageNote):
 
 class NumeroAcessosVariaveis(LanguageNote):
 	def __init__(self, variaveis):
-		message = ""
+		linhas = []
 		for var in variaveis:
-			message += f"Variavel '<b>{var.nome}</b>' do tipo <b>{var.tipo}</b>: {var.num_reads} reads; {var.num_writes} writes.<br>"
+			linhas.append(f"Variavel <b>{var.nome}</b> do tipo <b>{var.tipo}</b>: {var.num_reads} reads; {var.num_writes} writes.")
+		message = "<br>".join(linhas)
 		super().__init__(
 			message,
 			LanguageNoteType.INFO
@@ -198,9 +202,10 @@ class NumeroAcessosVariaveis(LanguageNote):
 class NumeroTipos(LanguageNote):
 	def __init__(self, tipos):
 		numTipos = len(tipos.keys())
-		message = f"O codigo contem <b>{numTipos} tipos</b> diferentes.<br><br>"
+		linhas = [f"O codigo contem <b>{numTipos} tipos</b> diferentes.<br>"]
 		for tipo, num in tipos.items():
-			message += f"Ocorreram {num} ocorrencias do tipo <b>{tipo}</b>.<br>"
+			linhas.append(f"Ocorreram <b>{num}</b> ocorrencias do tipo <b>{tipo}</b>.")
+		message = "<br>".join(linhas)
 		super().__init__(
 			message,
 			LanguageNoteType.INFO
@@ -208,9 +213,10 @@ class NumeroTipos(LanguageNote):
 
 class NumeroOperacoes(LanguageNote):
 	def __init__(self, numOperacoes, operacoes):
-		message = f"O codigo contem <b>{numOperacoes} operacoes</b>.<br><br>"
+		linhas = [f"O codigo contem <b>{numOperacoes} operacoes</b>.<br>"]
 		for nome, num in operacoes.items():
-			message += f"Ocorreram {num} operacoes do tipo <b>{nome}</b>.<br>"
+			linhas.append(f"Ocorreram <b>{num}</b> operacoes do tipo <b>{nome}</b>.")
+		message = "<br>".join(linhas)
 		super().__init__(
 			message,
 			LanguageNoteType.INFO
@@ -218,9 +224,10 @@ class NumeroOperacoes(LanguageNote):
 
 class NumeroOperacoesDepth(LanguageNote):
 	def __init__(self, depths):
-		message = ""
+		linhas = []
 		for depth, num in depths.items():
-			message += f"Ocorreram <b>{num}</b> operacoes com <b>profundeza {depth}</b>.<br>"
+			linhas.append(f"Ocorreram <b>{num}</b> operacoes com profundeza <b>{depth}</b>.")
+		message = "<br>".join(linhas)
 		super().__init__(
 			message,
 			LanguageNoteType.INFO

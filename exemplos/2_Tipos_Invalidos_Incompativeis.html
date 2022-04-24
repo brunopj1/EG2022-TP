@@ -19,7 +19,7 @@
 <body>
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">TipoInvalido</h1>
-    <p class="note-descricao">Utilizacao de um tipo invalido 'Batata'</p>
+    <p class="note-descricao">Utilizacao de um tipo invalido <b>Batata</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
 <pre class="codigo-odd"> 3 |     <b class="note-codigo-highlight">Batata</b> b1;</pre>
 <pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre></code></div>
@@ -28,7 +28,7 @@
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">TipoInvalido</h1>
-    <p class="note-descricao">Utilizacao de um tipo invalido 'Batata&lt;int&gt;'</p>
+    <p class="note-descricao">Utilizacao de um tipo invalido <b>Batata&lt;int&gt;</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 3 |     Batata b1;</pre>
 <pre class="codigo-odd"> 4 |     <b class="note-codigo-highlight">Batata&lt;int&gt;</b> b2;</pre>
 <pre class="codigo-even"> 5 |     List&lt;int, float&gt; l1;</pre></code></div>
@@ -37,7 +37,7 @@
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">TipoInvalido</h1>
-    <p class="note-descricao">Utilizacao de um tipo invalido 'List&lt;int, float&gt;'</p>
+    <p class="note-descricao">Utilizacao de um tipo invalido <b>List&lt;int, float&gt;</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre>
 <pre class="codigo-odd"> 5 |     <b class="note-codigo-highlight">List&lt;int, float&gt;</b> l1;</pre>
 <pre class="codigo-even"> 6 | </pre></code></div>
@@ -46,7 +46,7 @@
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">EstruturaTiposIncompativeis</h1>
-    <p class="note-descricao">Estrutura com elementos de tipos incompativeis 'int' e 'bool'</p>
+    <p class="note-descricao">Estrutura com elementos de tipos incompativeis <b>int</b> e <b>bool</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
 <pre class="codigo-odd"> 7 |     List&lt;int&gt; l2 = <b class="note-codigo-highlight">[ 1, True, 3 ]</b>;</pre>
 <pre class="codigo-even"> 8 | }</pre></code></div>
@@ -55,7 +55,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
-    <p class="note-descricao">Variavel 'b1' nao utilizada</p>
+    <p class="note-descricao">Variavel <b>b1</b> nao utilizada.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
 <pre class="codigo-odd"> 3 |     Batata <b class="note-codigo-highlight">b1</b>;</pre>
 <pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre></code></div>
@@ -64,7 +64,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
-    <p class="note-descricao">Variavel 'b2' nao utilizada</p>
+    <p class="note-descricao">Variavel <b>b2</b> nao utilizada.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 3 |     Batata b1;</pre>
 <pre class="codigo-odd"> 4 |     Batata&lt;int&gt; <b class="note-codigo-highlight">b2</b>;</pre>
 <pre class="codigo-even"> 5 |     List&lt;int, float&gt; l1;</pre></code></div>
@@ -73,7 +73,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoUtilizada</h1>
-    <p class="note-descricao">Variavel 'l1' nao utilizada</p>
+    <p class="note-descricao">Variavel <b>l1</b> nao utilizada.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 4 |     Batata&lt;int&gt; b2;</pre>
 <pre class="codigo-odd"> 5 |     List&lt;int, float&gt; <b class="note-codigo-highlight">l1</b>;</pre>
 <pre class="codigo-even"> 6 | </pre></code></div>
@@ -82,7 +82,7 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'l2' atribuida mas nao lida</p>
+    <p class="note-descricao">Variavel <b>l2</b> atribuida mas nao lida.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
 <pre class="codigo-odd"> 7 |     List&lt;int&gt; <b class="note-codigo-highlight">l2</b> = [ 1, True, 3 ];</pre>
 <pre class="codigo-even"> 8 | }</pre></code></div>
@@ -91,28 +91,28 @@
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
-    <p class="note-descricao">Variavel '<b>b1</b>' do tipo <b>unknown</b>: 0 reads; 0 writes.<br>Variavel '<b>b2</b>' do tipo <b>unknown</b>: 0 reads; 0 writes.<br>Variavel '<b>l1</b>' do tipo <b>List&lt;unknown&gt;</b>: 0 reads; 0 writes.<br>Variavel '<b>l2</b>' do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br></p>
+    <p class="note-descricao">Variavel <b>b1</b> do tipo <b>unknown</b>: 0 reads; 0 writes.<br>Variavel <b>b2</b> do tipo <b>unknown</b>: 0 reads; 0 writes.<br>Variavel <b>l1</b> do tipo <b>List&lt;unknown&gt;</b>: 0 reads; 0 writes.<br>Variavel <b>l2</b> do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroTipos</h1>
-    <p class="note-descricao">O codigo contem <b>3 tipos</b> diferentes.<br><br>Ocorreram 2 ocorrencias do tipo <b>unknown</b>.<br>Ocorreram 1 ocorrencias do tipo <b>List&lt;unknown&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>List&lt;int&gt;</b>.<br></p>
+    <p class="note-descricao">O codigo contem <b>3 tipos</b> diferentes.<br><br>Ocorreram <b>2</b> ocorrencias do tipo <b>unknown</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>List&lt;unknown&gt;</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>List&lt;int&gt;</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoes</h1>
-    <p class="note-descricao">O codigo contem <b>5 operacoes</b>.<br><br>Ocorreram 1 operacoes do tipo <b>funcao</b>.<br>Ocorreram 3 operacoes do tipo <b>decl</b>.<br>Ocorreram 1 operacoes do tipo <b>decl_atrib</b>.<br></p>
+    <p class="note-descricao">O codigo contem <b>5 operacoes</b>.<br><br>Ocorreram <b>1</b> operacoes do tipo <b>funcao</b>.<br>Ocorreram <b>3</b> operacoes do tipo <b>decl</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>decl_atrib</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoesDepth</h1>
-    <p class="note-descricao">Ocorreram <b>1</b> operacoes com <b>profundeza 0</b>.<br>Ocorreram <b>4</b> operacoes com <b>profundeza 1</b>.<br></p>
+    <p class="note-descricao">Ocorreram <b>1</b> operacoes com profundeza <b>0</b>.<br>Ocorreram <b>4</b> operacoes com profundeza <b>1</b>.</p>
     
     <div class="note-posicao"></div>
 </div>

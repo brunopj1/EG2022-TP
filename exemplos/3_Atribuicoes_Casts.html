@@ -19,7 +19,7 @@
 <body>
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">AtribuicaoInvalida</h1>
-    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo float para o tipo int</p>
+    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo <b>float</b> para o tipo </b>int</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
 <pre class="codigo-odd"> 3 |     int <b class="note-codigo-highlight">i</b> = 2.1;</pre>
 <pre class="codigo-even"> 4 |     i = (int) 2.1;</pre></code></div>
@@ -28,52 +28,61 @@
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">CastInvalido</h1>
-    <p class="note-descricao">Cast invalido de uma expressao do tipo bool para o tipo int</p>
+    <p class="note-descricao">Cast invalido de uma expressao do tipo <b>bool</b> para o tipo <b>int</b>.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 4 |     i = (int) 2.1;</pre>
 <pre class="codigo-odd"> 5 |     i = <b class="note-codigo-highlight">(int)</b> True;</pre>
-<pre class="codigo-even"> 6 | </pre></code></div>
+<pre class="codigo-even"> 6 |     i = 1 * 1.0;</pre></code></div>
     <div class="note-posicao">Linha: 5, Coluna: 9</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">AtribuicaoInvalida</h1>
-    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo List&lt;float&gt; para o tipo List&lt;int&gt;</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
-<pre class="codigo-odd"> 7 |     List&lt;int&gt; <b class="note-codigo-highlight">l1</b> = [ 2.1, 4, 5 ];</pre>
-<pre class="codigo-even"> 8 |     List&lt;int&gt; l2 = (List&lt;int&gt;) [ 2.1, 4, 5 ];</pre></code></div>
-    <div class="note-posicao">Linha: 7, Coluna: 15</div>
+    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo <b>float</b> para o tipo </b>int</b>.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 5 |     i = (int) True;</pre>
+<pre class="codigo-odd"> 6 |     <b class="note-codigo-highlight">i</b> = 1 * 1.0;</pre>
+<pre class="codigo-even"> 7 | </pre></code></div>
+    <div class="note-posicao">Linha: 6, Coluna: 5</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">AtribuicaoInvalida</h1>
-    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo Set&lt;int&gt; para o tipo List&lt;int&gt;</p>
-    <div class="note-codigo"><code><pre class="codigo-even">  9 | </pre>
-<pre class="codigo-odd"> 10 |     List&lt;int&gt; <b class="note-codigo-highlight">l3</b> = &laquo; 1, 2, 3 &raquo;;</pre>
-<pre class="codigo-even"> 11 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre></code></div>
-    <div class="note-posicao">Linha: 10, Coluna: 15</div>
+    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo <b>List&lt;float&gt;</b> para o tipo </b>List&lt;int&gt;</b>.</p>
+    <div class="note-codigo"><code><pre class="codigo-even">  7 | </pre>
+<pre class="codigo-odd">  8 |     List&lt;int&gt; <b class="note-codigo-highlight">l1</b> = [ 2.1, 4, 5 ];</pre>
+<pre class="codigo-even">  9 |     List&lt;int&gt; l2 = (List&lt;int&gt;) [ 2.1, 4, 5 ];</pre></code></div>
+    <div class="note-posicao">Linha: 8, Coluna: 15</div>
+</div>
+
+<div class="note" style="border-color: red;">
+    <h1 class="note-titulo">AtribuicaoInvalida</h1>
+    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo <b>Set&lt;int&gt;</b> para o tipo </b>List&lt;int&gt;</b>.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 10 | </pre>
+<pre class="codigo-odd"> 11 |     List&lt;int&gt; <b class="note-codigo-highlight">l3</b> = &laquo; 1, 2, 3 &raquo;;</pre>
+<pre class="codigo-even"> 12 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre></code></div>
+    <div class="note-posicao">Linha: 11, Coluna: 15</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">CastInvalido</h1>
-    <p class="note-descricao">Cast invalido de uma expressao do tipo List&lt;int&gt; para o tipo Set&lt;int&gt;</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 11 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre>
-<pre class="codigo-odd"> 12 |     Set&lt;int&gt; s = <b class="note-codigo-highlight">(Set&lt;int&gt;)</b> [ 1, 2, 3 ];</pre>
-<pre class="codigo-even"> 13 | </pre></code></div>
-    <div class="note-posicao">Linha: 12, Coluna: 18</div>
+    <p class="note-descricao">Cast invalido de uma expressao do tipo <b>List&lt;int&gt;</b> para o tipo <b>Set&lt;int&gt;</b>.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 12 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre>
+<pre class="codigo-odd"> 13 |     Set&lt;int&gt; s = <b class="note-codigo-highlight">(Set&lt;int&gt;)</b> [ 1, 2, 3 ];</pre>
+<pre class="codigo-even"> 14 | </pre></code></div>
+    <div class="note-posicao">Linha: 13, Coluna: 18</div>
 </div>
 
 <div class="note" style="border-color: red;">
     <h1 class="note-titulo">AtribuicaoInvalida</h1>
-    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo float para o tipo int</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 14 |     List&lt;int&gt; l5 = [ 1, 2, 3 ];</pre>
-<pre class="codigo-odd"> 15 |     <b class="note-codigo-highlight">l5[0]</b> = 99.9;</pre>
-<pre class="codigo-even"> 16 | }</pre></code></div>
-    <div class="note-posicao">Linha: 15, Coluna: 5</div>
+    <p class="note-descricao">Atribuicao invalida de uma expressao do tipo <b>float</b> para o tipo </b>int</b>.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 15 |     List&lt;int&gt; l5 = [ 1, 2, 3 ];</pre>
+<pre class="codigo-odd"> 16 |     <b class="note-codigo-highlight">l5[0]</b> = 99.9;</pre>
+<pre class="codigo-even"> 17 | }</pre></code></div>
+    <div class="note-posicao">Linha: 16, Coluna: 5</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'i' atribuida mas nao lida</p>
+    <p class="note-descricao">Variavel <b>i</b> atribuida mas nao lida.</p>
     <div class="note-codigo"><code><pre class="codigo-even"> 2 | void main() {</pre>
 <pre class="codigo-odd"> 3 |     int <b class="note-codigo-highlight">i</b> = 2.1;</pre>
 <pre class="codigo-even"> 4 |     i = (int) 2.1;</pre></code></div>
@@ -82,73 +91,73 @@
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'l1' atribuida mas nao lida</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 6 | </pre>
-<pre class="codigo-odd"> 7 |     List&lt;int&gt; <b class="note-codigo-highlight">l1</b> = [ 2.1, 4, 5 ];</pre>
-<pre class="codigo-even"> 8 |     List&lt;int&gt; l2 = (List&lt;int&gt;) [ 2.1, 4, 5 ];</pre></code></div>
-    <div class="note-posicao">Linha: 7, Coluna: 15</div>
-</div>
-
-<div class="note" style="border-color: orange;">
-    <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'l2' atribuida mas nao lida</p>
-    <div class="note-codigo"><code><pre class="codigo-even">  7 |     List&lt;int&gt; l1 = [ 2.1, 4, 5 ];</pre>
-<pre class="codigo-odd">  8 |     List&lt;int&gt; <b class="note-codigo-highlight">l2</b> = (List&lt;int&gt;) [ 2.1, 4, 5 ];</pre>
-<pre class="codigo-even">  9 | </pre></code></div>
+    <p class="note-descricao">Variavel <b>l1</b> atribuida mas nao lida.</p>
+    <div class="note-codigo"><code><pre class="codigo-even">  7 | </pre>
+<pre class="codigo-odd">  8 |     List&lt;int&gt; <b class="note-codigo-highlight">l1</b> = [ 2.1, 4, 5 ];</pre>
+<pre class="codigo-even">  9 |     List&lt;int&gt; l2 = (List&lt;int&gt;) [ 2.1, 4, 5 ];</pre></code></div>
     <div class="note-posicao">Linha: 8, Coluna: 15</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'l3' atribuida mas nao lida</p>
-    <div class="note-codigo"><code><pre class="codigo-even">  9 | </pre>
-<pre class="codigo-odd"> 10 |     List&lt;int&gt; <b class="note-codigo-highlight">l3</b> = &laquo; 1, 2, 3 &raquo;;</pre>
-<pre class="codigo-even"> 11 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre></code></div>
-    <div class="note-posicao">Linha: 10, Coluna: 15</div>
+    <p class="note-descricao">Variavel <b>l2</b> atribuida mas nao lida.</p>
+    <div class="note-codigo"><code><pre class="codigo-even">  8 |     List&lt;int&gt; l1 = [ 2.1, 4, 5 ];</pre>
+<pre class="codigo-odd">  9 |     List&lt;int&gt; <b class="note-codigo-highlight">l2</b> = (List&lt;int&gt;) [ 2.1, 4, 5 ];</pre>
+<pre class="codigo-even"> 10 | </pre></code></div>
+    <div class="note-posicao">Linha: 9, Coluna: 15</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 'l4' atribuida mas nao lida</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 10 |     List&lt;int&gt; l3 = &laquo; 1, 2, 3 &raquo;;</pre>
-<pre class="codigo-odd"> 11 |     List&lt;int&gt; <b class="note-codigo-highlight">l4</b> = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre>
-<pre class="codigo-even"> 12 |     Set&lt;int&gt; s = (Set&lt;int&gt;) [ 1, 2, 3 ];</pre></code></div>
+    <p class="note-descricao">Variavel <b>l3</b> atribuida mas nao lida.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 10 | </pre>
+<pre class="codigo-odd"> 11 |     List&lt;int&gt; <b class="note-codigo-highlight">l3</b> = &laquo; 1, 2, 3 &raquo;;</pre>
+<pre class="codigo-even"> 12 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre></code></div>
     <div class="note-posicao">Linha: 11, Coluna: 15</div>
 </div>
 
 <div class="note" style="border-color: orange;">
     <h1 class="note-titulo">VariavelNaoLida</h1>
-    <p class="note-descricao">Variavel 's' atribuida mas nao lida</p>
-    <div class="note-codigo"><code><pre class="codigo-even"> 11 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre>
-<pre class="codigo-odd"> 12 |     Set&lt;int&gt; <b class="note-codigo-highlight">s</b> = (Set&lt;int&gt;) [ 1, 2, 3 ];</pre>
-<pre class="codigo-even"> 13 | </pre></code></div>
-    <div class="note-posicao">Linha: 12, Coluna: 14</div>
+    <p class="note-descricao">Variavel <b>l4</b> atribuida mas nao lida.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 11 |     List&lt;int&gt; l3 = &laquo; 1, 2, 3 &raquo;;</pre>
+<pre class="codigo-odd"> 12 |     List&lt;int&gt; <b class="note-codigo-highlight">l4</b> = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre>
+<pre class="codigo-even"> 13 |     Set&lt;int&gt; s = (Set&lt;int&gt;) [ 1, 2, 3 ];</pre></code></div>
+    <div class="note-posicao">Linha: 12, Coluna: 15</div>
+</div>
+
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoLida</h1>
+    <p class="note-descricao">Variavel <b>s</b> atribuida mas nao lida.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 12 |     List&lt;int&gt; l4 = (List&lt;int&gt;) &laquo; 1, 2, 3 &raquo;;</pre>
+<pre class="codigo-odd"> 13 |     Set&lt;int&gt; <b class="note-codigo-highlight">s</b> = (Set&lt;int&gt;) [ 1, 2, 3 ];</pre>
+<pre class="codigo-even"> 14 | </pre></code></div>
+    <div class="note-posicao">Linha: 13, Coluna: 14</div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
-    <p class="note-descricao">Variavel '<b>i</b>' do tipo <b>int</b>: 0 reads; 3 writes.<br>Variavel '<b>l1</b>' do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel '<b>l2</b>' do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel '<b>l3</b>' do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel '<b>l4</b>' do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel '<b>s</b>' do tipo <b>Set&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel '<b>l5</b>' do tipo <b>List&lt;int&gt;</b>: 1 reads; 1 writes.<br></p>
+    <p class="note-descricao">Variavel <b>i</b> do tipo <b>int</b>: 0 reads; 4 writes.<br>Variavel <b>l1</b> do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel <b>l2</b> do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel <b>l3</b> do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel <b>l4</b> do tipo <b>List&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel <b>s</b> do tipo <b>Set&lt;int&gt;</b>: 0 reads; 1 writes.<br>Variavel <b>l5</b> do tipo <b>List&lt;int&gt;</b>: 1 reads; 1 writes.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroTipos</h1>
-    <p class="note-descricao">O codigo contem <b>3 tipos</b> diferentes.<br><br>Ocorreram 1 ocorrencias do tipo <b>int</b>.<br>Ocorreram 5 ocorrencias do tipo <b>List&lt;int&gt;</b>.<br>Ocorreram 1 ocorrencias do tipo <b>Set&lt;int&gt;</b>.<br></p>
+    <p class="note-descricao">O codigo contem <b>3 tipos</b> diferentes.<br><br>Ocorreram <b>1</b> ocorrencias do tipo <b>int</b>.<br>Ocorreram <b>5</b> ocorrencias do tipo <b>List&lt;int&gt;</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>Set&lt;int&gt;</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoes</h1>
-    <p class="note-descricao">O codigo contem <b>11 operacoes</b>.<br><br>Ocorreram 1 operacoes do tipo <b>funcao</b>.<br>Ocorreram 7 operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram 3 operacoes do tipo <b>atrib_simples</b>.<br></p>
+    <p class="note-descricao">O codigo contem <b>12 operacoes</b>.<br><br>Ocorreram <b>1</b> operacoes do tipo <b>funcao</b>.<br>Ocorreram <b>7</b> operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram <b>4</b> operacoes do tipo <b>atrib_simples</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
 
 <div class="note" style="border-color: blue;">
     <h1 class="note-titulo">NumeroOperacoesDepth</h1>
-    <p class="note-descricao">Ocorreram <b>1</b> operacoes com <b>profundeza 0</b>.<br>Ocorreram <b>10</b> operacoes com <b>profundeza 1</b>.<br></p>
+    <p class="note-descricao">Ocorreram <b>1</b> operacoes com profundeza <b>0</b>.<br>Ocorreram <b>11</b> operacoes com profundeza <b>1</b>.</p>
     
     <div class="note-posicao"></div>
 </div>
