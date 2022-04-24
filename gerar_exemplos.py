@@ -169,6 +169,23 @@ void main() {
     bool True = False;
 }
 """
+), (
+# Titulo
+"Notas", 
+# Codigo
+"""
+void main() {
+    int i = 2;
+    if (True) {
+        i++;
+    } else {
+        List<float> l = [ 1.0, 2.0, 3.0 ];
+        for (int j = 0; j < 3; j++) {
+            l[j] += i;
+        }    
+    }
+}
+"""
 )
 ]
 
