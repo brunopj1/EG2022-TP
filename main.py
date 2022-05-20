@@ -5,7 +5,9 @@ from report_generator import generateReport
 
 codigo = """
 void main() {
-    int a;
+    int a = 1;
+    int b = 2;
+    int c = a + b;
 }
 """
 
@@ -15,5 +17,12 @@ i.setupVariables()
 
 tree = l.parse(codigo)
 i.visit(tree)
-i.gerarNotesInfo()
-generateReport(i.notas, codigo, "report")
+
+#i.gerarNotesInfo()
+#generateReport(i.notas, codigo, "report")
+
+for funcoes in i.funcoes.values():
+    for func in funcoes:
+        print(func.numInstrucoes)
+        graph = func.controlFlowGraph
+        graph.render(filename='ola', format="svg")

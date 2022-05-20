@@ -1,5 +1,4 @@
-from re import S
-
+import graphviz
 
 class Variavel:
     def __init__(self, nome, tipo, scopeCriacao, inicializada, posicaoCriacao):
@@ -56,13 +55,19 @@ class Variavel:
 
 class Funcao:
     def __init__(self, nome, tipo_ret, args, posicaoCriacao, posicaoCriacaoFim):
+
         self.nome = nome
         self.tipo_ret = tipo_ret
         self.args_tipo = []
         self.args_nome = []
+
         for tipo, nome in args:
             self.args_tipo.append(tipo)
             self.args_nome.append(nome)
 
+        self.numInstrucoes = 0
+
         self.posicaoCriacao = posicaoCriacao
         self.posicaoCriacaoFim = posicaoCriacaoFim
+
+        self.controlFlowGraph = graphviz.Digraph()

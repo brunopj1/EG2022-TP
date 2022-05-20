@@ -29,6 +29,8 @@ class MyInterpreter(Interpreter):
 
         self.depth = -1
 
+        self.funcaoAtual = None
+
         # Variaveis de relatorio
 
         self.registoVariaveis = []
@@ -190,11 +192,8 @@ class MyInterpreter(Interpreter):
             self.registoOperacoes.setdefault(elem.data, 0)
             self.registoOperacoes[elem.data] += 1
             # Contar o numero de operacoes
-            if elem.data != "cond":
-                self.numeroOperacoes += 1
-            # Registar a operacao na depth atual
-            if elem.data != "cond":
-                self.registoDepths[self.depth] += 1
+            self.numeroOperacoes += 1
+            self.registoDepths[self.depth] += 1
             # Visitar a operacao
             self.visit(elem)
         # Apagar o scope
@@ -214,11 +213,11 @@ class MyInterpreter(Interpreter):
                 _elem = _elem.children[1].children[0]
             self.registoOperacoes.setdefault(_elem.data, 0)
             self.registoOperacoes[_elem.data] += 1
-            # Contar o numero de operacoes
+            # Caso nao seja uma condicional
             if elem.data != "cond":
+                # Contar o numero de operacoes
                 self.numeroOperacoes += 1
-            # Registar a operacao na depth atual
-            if _elem.data != "cond":
+                # Registar a operacao na depth atual
                 self.registoDepths[self.depth] += 1
             # Visitar a operacao
             var = self.visit(elem)
@@ -242,11 +241,18 @@ class MyInterpreter(Interpreter):
         args = self.visit(tree.children[3])
         posicaoCriacao = (tree.children[0].line, tree.children[0].column)
         posicaoCriacaoFim = (tree.children[4].end_line, tree.children[4].end_column)
-        self.definirFuncao(Funcao(nome, tipo_return, args, posicaoCriacao, posicaoCriacaoFim))
+        funcao = Funcao(nome, tipo_return, args, posicaoCriacao, posicaoCriacaoFim)
+        self.definirFuncao(funcao)
+        self.funcaoAtual = funcao
         # Validar o corpo
         self.visit(tree.children[6])
         # Apagar o scope
         self.popScope(False)
+        # Atualizar o grafo da funcao
+        self.funcaoAtual.controlFlowGraph.node('start', 'start')
+        # TODO connectar o start ao corpo
+        # Atualizar a funcao atual
+        self.funcaoAtual = None
 
     def funcao_args(self, tree):
         args = []
@@ -397,7 +403,6 @@ class MyInterpreter(Interpreter):
             varsParaInicializar = reduce(lambda x, y: x.intersection(y), varsInicializadas)
             for var in varsParaInicializar:
                 var.inicializar(self.scopeAtual)
-
 
     def cond_if(self, tree):
         # Validar a condicao do If
