@@ -54,7 +54,7 @@ class Variavel:
     #endregion
 
 class Funcao:
-    def __init__(self, nome, tipo_ret, args, posicaoCriacao, posicaoCriacaoFim):
+    def __init__(self, nome, tipo_ret, args, posicaoCriacao=None, posicaoCriacaoFim=None):
 
         self.nome = nome
         self.tipo_ret = tipo_ret

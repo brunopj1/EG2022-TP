@@ -6,7 +6,7 @@ from aux_classes import *
 from language_notes import *
 from tipos import *
 
-class MyInterpreter(Interpreter):
+class InterpreterAnalisador(Interpreter):
 
     #region Interpreter Setup
 
@@ -23,13 +23,12 @@ class MyInterpreter(Interpreter):
         
         self.variaveis = []
         self.funcoes = {}
+        self.funcoesOrd = []
 
         self.scopeAtual = []
         self.proximoScope = 0
 
         self.depth = -1
-
-        self.funcaoAtual = None
 
         # Variaveis de relatorio
 
@@ -107,6 +106,8 @@ class MyInterpreter(Interpreter):
         self.registoTipos[var.tipo] += 1
 
     def definirFuncao(self, func):
+        # Guardar a funcao numa lista ordenada
+        self.funcoesOrd.append(func)
         # Verificar se o nome da funcao e valido
         if func.nome in self.palavrasReservadas:
             erro = NomeProibido(func.nome, False)
@@ -248,9 +249,6 @@ class MyInterpreter(Interpreter):
         self.visit(tree.children[6])
         # Apagar o scope
         self.popScope(False)
-        # Atualizar o grafo da funcao
-        self.funcaoAtual.controlFlowGraph.node('start', 'start')
-        # TODO connectar o start ao corpo
         # Atualizar a funcao atual
         self.funcaoAtual = None
 
@@ -266,6 +264,7 @@ class MyInterpreter(Interpreter):
             args.append((tipo, nome))
         return args
    
+   # TODO decidir como gerar o nodo disto
     def funcao_call(self, tree):
         nome = tree.children[0].value
         args_tipo = self.visit(tree.children[1])
@@ -310,6 +309,11 @@ class MyInterpreter(Interpreter):
         tipo = self.visit(tree.children[0])
         posicaoCriacao = (tree.children[1].line, tree.children[1].column)
         self.definirVariavel(Variavel(nome, tipo, self.scopeAtual, False, posicaoCriacao))
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
+        return inst, inst
 
     def decl_atrib(self, tree):
         # Definir a variavel
@@ -327,6 +331,11 @@ class MyInterpreter(Interpreter):
             posicao = (tree.children[1].line, tree.children[1].column)
             posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
             self.saveNote(erro, posicao, posicaoFim)
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
+        return inst, inst
 
     def atrib(self, tree):
         varInicializada = None
@@ -368,6 +377,11 @@ class MyInterpreter(Interpreter):
             posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
             self.saveNote(erro, posicao, posicaoFim)
 
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
+
         # Retornar a variavel inicializada
         return varInicializada
 
@@ -396,6 +410,10 @@ class MyInterpreter(Interpreter):
             self.numeroOperacoes += 1
             # Registar a operacao na depth atual
             self.registoDepths[self.depth] += 1
+            # TODO Adicionar a operacao ao grafo da funcao
+            inst = "i" + str(self.funcaoAtual.numInstrucoes)
+            self.funcaoAtual.numInstrucoes += 1
+            self.funcaoAtual.controlFlowGraph.node(inst, inst, shape="diamond")
             # Visitar
             varsInicializadas.append(self.visit(elem))
         # Verificar se alguma variavel deve ser inicializada no scope externo
@@ -448,6 +466,10 @@ class MyInterpreter(Interpreter):
             posicao = (tree.children[0].line, tree.children[0].column)
             posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
             self.saveNote(erro, posicao, posicaoFim)
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
@@ -458,6 +480,10 @@ class MyInterpreter(Interpreter):
             posicao = (tree.children[1].line, tree.children[1].column)
             posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
             self.saveNote(erro, posicao, posicaoFim)
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         self.visit(tree.children[0])
 
     #endregion
@@ -470,6 +496,10 @@ class MyInterpreter(Interpreter):
         # Visitar o head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         # Apagar o scope
         self.popScope(False)
     
@@ -500,6 +530,10 @@ class MyInterpreter(Interpreter):
         # Visitar a head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
+        # TODO Adicionar a operacao ao grafo da funcao
+        inst = "i" + str(self.funcaoAtual.numInstrucoes)
+        self.funcaoAtual.numInstrucoes += 1
+        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         # Apagar o scope
         self.popScope(False)
 

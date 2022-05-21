@@ -1,5 +1,5 @@
 from gramatica import grammar
-from interpreter import MyInterpreter
+from interpreter_analisador import MyInterpreter
 from lark import Lark
 from report_generator import generateReport
 

@@ -1,5 +1,6 @@
 from gramatica import grammar
-from interpreter import MyInterpreter
+from interpreter_analisador import InterpreterAnalisador
+from interpreter_grafos import InterpreterGrafos
 from lark import Lark
 from report_generator import generateReport
 
@@ -8,20 +9,29 @@ void main() {
     int a = 1;
     int b = 2;
     int c = a + b;
+    if (True) { }
+    else if (True) {
+        if (False) {
+            a++;
+        }
+        b++;
+    }
+    else { }
 }
 """
 
 l = Lark(grammar, propagate_positions=True)
-i = MyInterpreter()
-i.setupVariables()
-
 tree = l.parse(codigo)
-i.visit(tree)
+
+ia = InterpreterAnalisador()
+ia.visit(tree)
+
+ig = InterpreterGrafos(ia.funcoesOrd)
 
 #i.gerarNotesInfo()
 #generateReport(i.notas, codigo, "report")
 
-for funcoes in i.funcoes.values():
+for funcoes in ia.funcoes.values():
     for func in funcoes:
         print(func.numInstrucoes)
         graph = func.controlFlowGraph

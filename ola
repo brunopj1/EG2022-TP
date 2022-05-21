@@ -1,3 +1,12 @@
 digraph {
-	start [label=start]
+	i0 [label=i0]
+	i1 [label=i1]
+	i2 [label=i2]
+	i3 [label=i3 shape=diamond]
+	i4 [label=i4 shape=diamond]
+	i5 [label=i5 shape=diamond]
+	i6 [label=i6]
+	i7 [label=i7]
+	i8 [label=i8 shape=diamond]
+	start [label=start color=green shape=invhouse]
 }
