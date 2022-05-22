@@ -1,3 +1,4 @@
+from enum import Enum
 import graphviz
 
 class Variavel:
@@ -71,3 +72,17 @@ class Funcao:
         self.posicaoCriacaoFim = posicaoCriacaoFim
 
         self.controlFlowGraph = graphviz.Digraph()
+
+class NodoGrafo:
+
+    def __init__(self, id, desc, color, shape):
+        self.id = id
+        self.desc = desc
+        self.color=color
+        self.shape=shape
+        self.out_label = None
+
+class TipoNodo(Enum):
+    Start = 0
+    Empty = 1
+    Inst = 2

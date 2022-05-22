@@ -194,6 +194,7 @@ class InterpreterAnalisador(Interpreter):
             self.registoOperacoes[elem.data] += 1
             # Contar o numero de operacoes
             self.numeroOperacoes += 1
+            # Registar a operacao na depth atual
             self.registoDepths[self.depth] += 1
             # Visitar a operacao
             self.visit(elem)
@@ -244,13 +245,10 @@ class InterpreterAnalisador(Interpreter):
         posicaoCriacaoFim = (tree.children[4].end_line, tree.children[4].end_column)
         funcao = Funcao(nome, tipo_return, args, posicaoCriacao, posicaoCriacaoFim)
         self.definirFuncao(funcao)
-        self.funcaoAtual = funcao
         # Validar o corpo
         self.visit(tree.children[6])
         # Apagar o scope
         self.popScope(False)
-        # Atualizar a funcao atual
-        self.funcaoAtual = None
 
     def funcao_args(self, tree):
         args = []
@@ -264,7 +262,6 @@ class InterpreterAnalisador(Interpreter):
             args.append((tipo, nome))
         return args
    
-   # TODO decidir como gerar o nodo disto
     def funcao_call(self, tree):
         nome = tree.children[0].value
         args_tipo = self.visit(tree.children[1])
@@ -309,11 +306,6 @@ class InterpreterAnalisador(Interpreter):
         tipo = self.visit(tree.children[0])
         posicaoCriacao = (tree.children[1].line, tree.children[1].column)
         self.definirVariavel(Variavel(nome, tipo, self.scopeAtual, False, posicaoCriacao))
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
-        return inst, inst
 
     def decl_atrib(self, tree):
         # Definir a variavel
@@ -331,11 +323,6 @@ class InterpreterAnalisador(Interpreter):
             posicao = (tree.children[1].line, tree.children[1].column)
             posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
             self.saveNote(erro, posicao, posicaoFim)
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
-        return inst, inst
 
     def atrib(self, tree):
         varInicializada = None
@@ -377,11 +364,6 @@ class InterpreterAnalisador(Interpreter):
             posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
             self.saveNote(erro, posicao, posicaoFim)
 
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
-
         # Retornar a variavel inicializada
         return varInicializada
 
@@ -410,10 +392,6 @@ class InterpreterAnalisador(Interpreter):
             self.numeroOperacoes += 1
             # Registar a operacao na depth atual
             self.registoDepths[self.depth] += 1
-            # TODO Adicionar a operacao ao grafo da funcao
-            inst = "i" + str(self.funcaoAtual.numInstrucoes)
-            self.funcaoAtual.numInstrucoes += 1
-            self.funcaoAtual.controlFlowGraph.node(inst, inst, shape="diamond")
             # Visitar
             varsInicializadas.append(self.visit(elem))
         # Verificar se alguma variavel deve ser inicializada no scope externo
@@ -466,10 +444,6 @@ class InterpreterAnalisador(Interpreter):
             posicao = (tree.children[0].line, tree.children[0].column)
             posicaoFim = (tree.children[0].end_line, tree.children[0].end_column)
             self.saveNote(erro, posicao, posicaoFim)
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         self.visit(tree.children[1])
 
     def ciclo_do_while(self, tree):
@@ -480,10 +454,6 @@ class InterpreterAnalisador(Interpreter):
             posicao = (tree.children[1].line, tree.children[1].column)
             posicaoFim = (tree.children[1].end_line, tree.children[1].end_column)
             self.saveNote(erro, posicao, posicaoFim)
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         self.visit(tree.children[0])
 
     #endregion
@@ -496,10 +466,6 @@ class InterpreterAnalisador(Interpreter):
         # Visitar o head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         # Apagar o scope
         self.popScope(False)
     
@@ -530,10 +496,6 @@ class InterpreterAnalisador(Interpreter):
         # Visitar a head e o corpo
         self.visit(tree.children[0])
         self.visit(tree.children[1])
-        # TODO Adicionar a operacao ao grafo da funcao
-        inst = "i" + str(self.funcaoAtual.numInstrucoes)
-        self.funcaoAtual.numInstrucoes += 1
-        self.funcaoAtual.controlFlowGraph.node(inst, inst)
         # Apagar o scope
         self.popScope(False)
 

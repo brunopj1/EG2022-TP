@@ -17,6 +17,7 @@ void main() {
         b++;
     }
     else { }
+    a++;
 }
 """
 
@@ -27,6 +28,7 @@ ia = InterpreterAnalisador()
 ia.visit(tree)
 
 ig = InterpreterGrafos(ia.funcoesOrd)
+ig.visit(tree)
 
 #i.gerarNotesInfo()
 #generateReport(i.notas, codigo, "report")
