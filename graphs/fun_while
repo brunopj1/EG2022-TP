@@ -1,0 +1,17 @@
+digraph {
+	i0 [label=start color=green shape=invhouse]
+	i1 [label="int a = 0"]
+	i2 [label="while (a < 100)" color=blue]
+	i3 [label="a++"]
+	i4 [label="if (a == 50)" color=red]
+	i5 [label=then color=red]
+	i4 -> i5 [constraint=true]
+	i6 [label="a += 10"]
+	i5 -> i6 [constraint=true]
+	i2 -> i3 [constraint=true]
+	i2 -> i4 [constraint=true]
+	i7 [label="a = 100"]
+	i0 -> i1 [constraint=true]
+	i0 -> i2 [constraint=true]
+	i0 -> i7 [constraint=true]
+}

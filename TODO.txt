@@ -1,4 +1,0 @@
-TODO - fazer uma classe para os nodos (onde dizemos se a edge vai ter label)
-
-TODO - perguntar se inserimos nodos em corpos vazios (ex: if (True) { })
-TODO - perguntar se o if nao tiver else o que é que ligamos à parte de baixo? (ex: if (False) { ... }; x++)

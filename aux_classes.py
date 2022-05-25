@@ -66,12 +66,11 @@ class Funcao:
             self.args_tipo.append(tipo)
             self.args_nome.append(nome)
 
-        self.numInstrucoes = 0
-
         self.posicaoCriacao = posicaoCriacao
         self.posicaoCriacaoFim = posicaoCriacaoFim
 
-        self.controlFlowGraph = graphviz.Digraph()
+        self.cfg = graphviz.Digraph(format="svg")
+        self.sdg = graphviz.Digraph(format="svg")
 
 class NodoGrafo:
 
