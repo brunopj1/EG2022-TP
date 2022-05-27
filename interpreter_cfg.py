@@ -38,7 +38,7 @@ class InterpreterCFG(Interpreter):
         for elemFrom in nodosFrom:
             for elemTo in nodosTo:
                 _label = elemFrom.out_label if elemFrom.out_label is not None else label
-                self.funcaoAtual.cfg.edge(elemFrom.id, elemTo.id, constraint="true", label=_label)
+                self.funcaoAtual.cfg.edge(elemFrom.id, elemTo.id, label=_label, constraint="true")
 
     def obterTexto(self, elem_from, elem_to=None):
         if elem_to is None:
@@ -173,7 +173,6 @@ class InterpreterCFG(Interpreter):
 
     #region Ciclos
 
-    # TODO verificar se é possivel especificar a posicao vertical dos nodos
     def ciclo_while(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
