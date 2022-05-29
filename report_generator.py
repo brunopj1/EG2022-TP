@@ -52,7 +52,7 @@ templateNotaGrafo = '''
     <div class="grafo">
         $(SDG)
     </div>
-    <h2 class="grafo-titulo">Complexidade de McCabe's:</h2>
+    <h2 class="grafo-titulo">Complexidade de McCabe:</h2>
     <p class="grafo-texto">Numero de nodos: <b>$(NODOS)</b></p>
     <p class="grafo-texto">Numero de arestas: <b>$(ARESTAS)</b></p>
     <p class="grafo-texto">Complexidade: <b>$(COMPLEXIDADE)</b></p>
