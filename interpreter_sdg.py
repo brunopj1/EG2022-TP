@@ -4,11 +4,11 @@ from lark.visitors import Interpreter
 from aux_classes import *
 
 # Cores:
-# green       -> nodo start
-# red         -> nodos condicionais
-# orange      -> nodos ciclos
-# darkviolet  -> variaveis globais
-# deeppink     -> argumentos
+# green         -> nodo start
+# chocolate     -> nodos condicionais
+# darkgoldenrod -> nodos ciclos
+# darkviolet    -> variaveis globais
+# deeppink      -> argumentos
 
 class InterpreterSDG(Interpreter):
     
@@ -192,7 +192,7 @@ class InterpreterSDG(Interpreter):
                     texto = "else if (" + texto + ")"
                     variaveis = self.visit(elem.children[0].children[0])
                 # Inserir o nodo da condicao
-                nodo_atual = self.adicionarNodo(texto, color="red")
+                nodo_atual = self.adicionarNodo(texto, color="chocolate")
                 # Ligar a condicao às variaveis usadas
                 for var in variaveis:
                     nodoVar = self.variaveisFuncao[var]
@@ -206,11 +206,11 @@ class InterpreterSDG(Interpreter):
                 # Guardar o ultimo if
                 if_last = nodo_atual
                 # Inserir o nodo "then"
-                nodo_atual = self.adicionarNodo("then", color="red")
+                nodo_atual = self.adicionarNodo("then", color="chocolate")
                 self.adicionarAresta(if_last, nodo_atual, constraint=True, color="blue")
             # Registar que existe else
             else:
-                nodo_atual = self.adicionarNodo("else", color="red")
+                nodo_atual = self.adicionarNodo("else", color="chocolate")
                 self.adicionarAresta(if_last, nodo_atual, constraint=True, color="blue")
             # Adicionar os nodos do corpo
             corpo = self.visit(elem)
@@ -234,7 +234,7 @@ class InterpreterSDG(Interpreter):
     def ciclo_while(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("while (" + texto + ")", color="orange")
+        condicao = self.adicionarNodo("while (" + texto + ")", color="darkgoldenrod")
         # Ligar a condicao às variaveis usadas
         variaveis = self.visit(tree.children[0])
         for var in variaveis:
@@ -250,7 +250,7 @@ class InterpreterSDG(Interpreter):
     def ciclo_do_while(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[1])
-        condicao = self.adicionarNodo("do while (" + texto + ")", color="orange")
+        condicao = self.adicionarNodo("do while (" + texto + ")", color="darkgoldenrod")
         # Ligar a condicao às variaveis usadas
         variaveis = self.visit(tree.children[1])
         for var in variaveis:
@@ -264,14 +264,14 @@ class InterpreterSDG(Interpreter):
         return condicao
 
     def ciclo_for(self, tree):
-        # Obter os nodos de fluxo do for e as variaveis da expressao
-        nodos, variaveis = self.visit(tree.children[0])
-        # TODO Ligar os nodos do for ao nodo principal
-        for nodo in nodos:
-            pass
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("for (" + texto + ")", color="orange")
+        condicao = self.adicionarNodo("for (" + texto + ")", color="darkgoldenrod")
+        # Obter os nodos de fluxo do for e as variaveis da expressao
+        nodos_head, variaveis = self.visit(tree.children[0])
+        # Ligar os nodos da head do for a condicao
+        for nodo in nodos_head:
+            self.adicionarAresta(condicao, nodo, constraint=True, color="blue")
         # Ligar a condicao às variaveis usadas
         for var in variaveis:
             nodoVar = self.variaveisFuncao[var]
@@ -284,7 +284,6 @@ class InterpreterSDG(Interpreter):
         return condicao
 
     def ciclo_for_head(self, tree):
-        # TODO registar as variaveis criadas para depois apaga-las
         nodos = []
         variaveis = set()
         for elem in tree.children:
@@ -300,13 +299,34 @@ class InterpreterSDG(Interpreter):
     def ciclo_foreach(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("foreach (" + texto + ")", color="orange")
+        condicao = self.adicionarNodo("foreach (" + texto + ")", color="darkgoldenrod")
+        # Obter o nome e nodo da variavel de controlo
+        nodo_head, variaveis = self.visit(tree.children[0])
+        # Ligar o nodo da variavel ao foreach
+        self.adicionarAresta(condicao, nodo_head, constraint=True, color="blue")
+        # Ligar a condicao às variaveis usadas
+        for var in variaveis:
+            nodoVar = self.variaveisFuncao[var]
+            self.adicionarAresta(nodoVar, condicao, constraint=True, color="green")
         # Criar os nodos do corpo
         corpo = self.visit(tree.children[1])
         # Ligar o corpo à condição
         self.adicionarAresta(condicao, corpo, constraint=True, color="blue")
         # Retornar o nodo da condição
         return condicao
+
+    def ciclo_foreach_head(self, tree):
+        nodo = self.adicionarNodo(self.obterTexto(tree.children[0], tree.children[1]))
+        # Registar o nodo como a origem da variavel
+        nomeVar = tree.children[1].value
+        self.variaveisFuncao[nomeVar] = nodo
+        # Ligar as variaveis usadas na expr ao nodo
+        variaveis = self.visit(tree.children[2])
+        for var in variaveis:
+            nodoVar = self.variaveisFuncao[var]
+            self.adicionarAresta(nodoVar, nodo, constraint=True, color="green")
+        # Retornar o nodo
+        return nodo, variaveis
 
     #endregion
 

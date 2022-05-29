@@ -20,6 +20,7 @@ templatePage = '''
     .codigo-odd { background-color: rgb(225, 225, 225); }
     .note-codigo-highlight { color: red; }
     .note-posicao { position: absolute; top: 5px; right: 10px; }
+    .grafo { border: 2px solid black; }
 </style>
 <body>$(NOTAS)</body>
 </html>
@@ -39,6 +40,24 @@ templateCodigo = "<div class=\"note-codigo\"><code>$(CODIGO)</code></div>"
 templateLinhaCodigo = "<pre class=\"codigo-$(PARIDADE)\">$(CODIGO)</pre>"
 
 templateHighlightCodigo = "<b class=\"note-codigo-highlight\">$(CODIGO)</b>"
+
+templateNotaGrafo = '''
+<div class="note note-grafos" style="border-color: green;">
+    <h1 class="note-titulo">$(FUNCAO)</h1>
+    <h2 class="grafo-titulo">Control Flow Graph:</h2>
+    <div class="grafo">
+        $(CFG)
+    </div>
+    <h2 class="grafo-titulo">System Dependency Graph:</h2>
+    <div class="grafo">
+        $(SDG)
+    </div>
+    <h2 class="grafo-titulo">Complexidade de McCabe's:</h2>
+    <p class="grafo-texto">Numero de nodos: <b>$(NODOS)</b></p>
+    <p class="grafo-texto">Numero de arestas: <b>$(ARESTAS)</b></p>
+    <p class="grafo-texto">Complexidade: <b>$(COMPLEXIDADE)</b></p>
+</div>
+'''
 
 #endregion
 
@@ -110,10 +129,24 @@ def generateCodigoNota(nota, codigo):
     excertoCodigo = templateCodigo.replace("$(CODIGO)", novasLinhas, 1)
     return excertoCodigo
 
-def generateReport(notas, codigo, nomeFicheiro):
+def obterGrafoSVG(grafo):
+
+    # Separar as linhas
+    grafo_str = grafo.pipe(encoding='utf-8')
+
+    # Procurar o codigo do svg
+    svg = re.search(r"(<svg width=\")(?:[^\"]+)(\" height=\")(?:[^\"]+)(\"(?:.|\n)*</svg>)", grafo_str)
+
+    # Ajustar o codigo do svg
+    svg_str = svg.group(1) + "fit-content" + svg.group(2) + "fit-content" + svg.group(3)
+
+    return svg_str
+
+def generateReport(notas, funcoes, codigo, nomeFicheiro):
 
     content = ""
 
+    # Adicionar as notas
     for n in notas:
 
         # Determinar a cor
@@ -133,11 +166,40 @@ def generateReport(notas, codigo, nomeFicheiro):
             excertoCodigo = generateCodigoNota(n, codigo)
 
         # Construir a nota em html
-        contentNota = templateNota.replace("$(NOME)", n.__class__.__name__, 1)
-        contentNota = contentNota.replace("$(DESCRICAO)", n.message, 1)
-        contentNota = contentNota.replace("$(CODIGO)", excertoCodigo, 1)
-        contentNota = contentNota.replace("$(POSICAO)", posicao, 1)
-        contentNota = contentNota.replace("$(COLOR)", color, 1)
+        contentNota = templateNota.replace("$(NOME)"    , n.__class__.__name__, 1)
+        contentNota = contentNota.replace("$(DESCRICAO)", n.message           , 1)
+        contentNota = contentNota.replace("$(CODIGO)"   , excertoCodigo       , 1)
+        contentNota = contentNota.replace("$(POSICAO)"  , posicao             , 1)
+        contentNota = contentNota.replace("$(COLOR)"    , color               , 1)
+        content += contentNota
+
+    # Adicionar os grafos
+    for func in funcoes:
+
+        # Funcao de processamento dos argumentos
+        def ajustarArgsFunc(tipo, nome):
+            return f"<span style=\"color: green\">{tipo}</span> <span style=\"color: cornflowerblue\">{nome}</span>"
+        
+        # Obter o nome da funcao
+        args = [ajustarArgsFunc(tipo, nome) for tipo, nome in zip(func.args_tipo, func.args_nome)]
+        nome = func.nome + "(" + ", ".join(args) + ")"
+
+        # Obter grafos
+        cfg = obterGrafoSVG(func.cfg)
+        sdg = obterGrafoSVG(func.sdg)
+
+        # Calcular a complexidade
+        num_nodos = func.mccabe_nodos
+        num_arestas = func.mccabe_arestas
+        complexidade = num_arestas - num_nodos + 2
+
+        # Gerar a nota
+        contentNota = templateNotaGrafo.replace("$(FUNCAO)", nome             , 1)
+        contentNota = contentNota.replace("$(CFG)"         , cfg              , 1)
+        contentNota = contentNota.replace("$(SDG)"         , sdg              , 1)
+        contentNota = contentNota.replace("$(NODOS)"       , str(num_nodos)   , 1)
+        contentNota = contentNota.replace("$(ARESTAS)"     , str(num_arestas) , 1)
+        contentNota = contentNota.replace("$(COMPLEXIDADE)", str(complexidade), 1)
         content += contentNota
 
     # Criar o ficheiro

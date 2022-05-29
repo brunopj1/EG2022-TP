@@ -72,6 +72,9 @@ class Funcao:
         self.cfg = graphviz.Digraph(format="svg")
         self.sdg = graphviz.Digraph(format="svg")
 
+        self.mccabe_nodos = 0
+        self.mccabe_arestas = 0
+
 class NodoGrafo:
 
     def __init__(self, id, desc, color, shape):

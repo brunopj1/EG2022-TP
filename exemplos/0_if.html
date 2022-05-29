@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<head>
+    <title>Report</title>
+    <meta charset="UTF-8">
+</head>
+<style>
+    body { display: flex; flex-direction: column; gap: 20px; font-family: Verdana, sans-serif; font-size: 15px; line-height: 1.5 }
+    pre {margin: 0px;}
+    .note { margin: 20px; padding: 0px 20px 0px 20px; border-radius: 20px; width: 85%; margin: auto; position: relative; background-color: white; border: solid; border-width: 4px; border-color: red; }
+    .note-titulo { position: relative; top: -15px; }
+    .note-descricao { position: relative; top: -15px; }
+    .note-codigo { padding: 10px; border-radius: 10px; position: relative; top: -15px; border: 2px solid black; }
+    .codigo-even { background-color: rgb(200, 200, 200); }
+    .codigo-odd { background-color: rgb(225, 225, 225); }
+    .note-codigo-highlight { color: red; }
+    .note-posicao { position: absolute; top: 5px; right: 10px; }
+    .grafo { border: 2px solid black; }
+</style>
+<body>
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">IfsAninhadosAgrupaveis</h1>
+    <p class="note-descricao">Os <b>If</b>s aninhados podem ser agrupados num so <b>If</b>.</p>
+    <div class="note-codigo"><code><pre class="codigo-even">  6 |     int res = 0;</pre>
+<pre class="codigo-odd">  7 |     <b class="note-codigo-highlight">if (b) {</b></pre>
+<pre class="codigo-even">  8 | <b class="note-codigo-highlight">        if (i &gt; j) {</b></pre>
+<pre class="codigo-odd">  9 | <b class="note-codigo-highlight">            res = 10;</b></pre>
+<pre class="codigo-even"> 10 | <b class="note-codigo-highlight">        }</b></pre>
+<pre class="codigo-odd"> 11 | <b class="note-codigo-highlight">    }</b></pre>
+<pre class="codigo-even"> 12 |     else {</pre></code></div>
+    <div class="note-posicao">Linha: 7, Coluna: 5</div>
+</div>
+
+<div class="note" style="border-color: orange;">
+    <h1 class="note-titulo">VariavelNaoLida</h1>
+    <p class="note-descricao">Variavel <b>res</b> atribuida mas nao lida.</p>
+    <div class="note-codigo"><code><pre class="codigo-even"> 5 |     int j = i - a;</pre>
+<pre class="codigo-odd"> 6 |     int <b class="note-codigo-highlight">res</b> = 0;</pre>
+<pre class="codigo-even"> 7 |     if (b) {</pre></code></div>
+    <div class="note-posicao">Linha: 6, Coluna: 9</div>
+</div>
+
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroAcessosVariaveis</h1>
+    <p class="note-descricao">Variavel <b>a</b> do tipo <b>int</b>: 2 reads; 1 writes.<br>Variavel <b>b</b> do tipo <b>bool</b>: 1 reads; 0 writes.<br>Variavel <b>i</b> do tipo <b>int</b>: 3 reads; 1 writes.<br>Variavel <b>j</b> do tipo <b>int</b>: 1 reads; 1 writes.<br>Variavel <b>res</b> do tipo <b>int</b>: 0 reads; 4 writes.</p>
+    
+    <div class="note-posicao"></div>
+</div>
+
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroTipos</h1>
+    <p class="note-descricao">O codigo contem <b>2 tipos</b> diferentes.<br><br>Ocorreram <b>4</b> ocorrencias do tipo <b>int</b>.<br>Ocorreram <b>1</b> ocorrencias do tipo <b>bool</b>.</p>
+    
+    <div class="note-posicao"></div>
+</div>
+
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroOperacoes</h1>
+    <p class="note-descricao">O codigo contem <b>11 operacoes</b>.<br><br>Ocorreram <b>4</b> operacoes do tipo <b>decl_atrib</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>funcao</b>.<br>Ocorreram <b>2</b> operacoes do tipo <b>cond</b>.<br>Ocorreram <b>2</b> operacoes do tipo <b>cond_if</b>.<br>Ocorreram <b>2</b> operacoes do tipo <b>atrib_simples</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>cond_else</b>.<br>Ocorreram <b>1</b> operacoes do tipo <b>atrib_bin</b>.</p>
+    
+    <div class="note-posicao"></div>
+</div>
+
+<div class="note" style="border-color: blue;">
+    <h1 class="note-titulo">NumeroOperacoesDepth</h1>
+    <p class="note-descricao">Ocorreram <b>2</b> operacoes com profundeza <b>0</b>.<br>Ocorreram <b>6</b> operacoes com profundeza <b>1</b>.<br>Ocorreram <b>2</b> operacoes com profundeza <b>2</b>.<br>Ocorreram <b>1</b> operacoes com profundeza <b>3</b>.</p>
+    
+    <div class="note-posicao"></div>
+</div>
+
+<div class="note note-grafos" style="border-color: green;">
+    <h1 class="note-titulo">foo(<span style="color: green">bool</span> <span style="color: cornflowerblue">b</span>)</h1>
+    <h2 class="grafo-titulo">Control Flow Graph:</h2>
+    <div class="grafo">
+        <svg width="fit-content" height="fit-content"
+ viewBox="0.00 0.00 229.14 677.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 673)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-673 225.14,-673 225.14,4 -4,4"/>
+<!-- i0 -->
+<g id="node1" class="node">
+<title>i0</title>
+<polygon fill="none" stroke="green" points="102.42,-645.44 135.3,-633 168.17,-645.44 168.14,-665.56 102.45,-665.56 102.42,-645.44"/>
+<text text-anchor="middle" x="135.3" y="-647.3" font-family="Times New Roman,serif" font-size="14.00">start</text>
+</g>
+<!-- i1 -->
+<g id="node2" class="node">
+<title>i1</title>
+<ellipse fill="none" stroke="black" cx="135.3" cy="-578" rx="50.09" ry="18"/>
+<text text-anchor="middle" x="135.3" y="-574.3" font-family="Times New Roman,serif" font-size="14.00">int i = a &#45; 2</text>
+</g>
+<!-- i0&#45;&gt;i1 -->
+<g id="edge10" class="edge">
+<title>i0&#45;&gt;i1</title>
+<path fill="none" stroke="black" d="M135.3,-632.81C135.3,-624.79 135.3,-615.05 135.3,-606.07"/>
+<polygon fill="black" stroke="black" points="138.8,-606.03 135.3,-596.03 131.8,-606.03 138.8,-606.03"/>
+</g>
+<!-- i2 -->
+<g id="node3" class="node">
+<title>i2</title>
+<ellipse fill="none" stroke="black" cx="135.3" cy="-505" rx="48.19" ry="18"/>
+<text text-anchor="middle" x="135.3" y="-501.3" font-family="Times New Roman,serif" font-size="14.00">int j = i &#45; a</text>
+</g>
+<!-- i1&#45;&gt;i2 -->
+<g id="edge1" class="edge">
+<title>i1&#45;&gt;i2</title>
+<path fill="none" stroke="black" d="M135.3,-559.81C135.3,-551.79 135.3,-542.05 135.3,-533.07"/>
+<polygon fill="black" stroke="black" points="138.8,-533.03 135.3,-523.03 131.8,-533.03 138.8,-533.03"/>
+</g>
+<!-- i3 -->
+<g id="node4" class="node">
+<title>i3</title>
+<ellipse fill="none" stroke="black" cx="135.3" cy="-432" rx="47.39" ry="18"/>
+<text text-anchor="middle" x="135.3" y="-428.3" font-family="Times New Roman,serif" font-size="14.00">int res = 0</text>
+</g>
+<!-- i2&#45;&gt;i3 -->
+<g id="edge2" class="edge">
+<title>i2&#45;&gt;i3</title>
+<path fill="none" stroke="black" d="M135.3,-486.81C135.3,-478.79 135.3,-469.05 135.3,-460.07"/>
+<polygon fill="black" stroke="black" points="138.8,-460.03 135.3,-450.03 131.8,-460.03 138.8,-460.03"/>
+</g>
+<!-- i4 -->
+<g id="node5" class="node">
+<title>i4</title>
+<polygon fill="none" stroke="chocolate" points="135.3,-377 94.91,-359 135.3,-341 175.68,-359 135.3,-377"/>
+<text text-anchor="middle" x="135.3" y="-355.3" font-family="Times New Roman,serif" font-size="14.00">if (b)</text>
+</g>
+<!-- i3&#45;&gt;i4 -->
+<g id="edge6" class="edge">
+<title>i3&#45;&gt;i4</title>
+<path fill="none" stroke="black" d="M135.3,-413.81C135.3,-405.79 135.3,-396.05 135.3,-387.07"/>
+<polygon fill="black" stroke="black" points="138.8,-387.03 135.3,-377.03 131.8,-387.03 138.8,-387.03"/>
+</g>
+<!-- i5 -->
+<g id="node6" class="node">
+<title>i5</title>
+<polygon fill="none" stroke="chocolate" points="94.3,-290 39.83,-272 94.3,-254 148.76,-272 94.3,-290"/>
+<text text-anchor="middle" x="94.3" y="-268.3" font-family="Times New Roman,serif" font-size="14.00">if (i &gt; j)</text>
+</g>
+<!-- i4&#45;&gt;i5 -->
+<g id="edge4" class="edge">
+<title>i4&#45;&gt;i5</title>
+<path fill="none" stroke="black" d="M128.53,-343.96C122.41,-331.28 113.27,-312.33 105.97,-297.2"/>
+<polygon fill="black" stroke="black" points="108.99,-295.4 101.49,-287.92 102.68,-298.44 108.99,-295.4"/>
+<text text-anchor="middle" x="130.8" y="-311.8" font-family="Times New Roman,serif" font-size="14.00">True</text>
+</g>
+<!-- i7 -->
+<g id="node8" class="node">
+<title>i7</title>
+<ellipse fill="none" stroke="black" cx="176.3" cy="-218" rx="44.69" ry="18"/>
+<text text-anchor="middle" x="176.3" y="-214.3" font-family="Times New Roman,serif" font-size="14.00">res = 100</text>
+</g>
+<!-- i4&#45;&gt;i7 -->
+<g id="edge5" class="edge">
+<title>i4&#45;&gt;i7</title>
+<path fill="none" stroke="black" d="M141.03,-343.46C143.41,-337.2 146.11,-329.79 148.3,-323 156.62,-297.11 164.52,-267.07 169.79,-245.96"/>
+<polygon fill="black" stroke="black" points="173.23,-246.63 172.23,-236.08 166.44,-244.95 173.23,-246.63"/>
+<text text-anchor="middle" x="168.3" y="-311.8" font-family="Times New Roman,serif" font-size="14.00">False</text>
+</g>
+<!-- i6 -->
+<g id="node7" class="node">
+<title>i6</title>
+<ellipse fill="none" stroke="black" cx="40.3" cy="-164" rx="40.09" ry="18"/>
+<text text-anchor="middle" x="40.3" y="-160.3" font-family="Times New Roman,serif" font-size="14.00">res = 10</text>
+</g>
+<!-- i5&#45;&gt;i6 -->
+<g id="edge3" class="edge">
+<title>i5&#45;&gt;i6</title>
+<path fill="none" stroke="black" d="M86.22,-256.42C82.79,-250.17 78.79,-242.75 75.3,-236 67.62,-221.17 59.35,-204.42 52.77,-190.92"/>
+<polygon fill="black" stroke="black" points="55.83,-189.2 48.32,-181.73 49.53,-192.26 55.83,-189.2"/>
+<text text-anchor="middle" x="88.8" y="-214.3" font-family="Times New Roman,serif" font-size="14.00">True</text>
+</g>
+<!-- i8 -->
+<g id="node9" class="node">
+<title>i8</title>
+<ellipse fill="none" stroke="black" cx="116.3" cy="-91" rx="38.19" ry="18"/>
+<text text-anchor="middle" x="116.3" y="-87.3" font-family="Times New Roman,serif" font-size="14.00">res *= i</text>
+</g>
+<!-- i5&#45;&gt;i8 -->
+<g id="edge8" class="edge">
+<title>i5&#45;&gt;i8</title>
+<path fill="none" stroke="black" d="M98.39,-255.05C99.8,-249.11 101.28,-242.28 102.3,-236 108.82,-195.77 112.7,-148.68 114.67,-119.6"/>
+<polygon fill="black" stroke="black" points="118.17,-119.59 115.33,-109.38 111.19,-119.13 118.17,-119.59"/>
+<text text-anchor="middle" x="128.3" y="-160.3" font-family="Times New Roman,serif" font-size="14.00">False</text>
+</g>
+<!-- i6&#45;&gt;i8 -->
+<g id="edge7" class="edge">
+<title>i6&#45;&gt;i8</title>
+<path fill="none" stroke="black" d="M57.16,-147.24C67.47,-137.62 80.81,-125.15 92.21,-114.5"/>
+<polygon fill="black" stroke="black" points="94.82,-116.85 99.74,-107.47 90.04,-111.74 94.82,-116.85"/>
+</g>
+<!-- i7&#45;&gt;i8 -->
+<g id="edge9" class="edge">
+<title>i7&#45;&gt;i8</title>
+<path fill="none" stroke="black" d="M171.17,-199.94C166.51,-185.3 159.03,-163.79 150.3,-146 145.46,-136.16 139.28,-125.85 133.52,-116.91"/>
+<polygon fill="black" stroke="black" points="136.39,-114.91 127.96,-108.5 130.55,-118.77 136.39,-114.91"/>
+</g>
+<!-- i9 -->
+<g id="node10" class="node">
+<title>i9</title>
+<polygon fill="none" stroke="red" points="149.17,-23.56 116.3,-36 83.42,-23.56 83.45,-3.44 149.14,-3.44 149.17,-23.56"/>
+<text text-anchor="middle" x="116.3" y="-14.3" font-family="Times New Roman,serif" font-size="14.00">stop</text>
+</g>
+<!-- i8&#45;&gt;i9 -->
+<g id="edge11" class="edge">
+<title>i8&#45;&gt;i9</title>
+<path fill="none" stroke="black" d="M116.3,-72.81C116.3,-64.79 116.3,-55.05 116.3,-46.07"/>
+<polygon fill="black" stroke="black" points="119.8,-46.03 116.3,-36.03 112.8,-46.03 119.8,-46.03"/>
+</g>
+</g>
+</svg>
+    </div>
+    <h2 class="grafo-titulo">System Dependency Graph:</h2>
+    <div class="grafo">
+        <svg width="fit-content" height="fit-content"
+ viewBox="0.00 0.00 473.94 421.74" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 417.74)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-417.74 469.94,-417.74 469.94,4 -4,4"/>
+<!-- i0 -->
+<g id="node1" class="node">
+<title>i0</title>
+<polygon fill="none" stroke="green" points="207.22,-381.31 240.1,-368.87 272.97,-381.31 272.94,-401.43 207.25,-401.43 207.22,-381.31"/>
+<text text-anchor="middle" x="240.1" y="-383.17" font-family="Times New Roman,serif" font-size="14.00">start</text>
+</g>
+<!-- i3 -->
+<g id="node4" class="node">
+<title>i3</title>
+<ellipse fill="none" stroke="black" cx="125.1" cy="-306" rx="50.09" ry="18"/>
+<text text-anchor="middle" x="125.1" y="-302.3" font-family="Times New Roman,serif" font-size="14.00">int i = a &#45; 2</text>
+</g>
+<!-- i0&#45;&gt;i3 -->
+<g id="edge17" class="edge">
+<title>i0&#45;&gt;i3</title>
+<path fill="none" stroke="blue" d="M224.11,-374.9C206.45,-362.8 177.62,-343.02 155.61,-327.93"/>
+<polygon fill="blue" stroke="blue" points="157.48,-324.96 147.25,-322.2 153.52,-330.74 157.48,-324.96"/>
+</g>
+<!-- i4 -->
+<g id="node5" class="node">
+<title>i4</title>
+<ellipse fill="none" stroke="black" cx="48.1" cy="-234" rx="48.19" ry="18"/>
+<text text-anchor="middle" x="48.1" y="-230.3" font-family="Times New Roman,serif" font-size="14.00">int j = i &#45; a</text>
+</g>
+<!-- i0&#45;&gt;i4 -->
+<g id="edge18" class="edge">
+<title>i0&#45;&gt;i4</title>
+<path fill="none" stroke="blue" d="M211.85,-379.4C167.74,-368.74 85.52,-346.41 66.1,-324 51.46,-307.12 47.51,-281.64 46.9,-262.27"/>
+<polygon fill="blue" stroke="blue" points="50.4,-262.21 46.86,-252.23 43.4,-262.24 50.4,-262.21"/>
+</g>
+<!-- i5 -->
+<g id="node6" class="node">
+<title>i5</title>
+<ellipse fill="none" stroke="black" cx="240.1" cy="-306" rx="47.39" ry="18"/>
+<text text-anchor="middle" x="240.1" y="-302.3" font-family="Times New Roman,serif" font-size="14.00">int res = 0</text>
+</g>
+<!-- i0&#45;&gt;i5 -->
+<g id="edge19" class="edge">
+<title>i0&#45;&gt;i5</title>
+<path fill="none" stroke="blue" d="M240.1,-368.76C240.1,-358.73 240.1,-345.84 240.1,-334.42"/>
+<polygon fill="blue" stroke="blue" points="243.6,-334.08 240.1,-324.08 236.6,-334.08 243.6,-334.08"/>
+</g>
+<!-- i6 -->
+<g id="node7" class="node">
+<title>i6</title>
+<ellipse fill="none" stroke="chocolate" cx="372.1" cy="-306" rx="28.7" ry="18"/>
+<text text-anchor="middle" x="372.1" y="-302.3" font-family="Times New Roman,serif" font-size="14.00">if (b)</text>
+</g>
+<!-- i0&#45;&gt;i6 -->
+<g id="edge20" class="edge">
+<title>i0&#45;&gt;i6</title>
+<path fill="none" stroke="blue" d="M257.62,-375.4C279.46,-362.35 317.06,-339.89 343.18,-324.28"/>
+<polygon fill="blue" stroke="blue" points="345.11,-327.2 351.9,-319.07 341.52,-321.19 345.11,-327.2"/>
+</g>
+<!-- i13 -->
+<g id="node14" class="node">
+<title>i13</title>
+<ellipse fill="none" stroke="black" cx="190.1" cy="-234" rx="38.19" ry="18"/>
+<text text-anchor="middle" x="190.1" y="-230.3" font-family="Times New Roman,serif" font-size="14.00">res *= i</text>
+</g>
+<!-- i0&#45;&gt;i13 -->
+<g id="edge21" class="edge">
+<title>i0&#45;&gt;i13</title>
+<path fill="none" stroke="blue" d="M255.39,-374.27C277.82,-355.8 315.03,-318.64 296.1,-288 282.57,-266.12 256.98,-252.97 234.34,-245.24"/>
+<polygon fill="blue" stroke="blue" points="235.11,-241.82 224.52,-242.16 233.01,-248.5 235.11,-241.82"/>
+</g>
+<!-- i1 -->
+<g id="node2" class="node">
+<title>i1</title>
+<ellipse fill="none" stroke="darkviolet" cx="67.1" cy="-386.87" rx="48.58" ry="26.74"/>
+<text text-anchor="middle" x="67.1" y="-390.67" font-family="Times New Roman,serif" font-size="14.00">global</text>
+<text text-anchor="middle" x="67.1" y="-375.67" font-family="Times New Roman,serif" font-size="14.00">int a = 10</text>
+</g>
+<!-- i1&#45;&gt;i3 -->
+<g id="edge1" class="edge">
+<title>i1&#45;&gt;i3</title>
+<path fill="none" stroke="green" d="M84.81,-361.78C91.75,-352.34 99.71,-341.52 106.71,-332"/>
+<polygon fill="green" stroke="green" points="109.71,-333.83 112.81,-323.7 104.07,-329.68 109.71,-333.83"/>
+</g>
+<!-- i1&#45;&gt;i4 -->
+<g id="edge2" class="edge">
+<title>i1&#45;&gt;i4</title>
+<path fill="none" stroke="green" d="M49.98,-361.49C43.32,-350.56 36.48,-337.18 33.1,-324 27.79,-303.32 32.38,-279.44 37.84,-261.63"/>
+<polygon fill="green" stroke="green" points="41.23,-262.5 41.08,-251.91 34.59,-260.29 41.23,-262.5"/>
+</g>
+<!-- i2 -->
+<g id="node3" class="node">
+<title>i2</title>
+<ellipse fill="none" stroke="deeppink" cx="372.1" cy="-386.87" rx="37.45" ry="26.74"/>
+<text text-anchor="middle" x="372.1" y="-390.67" font-family="Times New Roman,serif" font-size="14.00">arg</text>
+<text text-anchor="middle" x="372.1" y="-375.67" font-family="Times New Roman,serif" font-size="14.00">bool b</text>
+</g>
+<!-- i2&#45;&gt;i6 -->
+<g id="edge4" class="edge">
+<title>i2&#45;&gt;i6</title>
+<path fill="none" stroke="green" d="M372.1,-359.61C372.1,-351.51 372.1,-342.57 372.1,-334.39"/>
+<polygon fill="green" stroke="green" points="375.6,-334.22 372.1,-324.22 368.6,-334.22 375.6,-334.22"/>
+</g>
+<!-- i3&#45;&gt;i4 -->
+<g id="edge3" class="edge">
+<title>i3&#45;&gt;i4</title>
+<path fill="none" stroke="green" d="M107.62,-289.12C97.38,-279.81 84.28,-267.9 72.98,-257.62"/>
+<polygon fill="green" stroke="green" points="75.25,-254.96 65.5,-250.82 70.54,-260.14 75.25,-254.96"/>
+</g>
+<!-- i8 -->
+<g id="node9" class="node">
+<title>i8</title>
+<ellipse fill="none" stroke="chocolate" cx="124.1" cy="-162" rx="38.19" ry="18"/>
+<text text-anchor="middle" x="124.1" y="-158.3" font-family="Times New Roman,serif" font-size="14.00">if (i &gt; j)</text>
+</g>
+<!-- i3&#45;&gt;i8 -->
+<g id="edge6" class="edge">
+<title>i3&#45;&gt;i8</title>
+<path fill="none" stroke="green" d="M124.98,-287.87C124.8,-263.67 124.49,-219.21 124.29,-190.39"/>
+<polygon fill="green" stroke="green" points="127.79,-190.16 124.22,-180.19 120.79,-190.21 127.79,-190.16"/>
+</g>
+<!-- i3&#45;&gt;i13 -->
+<g id="edge15" class="edge">
+<title>i3&#45;&gt;i13</title>
+<path fill="none" stroke="green" d="M140.17,-288.76C148.66,-279.62 159.4,-268.06 168.74,-258"/>
+<polygon fill="green" stroke="green" points="171.31,-260.38 175.55,-250.67 166.18,-255.61 171.31,-260.38"/>
+</g>
+<!-- i4&#45;&gt;i8 -->
+<g id="edge7" class="edge">
+<title>i4&#45;&gt;i8</title>
+<path fill="none" stroke="green" d="M65.34,-217.12C75.59,-207.68 88.74,-195.56 100,-185.19"/>
+<polygon fill="green" stroke="green" points="102.46,-187.69 107.44,-178.34 97.71,-182.54 102.46,-187.69"/>
+</g>
+<!-- i7 -->
+<g id="node8" class="node">
+<title>i7</title>
+<ellipse fill="none" stroke="chocolate" cx="311.1" cy="-234" rx="27" ry="18"/>
+<text text-anchor="middle" x="311.1" y="-230.3" font-family="Times New Roman,serif" font-size="14.00">then</text>
+</g>
+<!-- i6&#45;&gt;i7 -->
+<g id="edge5" class="edge">
+<title>i6&#45;&gt;i7</title>
+<path fill="none" stroke="blue" d="M358.86,-289.81C350.71,-280.45 340.1,-268.28 330.95,-257.79"/>
+<polygon fill="blue" stroke="blue" points="333.51,-255.4 324.31,-250.16 328.24,-260 333.51,-255.4"/>
+</g>
+<!-- i11 -->
+<g id="node12" class="node">
+<title>i11</title>
+<ellipse fill="none" stroke="chocolate" cx="421.1" cy="-234" rx="27" ry="18"/>
+<text text-anchor="middle" x="421.1" y="-230.3" font-family="Times New Roman,serif" font-size="14.00">else</text>
+</g>
+<!-- i6&#45;&gt;i11 -->
+<g id="edge12" class="edge">
+<title>i6&#45;&gt;i11</title>
+<path fill="none" stroke="blue" d="M383.21,-289.12C389.42,-280.26 397.27,-269.04 404.22,-259.12"/>
+<polygon fill="blue" stroke="blue" points="407.15,-261.02 410.02,-250.82 401.42,-257.01 407.15,-261.02"/>
+</g>
+<!-- i7&#45;&gt;i8 -->
+<g id="edge11" class="edge">
+<title>i7&#45;&gt;i8</title>
+<path fill="none" stroke="blue" d="M288.17,-224.42C256.92,-212.72 200.54,-191.61 162.71,-177.45"/>
+<polygon fill="blue" stroke="blue" points="163.64,-174.06 153.05,-173.84 161.18,-180.62 163.64,-174.06"/>
+</g>
+<!-- i9 -->
+<g id="node10" class="node">
+<title>i9</title>
+<ellipse fill="none" stroke="chocolate" cx="124.1" cy="-90" rx="27" ry="18"/>
+<text text-anchor="middle" x="124.1" y="-86.3" font-family="Times New Roman,serif" font-size="14.00">then</text>
+</g>
+<!-- i8&#45;&gt;i9 -->
+<g id="edge8" class="edge">
+<title>i8&#45;&gt;i9</title>
+<path fill="none" stroke="blue" d="M124.1,-143.7C124.1,-135.98 124.1,-126.71 124.1,-118.11"/>
+<polygon fill="blue" stroke="blue" points="127.6,-118.1 124.1,-108.1 120.6,-118.1 127.6,-118.1"/>
+</g>
+<!-- i10 -->
+<g id="node11" class="node">
+<title>i10</title>
+<ellipse fill="none" stroke="black" cx="124.1" cy="-18" rx="40.09" ry="18"/>
+<text text-anchor="middle" x="124.1" y="-14.3" font-family="Times New Roman,serif" font-size="14.00">res = 10</text>
+</g>
+<!-- i9&#45;&gt;i10 -->
+<g id="edge10" class="edge">
+<title>i9&#45;&gt;i10</title>
+<path fill="none" stroke="blue" d="M124.1,-71.7C124.1,-63.98 124.1,-54.71 124.1,-46.11"/>
+<polygon fill="blue" stroke="blue" points="127.6,-46.1 124.1,-36.1 120.6,-46.1 127.6,-46.1"/>
+</g>
+<!-- i10&#45;&gt;i5 -->
+<g id="edge9" class="edge">
+<title>i10&#45;&gt;i5</title>
+<path fill="none" stroke="green" d="M137.28,-35.07C162.59,-67.08 217.26,-142.13 237.1,-216 242.53,-236.25 243.05,-260.02 242.34,-277.9"/>
+<polygon fill="green" stroke="green" points="238.84,-277.76 241.78,-287.93 245.83,-278.14 238.84,-277.76"/>
+</g>
+<!-- i12 -->
+<g id="node13" class="node">
+<title>i12</title>
+<ellipse fill="none" stroke="black" cx="421.1" cy="-162" rx="44.69" ry="18"/>
+<text text-anchor="middle" x="421.1" y="-158.3" font-family="Times New Roman,serif" font-size="14.00">res = 100</text>
+</g>
+<!-- i11&#45;&gt;i12 -->
+<g id="edge14" class="edge">
+<title>i11&#45;&gt;i12</title>
+<path fill="none" stroke="blue" d="M421.1,-215.7C421.1,-207.98 421.1,-198.71 421.1,-190.11"/>
+<polygon fill="blue" stroke="blue" points="424.6,-190.1 421.1,-180.1 417.6,-190.1 424.6,-190.1"/>
+</g>
+<!-- i12&#45;&gt;i5 -->
+<g id="edge13" class="edge">
+<title>i12&#45;&gt;i5</title>
+<path fill="none" stroke="green" d="M410.5,-179.56C397.46,-198.91 373.75,-230.95 347.1,-252 327.63,-267.38 302.98,-279.96 282.25,-289"/>
+<polygon fill="green" stroke="green" points="280.87,-285.78 273.03,-292.9 283.6,-292.23 280.87,-285.78"/>
+</g>
+<!-- i13&#45;&gt;i5 -->
+<g id="edge16" class="edge">
+<title>i13&#45;&gt;i5</title>
+<path fill="none" stroke="green" d="M201.86,-251.47C207.95,-259.99 215.51,-270.58 222.3,-280.08"/>
+<polygon fill="green" stroke="green" points="219.59,-282.31 228.25,-288.41 225.28,-278.24 219.59,-282.31"/>
+</g>
+</g>
+</svg>
+    </div>
+    <h2 class="grafo-titulo">Complexidade de McCabe's:</h2>
+    <p class="grafo-texto">Numero de nodos: <b>10</b></p>
+    <p class="grafo-texto">Numero de arestas: <b>11</b></p>
+    <p class="grafo-texto">Complexidade: <b>3</b></p>
+</div>
+</body>
+</html>

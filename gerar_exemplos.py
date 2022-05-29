@@ -1,209 +1,170 @@
 from gramatica import grammar
-from interpreter_analisador import MyInterpreter
+from interpreter_analisador import InterpreterAnalisador
+from interpreter_cfg import InterpreterCFG
 from lark import Lark
+from interpreter_sdg import InterpreterSDG
 from report_generator import generateReport
 
 testes = [
 (
 # Titulo
-"Variaveis", 
+"if", 
 # Codigo
 """
-int a = b;
+int a = 10;
 
-void main() {
-    int b;
-    int a = b;
-    int c;
-    z = a;
-}
-"""
-), (
-# Titulo
-"Funcoes", 
-# Codigo
-"""
-void foo() { }
-bool foo() { }
-
-bool foo(int a, List<bool> b) { }
-void foo(int a1, List<bool> b1) { }
-
-bool foo(float a, int b) { }
-
-void main() {
-    int x = 2;
-    bool b1 = foo(1, x);
-    bool b2 = bar();
-}
-"""
-), (
-# Titulo
-"Tipos_Invalidos_Incompativeis", 
-# Codigo
-"""
-void main() {
-    Batata b1;
-    Batata<int> b2;
-    List<int, float> l1;
-
-    List<int> l2 = [ 1, True, 3 ];
-}
-"""
-), (
-# Titulo
-"Atribuicoes_Casts", 
-# Codigo
-"""
-void main() {
-    int i = 2.1;
-    i = (int) 2.1;
-    i = (int) True;
-    i = 1 * 1.0;
-
-    List<int> l1 = [ 2.1, 4, 5 ];
-    List<int> l2 = (List<int>) [ 2.1, 4, 5 ];
-
-    List<int> l3 = « 1, 2, 3 »;
-    List<int> l4 = (List<int>) « 1, 2, 3 »;
-    Set<int> s = (Set<int>) [ 1, 2, 3 ];
-
-    List<int> l5 = [ 1, 2, 3 ];
-    l5[0] = 99.9;
-}
-"""
-), (
-# Titulo
-"Acesso_Subtipos", 
-# Codigo
-"""
-void main() {
-    List<float> l = [ 1, 2, 3 ];
-    float f1 = l[2];
-    float f2 = l[2.1];
-
-    Map<float, float> m = {
-        1.0: 1.5,
-        2.0: 2.5,
-        3.0: 3.5
-    };
-
-    float f3 = m[1.0];
-    float f4 = m[1];
-    float f5 = m[True];
-
-    int i = 1[0];
-}
-"""
-), (
-# Titulo
-"Iteracao_Subtipos", 
-# Codigo
-"""
-void main() {
-    List<float> l = [ 1, 2, 3 ];
-
-    Map<float, float> m = {
-        1.0: 1.5,
-        2.0: 2.5,
-        3.0: 3.5
-    };
-
-    foreach(float f in l) { }
-
-    foreach(float f in m) { }
-
-    foreach(Tuple<float, float> entry in m) { }
-
-    foreach(int i in 15) { }
-}
-"""
-), (
-# Titulo
-"Operadores_Condicoes_Invalidas", 
-# Codigo
-"""
-void main() {
-    int i = 1 * True;
-    bool b = ! 2.0;
-    int j = - True;
-
-    if (1) { }
-    while (1) { }
-    do { } while (1);
-    for (int a = 0; 1; a++) { }
-}
-"""
-), (
-# Titulo
-"Ifs_Aninhados", 
-# Codigo
-"""
-void main() {
-    bool b = True;
+void foo(bool b) {
+    int i = a - 2;
+    int j = i - a;
+    int res = 0;
     if (b) {
-        if (!b) {
-
+        if (i > j) {
+            res = 10;
         }
-        b = !b;
     }
+    else {
+        res = 100;
+    }
+    res *= i;
+}
+"""
+), (
+# Titulo
+"while", 
+# Codigo
+"""
+int a = 10;
 
-    if (!b) {
+void foo(bool b) {
+    int i = a - 2;
+    int j = i - a;
+    int res = 0;
+    while (b) {
+        res++;
+        if (res > j + i) {
+            b = False;
+        }
+    }
+    res *= i;
+}
+"""
+), (
+# Titulo
+"do_while", 
+# Codigo
+"""
+int a = 10;
+
+void foo(bool b) {
+    int i = a - 2;
+    int j = i - a;
+    int res = 0;
+    do {
+        res++;
+        if (res > j + i) {
+            b = False;
+        }
+    } while (b);
+    res *= i;
+}
+"""
+), (
+# Titulo
+"for", 
+# Codigo
+"""
+int a = 10;
+
+void foo(bool b) {
+    int res = 0;
+    for (int i = a - 2, int j = i - a; b; ) {
+        res++;
+        if (res > j + i) {
+            b = False;
+        }
+    }
+    res *= 10;
+}
+"""
+), (
+# Titulo
+"foreach", 
+# Codigo
+"""
+int a = 10;
+
+void foo(bool b) {
+    int i = a - 2;
+    int j = i - a;
+    int res = 0;
+    List<int> l = [ 1, 2, 3, 4, 5 ];
+    foreach (int elem in l) {
         if (b) {
-            if (b || !b) { 
-
-            }
+            res += elem;
+        }
+        if (res > j + i) {
+            b = False;
         }
     }
+    res *= i;
 }
 """
 ), (
 # Titulo
-"Nome_Proibido", 
+"foreach_in_range", 
 # Codigo
 """
-void main() {
-    float float = 3.5;
-    int bool = 2;
-    int List = 3 + 2;
-    bool True = False;
+List<int> range(int start, int stop, int step) {
+    List<int> l = [];
+    int idx = 0;
+    while (start < stop) {
+        l[idx] = start;
+        start += step;
+        idx++;
+    }
 }
-"""
-), (
-# Titulo
-"Notas", 
-# Codigo
-"""
-void main() {
-    int i = 2;
-    if (True) {
-        i++;
-    } else {
-        List<float> l = [ 1.0, 2.0, 3.0 ];
-        for (int j = 0; j < 3; j++) {
-            l[j] += i;
-        }    
+
+List<int> range(int start, int stop) {
+    List<int> l = range(start, stop, 1); 
+}
+
+void sum() {
+    int sum = 0;
+    foreach (int val in range(10, 200, 5)) {
+        sum += val;
     }
 }
 """
 )
 ]
 
+# Criar o Lark
 l = Lark(grammar, propagate_positions=True)
-i = MyInterpreter()
 
+# Para cada exemplo
 for num, (tag, codigo) in enumerate(testes):
-    codigo = codigo[1:-1]
-    tree = l.parse(codigo)
-    i.setupVariables()
-    i.visit(tree)
-    i.gerarNotesInfo()
-    titulo = str(num) + "_" + tag
-    generateReport(i.notas, codigo, titulo)
 
-#l = Lark(grammar)
-#tree = l.parse(frase)
-#i = MyInterpreter()
-#i.visit(tree)
-#i.gerarNotesInfo()
-#generateReport(i.notas)
+    # Remover as linhas desnecessarias
+    codigo = codigo[1:-1]
+
+    # Dar parse ao programa
+    tree = l.parse(codigo)
+    
+    # Detetar erros
+    ia = InterpreterAnalisador()
+    ia.visit(tree)
+    ia.gerarNotesInfo()
+
+    #TODO se houver erros nao gerar os grafos
+
+    # Gerar os CFG
+    icfg = InterpreterCFG(codigo, ia.funcoesOrd)
+    icfg.visit(tree)
+
+    # Gerar os SDG
+    isdg = InterpreterSDG(codigo, ia.funcoesOrd)
+    isdg.visit(tree)
+
+    # Gerar o relatorio
+    titulo = "./exemplos/" + str(num) + "_" + tag
+    generateReport(ia.notas, ia.funcoesOrd, codigo, titulo)

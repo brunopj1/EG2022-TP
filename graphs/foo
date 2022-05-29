@@ -1,9 +1,0 @@
-digraph {
-	i0 [label=start color=green shape=invhouse]
-	i1 [label="global
-int glob_a = 0" color=darkviolet]
-	i2 [label="global
-float glob_b = 1.0" color=darkviolet]
-	i3 [label="arg
-int i" color=deeppink]
-}

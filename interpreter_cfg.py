@@ -4,9 +4,11 @@ from lark.visitors import Interpreter
 from aux_classes import *
 
 # Cores:
-# green -> start
-# red   -> stop
-# blue  -> corpo vazio
+# green         -> start
+# red           -> stop
+# chocolate     -> nodos condicionais
+# darkgoldenrod -> nodos ciclos
+# blue          -> corpo vazio
 
 class InterpreterCFG(Interpreter):
     
@@ -26,6 +28,7 @@ class InterpreterCFG(Interpreter):
         self.instrucaoIdx += 1
         # Inserir o nodo
         self.funcaoAtual.cfg.node(id, desc, shape=shape, color=color)
+        self.funcaoAtual.mccabe_nodos += 1
         # Retornar o nodos
         return NodoGrafo(id, desc, color, shape)
 
@@ -39,6 +42,7 @@ class InterpreterCFG(Interpreter):
             for elemTo in nodosTo:
                 _label = elemFrom.out_label if elemFrom.out_label is not None else label
                 self.funcaoAtual.cfg.edge(elemFrom.id, elemTo.id, label=_label, constraint="true")
+                self.funcaoAtual.mccabe_arestas += 1
 
     def obterTexto(self, elem_from, elem_to=None):
         if elem_to is None:
@@ -137,7 +141,7 @@ class InterpreterCFG(Interpreter):
                     texto = self.obterTexto(elem.children[0])
                 else:
                     texto = texto = self.obterTexto(elem.children[0].children[0])
-                if_atual = self.adicionarNodo("if (" + texto + ")", shape="diamond")
+                if_atual = self.adicionarNodo("if (" + texto + ")", shape="diamond", color="chocolate")
                 # Guardar o primeiro if
                 if if_first is None:
                     if_first = if_atual
@@ -176,7 +180,7 @@ class InterpreterCFG(Interpreter):
     def ciclo_while(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("while (" + texto + ")", shape="diamond")
+        condicao = self.adicionarNodo("while (" + texto + ")", shape="diamond", color="darkgoldenrod")
         # Criar os nodos do corpo
         corpo_first, corpo_last = self.visit(tree.children[1])
         # Ligar o corpo à condição
@@ -192,7 +196,7 @@ class InterpreterCFG(Interpreter):
         corpo_first, corpo_last = self.visit(tree.children[0])
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("while (" + texto + ")", shape="diamond")
+        condicao = self.adicionarNodo("while (" + texto + ")", shape="diamond", color="darkgoldenrod")
         # Ligar o corpo à condição
         self.adicionarAresta(corpo_last, condicao)
         # Ligar a condicao ao corpo
@@ -204,7 +208,7 @@ class InterpreterCFG(Interpreter):
     def ciclo_for(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("for (" + texto + ")", shape="diamond")
+        condicao = self.adicionarNodo("for (" + texto + ")", shape="diamond", color="darkgoldenrod")
         # Criar os nodos do corpo
         corpo_first, corpo_last = self.visit(tree.children[1])
         # Ligar o corpo à condição
@@ -218,7 +222,7 @@ class InterpreterCFG(Interpreter):
     def ciclo_foreach(self, tree):
         # Criar o nodo da condição
         texto = self.obterTexto(tree.children[0])
-        condicao = self.adicionarNodo("foreach (" + texto + ")", shape="diamond")
+        condicao = self.adicionarNodo("foreach (" + texto + ")", shape="diamond", color="darkgoldenrod")
         # Criar os nodos do corpo
         corpo_first, corpo_last = self.visit(tree.children[1])
         # Ligar o corpo à condição
